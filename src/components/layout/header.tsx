@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, LayoutDashboard, Sparkles, PanelLeft } from 'lucide-react';
+import { LayoutDashboard, Sparkles, PanelLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +10,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import Logo from '@/components/logo';
 
 const navItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -26,8 +27,8 @@ export default function AppHeader() {
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Bot className="h-6 w-6 text-primary" />
-          <span className="sr-only">CryptoPrev</span>
+          <Logo className="h-8 w-8" />
+          <span className="font-bold text-lg">CryptoPrev</span>
         </Link>
         {navItems.map((item) => (
             <Link
@@ -35,7 +36,7 @@ export default function AppHeader() {
                 href={item.href}
                 className={cn(
                     "transition-colors hover:text-foreground",
-                    pathname === item.href ? "text-foreground" : "text-muted-foreground"
+                    pathname === item.href ? "text-foreground font-semibold" : "text-muted-foreground"
                 )}
             >
                 {item.label}
@@ -59,8 +60,8 @@ export default function AppHeader() {
               href="#"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Bot className="h-6 w-6 text-primary" />
-              <span className="sr-only">CryptoPrev</span>
+              <Logo className="h-8 w-8" />
+              <span className="font-bold text-lg">CryptoPrev</span>
             </Link>
             {navItems.map((item) => (
                 <Link
