@@ -57,12 +57,43 @@ export default function DepositDialog() {
             Choose your preferred method to add funds to your CryptoPrev account.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="crypto" className="w-full">
+        <Tabs defaultValue="pix" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="crypto"><Wallet className="mr-2"/> Crypto</TabsTrigger>
-            <TabsTrigger value="card"><CreditCard className="mr-2"/> Card</TabsTrigger>
             <TabsTrigger value="pix"><PixIcon className="mr-2"/> PIX</TabsTrigger>
+            <TabsTrigger value="card"><CreditCard className="mr-2"/> Card</TabsTrigger>
+            <TabsTrigger value="crypto"><Wallet className="mr-2"/> Crypto</TabsTrigger>
           </TabsList>
+          <TabsContent value="pix">
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+                <p className="text-sm text-muted-foreground">Scan the QR code with your bank's app to pay.</p>
+                <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2">
+                    <Image src="https://placehold.co/200x200.png" alt="PIX QR Code" width={200} height={200} data-ai-hint="qr code"/>
+                </div>
+                <p className="text-xs text-muted-foreground">This is a simulated transaction.</p>
+            </div>
+          </TabsContent>
+          <TabsContent value="card">
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="card-number">Card Number</Label>
+                <Input id="card-number" placeholder="0000 0000 0000 0000" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="expiry-date">Expires</Label>
+                  <Input id="expiry-date" placeholder="MM/YY" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cvc">CVC</Label>
+                  <Input id="cvc" placeholder="123" />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="amount-card">Amount ($)</Label>
+                  <Input id="amount-card" type="number" defaultValue="1000" />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
           <TabsContent value="crypto">
              <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -95,37 +126,6 @@ export default function DepositDialog() {
                   className="col-span-3"
                 />
               </div>
-            </div>
-          </TabsContent>
-          <TabsContent value="card">
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="card-number">Card Number</Label>
-                <Input id="card-number" placeholder="0000 0000 0000 0000" />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="expiry-date">Expires</Label>
-                  <Input id="expiry-date" placeholder="MM/YY" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cvc">CVC</Label>
-                  <Input id="cvc" placeholder="123" />
-                </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="amount-card">Amount ($)</Label>
-                  <Input id="amount-card" type="number" defaultValue="1000" />
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-          <TabsContent value="pix">
-            <div className="flex flex-col items-center gap-4 py-4 text-center">
-                <p className="text-sm text-muted-foreground">Scan the QR code with your bank's app to pay.</p>
-                <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2">
-                    <Image src="https://placehold.co/200x200.png" alt="PIX QR Code" width={200} height={200} data-ai-hint="qr code"/>
-                </div>
-                <p className="text-xs text-muted-foreground">This is a simulated transaction.</p>
             </div>
           </TabsContent>
         </Tabs>
