@@ -4,25 +4,34 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-if (!serviceAccountKey) {
-  throw new Error('The FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.');
+let db: admin.firestore.Firestore;
+let isFirebaseEnabled = false;
+
+if (serviceAccountKey) {
+  try {
+    const serviceAccount = JSON.parse(
+      Buffer.from(serviceAccountKey, 'base64').toString('utf-8')
+    );
+    
+    if (!getApps().length) {
+      initializeApp({
+        credential: cert(serviceAccount),
+      });
+    }
+    
+    db = getFirestore();
+    isFirebaseEnabled = true;
+  } catch (error) {
+    console.error("Firebase initialization failed:", error);
+  }
+} else {
+  console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set. Using mock data.");
 }
 
-const serviceAccount = JSON.parse(
-  Buffer.from(serviceAccountKey, 'base64').toString('utf-8')
-);
-
-if (!getApps().length) {
-  initializeApp({
-    credential: cert(serviceAccount),
-  });
-}
-
-const db = getFirestore();
-
-export { db, admin };
 
 // A simple helper function to format Firestore Timestamps
 export const formatTimestamp = (timestamp: admin.firestore.Timestamp) => {
     return timestamp.toDate().toISOString().split('T')[0];
 }
+
+export { db, admin, isFirebaseEnabled };

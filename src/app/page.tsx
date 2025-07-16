@@ -27,9 +27,28 @@ import DepositDialog from '@/components/dashboard/deposit-dialog';
 import StatCard from '@/components/dashboard/stat-card';
 import YieldChart from '@/components/dashboard/yield-chart';
 import ProjectionChart from '@/components/dashboard/projection-chart';
-import { db, formatTimestamp, admin } from '@/lib/firebase';
+import { db, formatTimestamp, admin, isFirebaseEnabled } from '@/lib/firebase';
 
 async function getDashboardData() {
+  if (!isFirebaseEnabled) {
+    // Return mock data if Firebase is not configured
+    return {
+      userData: {
+        currentBalance: 5250.75,
+        accumulatedRewards: 250.75,
+        activeProtocol: 'Compound',
+        activeProtocolApy: 5.2,
+      },
+      distributionHistory: [
+        { id: '1', date: '2024-06-30', amount: 45.50, status: 'Paid', protocol: 'Aave' },
+        { id: '2', date: '2024-05-31', amount: 42.10, status: 'Paid', protocol: 'Aave' },
+        { id: '3', date: '2024-04-30', amount: 48.90, status: 'Paid', protocol: 'Compound' },
+        { id: '4', date: '2024-03-31', amount: 39.20, status: 'Paid', protocol: 'Compound' },
+        { id: '5', date: '2024-02-29', amount: 41.80, status: 'Paid', protocol: 'Compound' },
+      ],
+    };
+  }
+
   const userId = 'user_1'; // In a real app, this would be the logged-in user's ID
   
   const userDocRef = db.collection('users').doc(userId);
@@ -41,9 +60,7 @@ async function getDashboardData() {
   const [userDoc, distributionsSnapshot] = await Promise.all([userDocPromise, distributionsPromise]);
 
   if (!userDoc.exists) {
-    // This is a good place to create a new user document if one doesn't exist
-    // For now, we'll throw an error
-    throw new Error('User not found. Please sign up.');
+    throw new Error('User not found. Please sign up or add a "user_1" document to your Firestore.');
   }
 
   const userData = userDoc.data()!;
