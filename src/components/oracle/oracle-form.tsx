@@ -18,7 +18,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import {
   Card,
@@ -62,7 +61,7 @@ function SubmitButton() {
       ) : (
         <>
           <Sparkles className="mr-2 h-4 w-4" />
-          Get Suggestion
+          Get Suggestions
         </>
       )}
     </Button>
@@ -100,7 +99,7 @@ export default function OracleForm() {
           <CardHeader>
             <CardTitle>Oracle Parameters</CardTitle>
             <CardDescription>
-              Provide your criteria to get an AI-powered DeFi suggestion.
+              Provide your criteria to get AI-powered DeFi suggestions.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -197,47 +196,49 @@ export default function OracleForm() {
         </form>
       </Card>
       
-      {state.data ? (
-        <Card>
-            <CardHeader>
-                <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">{state.data.protocolName}</CardTitle>
-                    <CardDescription>{state.data.lockupPeriod}</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-sm border-2 border-foreground bg-accent px-4 py-2 text-accent-foreground brutalist-shadow">
-                    <BadgePercent className="h-6 w-6" />
-                    <span className="text-2xl font-bold">{state.data.apy.toFixed(2)}% APY</span>
-                  </div>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <Separator className="border-t-2 border-dashed border-foreground/50"/>
-                <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-4">
-                        <h4 className="font-bold text-lg">Strategy</h4>
-                        <p className="text-muted-foreground">{state.data.strategyDescription}</p>
-                    </div>
-                    <div className="space-y-4">
-                        <h4 className="font-bold text-lg">Est. Monthly Yield</h4>
-                        <p className="text-3xl font-bold text-accent">${state.data.estimatedMonthlyYield.toFixed(2)}</p>
-                        <p className="text-sm text-muted-foreground">Based on your investment amount.</p>
-                    </div>
-                </div>
-                <Separator className="border-t-2 border-dashed border-foreground/50"/>
-                 <div>
-                    <h4 className="font-bold text-lg">Potential Risks</h4>
-                    <div className="mt-2 flex items-start gap-3 border-2 border-destructive/50 bg-destructive/10 p-4 text-sm">
-                      <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
-                      <p className="text-foreground">{state.data.risks}</p>
-                    </div>
-                  </div>
-            </CardContent>
-        </Card>
+      {state.data && state.data.suggestions.length > 0 ? (
+        <div className="grid gap-6 lg:grid-cols-3">
+            {state.data.suggestions.map((suggestion, index) => (
+                <Card key={index}>
+                    <CardHeader>
+                        <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <CardTitle className="text-2xl">{suggestion.protocolName}</CardTitle>
+                            <CardDescription>{suggestion.lockupPeriod}</CardDescription>
+                          </div>
+                          <div className="flex items-center gap-2 rounded-sm border-2 border-foreground bg-accent px-4 py-2 text-accent-foreground brutalist-shadow">
+                            <BadgePercent className="h-6 w-6" />
+                            <span className="text-2xl font-bold">{suggestion.apy.toFixed(2)}% APY</span>
+                          </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <Separator className="border-t-2 border-dashed border-foreground/50"/>
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-lg">Strategy</h4>
+                            <p className="text-muted-foreground text-sm">{suggestion.strategyDescription}</p>
+                        </div>
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-lg">Est. Monthly Yield</h4>
+                            <p className="text-3xl font-bold text-accent">${suggestion.estimatedMonthlyYield.toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">Based on your investment amount.</p>
+                        </div>
+                        <Separator className="border-t-2 border-dashed border-foreground/50"/>
+                         <div>
+                            <h4 className="font-bold text-lg">Potential Risks</h4>
+                            <div className="mt-2 flex items-start gap-3 border-2 border-destructive/50 bg-destructive/10 p-4 text-sm">
+                              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
+                              <p className="text-foreground">{suggestion.risks}</p>
+                            </div>
+                          </div>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
       ) : (
           <div className="flex min-h-[400px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
               <Sparkles className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">Your AI-powered suggestion will appear here.</h3>
+              <h3 className="mt-4 text-lg font-semibold">Your AI-powered suggestions will appear here.</h3>
               <p className="mb-4 mt-2 text-sm text-muted-foreground">
                 Submit your criteria to see the magic happen.
               </p>

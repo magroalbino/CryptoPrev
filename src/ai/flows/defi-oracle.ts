@@ -23,7 +23,7 @@ const AnalyzeDefiProtocolsInputSchema = z.object({
 });
 export type AnalyzeDefiProtocolsInput = z.infer<typeof AnalyzeDefiProtocolsInputSchema>;
 
-const AnalyzeDefiProtocolsOutputSchema = z.object({
+const ProtocolSuggestionSchema = z.object({
   protocolName: z.string().describe('The name of the suggested DeFi protocol.'),
   apy: z.number().describe('The APY (Annual Percentage Yield) of the protocol.'),
   lockupPeriod: z
@@ -37,6 +37,10 @@ const AnalyzeDefiProtocolsOutputSchema = z.object({
     .string()
     .describe('A detailed description of the DeFi strategy for the specified protocol.'),
 });
+
+const AnalyzeDefiProtocolsOutputSchema = z.object({
+  suggestions: z.array(ProtocolSuggestionSchema).describe("A list of the top 3 DeFi protocol suggestions.")
+});
 export type AnalyzeDefiProtocolsOutput = z.infer<typeof AnalyzeDefiProtocolsOutputSchema>;
 
 export async function analyzeDefiProtocols(
@@ -49,20 +53,20 @@ const prompt = ai.definePrompt({
   name: 'analyzeDefiProtocolsPrompt',
   input: {schema: AnalyzeDefiProtocolsInputSchema},
   output: {schema: AnalyzeDefiProtocolsOutputSchema},
-  prompt: `You are a DeFi (Decentralized Finance) expert. You are tasked with analyzing DeFi protocols to find the best options for maximizing stablecoin yield for the user, based on their risk tolerance and investment amount.  Provide only a single best option for the user.
+  prompt: `You are a DeFi (Decentralized Finance) expert. You are tasked with analyzing DeFi protocols to find the best options for maximizing stablecoin yield for the user, based on their risk tolerance and investment amount.  Provide the top 3 best options for the user.
 
 Analyze DeFi protocols for the following stablecoin: {{{stablecoin}}}
 Risk Tolerance: {{{riskTolerance}}}
 Investment Amount: {{{investmentAmount}}}
 
-Consider the following factors when recommending a protocol:
+Consider the following factors when recommending each protocol:
 
 *   **APY (Annual Percentage Yield):** Prioritize protocols with higher APYs.
 *   **Lock-up Period:**  Consider protocols with shorter lock-up periods, but also present options with longer lock-up periods if the APY is significantly higher.
 *   **Risks:**  Thoroughly evaluate the risks associated with each protocol, including smart contract risk, impermanent loss, and liquidation risk.  Present these risks to the user in simple terms.
 *   **Strategy Description:** Provide a detailed description of the DeFi strategy for the specified protocol.
 
-Based on the above criteria, recommend the best DeFi protocol for the user. Do not suggest multiple protocols.  Instead, pick a single best option.
+Based on the above criteria, recommend the top 3 best DeFi protocols for the user.
 `,
 });
 
