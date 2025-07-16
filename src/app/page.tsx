@@ -73,25 +73,25 @@ export default function Dashboard() {
           title="Current Balance"
           value="$10,482.50"
           description="+1.2% from last month"
-          icon={<Wallet className="text-primary" />}
+          icon={<Wallet className="text-accent" />}
         />
         <StatCard
           title="Accumulated Rewards"
           value="$482.50"
           description="Total since inception"
-          icon={<CircleDollarSign className="text-primary" />}
+          icon={<CircleDollarSign className="text-accent" />}
         />
         <StatCard
           title="Next Payout"
           value="15 days"
           description="July 31, 2024"
-          icon={<Calendar className="text-primary" />}
+          icon={<Calendar className="text-accent" />}
         />
         <StatCard
           title="Active Protocol"
           value="Aave v3"
           description="Current APY: 5.2%"
-          icon={<Activity className="text-primary" />}
+          icon={<Activity className="text-accent" />}
         />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
@@ -144,7 +144,7 @@ export default function Dashboard() {
                   <TableCell>{dist.protocol}</TableCell>
                   <TableCell className="text-right">${dist.amount.toFixed(2)}</TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className="border-green-500 bg-green-500/10 text-green-700 dark:text-green-400">
+                    <Badge variant="outline" className="border-green-500 bg-green-900/50 text-green-400">
                       {dist.status}
                     </Badge>
                   </TableCell>

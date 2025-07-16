@@ -21,7 +21,7 @@ export default function AppHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
@@ -35,8 +35,8 @@ export default function AppHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                    "transition-colors hover:text-foreground",
-                    pathname === item.href ? "text-foreground font-semibold" : "text-muted-foreground"
+                    "transition-colors hover:text-accent",
+                    pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
                 )}
             >
                 {item.label}
@@ -46,7 +46,7 @@ export default function AppHeader() {
       <Sheet>
         <SheetTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             className="shrink-0 md:hidden"
           >
@@ -54,7 +54,7 @@ export default function AppHeader() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className='brutalist-border'>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="#"
@@ -68,8 +68,8 @@ export default function AppHeader() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                        "hover:text-foreground",
-                         pathname === item.href ? "text-foreground" : "text-muted-foreground"
+                        "hover:text-accent",
+                         pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
                     )}
                 >
                     {item.label}

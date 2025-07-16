@@ -52,7 +52,7 @@ const formSchema = z.object({
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} size="lg" className="w-full">
+    <Button type="submit" disabled={pending} size="lg" className="w-full" variant="secondary">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -96,7 +96,13 @@ export default function OracleForm() {
     <div className="grid gap-8">
       <Card>
         <form action={formAction}>
-          <CardContent className="pt-6">
+          <CardHeader>
+            <CardTitle>Oracle Parameters</CardTitle>
+            <CardDescription>
+              Provide your criteria to get an AI-powered DeFi suggestion.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Form {...form}>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <FormField
@@ -104,18 +110,18 @@ export default function OracleForm() {
                   name="stablecoin"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stablecoin</FormLabel>
+                      <FormLabel className="font-bold">Stablecoin</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         name={field.name}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="brutalist-border">
                             <SelectValue placeholder="Select a stablecoin" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="brutalist-border">
                           <SelectItem value="USDC">USDC</SelectItem>
                           <SelectItem value="USDT">USDT</SelectItem>
                           <SelectItem value="DAI">DAI</SelectItem>
@@ -131,9 +137,9 @@ export default function OracleForm() {
                   name="investmentAmount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Investment Amount ($)</FormLabel>
+                      <FormLabel className="font-bold">Investment Amount ($)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g. 1000" {...field} />
+                        <Input type="number" placeholder="e.g. 1000" {...field} className="brutalist-border"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -145,12 +151,12 @@ export default function OracleForm() {
                   name="riskTolerance"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>Risk Tolerance</FormLabel>
+                      <FormLabel className="font-bold">Risk Tolerance</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex items-center space-x-4"
+                          className="flex items-center space-x-4 pt-2"
                           name={field.name}
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -186,7 +192,7 @@ export default function OracleForm() {
               </div>
             </Form>
           </CardContent>
-          <CardFooter className="border-t px-6 py-4">
+          <CardFooter className="border-t-2 border-foreground px-6 py-4">
             <SubmitButton />
           </CardFooter>
         </form>
@@ -200,41 +206,41 @@ export default function OracleForm() {
                     <CardTitle className="text-2xl">{state.data.protocolName}</CardTitle>
                     <CardDescription>{state.data.lockupPeriod}</CardDescription>
                   </div>
-                  <div className="flex items-center gap-2 rounded-lg border bg-accent/10 px-4 py-2 text-accent">
+                  <div className="flex items-center gap-2 rounded-sm border-2 border-foreground bg-accent px-4 py-2 text-accent-foreground brutalist-shadow">
                     <BadgePercent className="h-6 w-6" />
                     <span className="text-2xl font-bold">{state.data.apy.toFixed(2)}% APY</span>
                   </div>
                 </div>
             </CardHeader>
             <CardContent className="space-y-6">
-                <Separator />
+                <Separator className="border-t-2 border-dashed border-foreground/50"/>
                 <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-4">
-                        <h4 className="font-semibold text-lg">Strategy</h4>
+                        <h4 className="font-bold text-lg">Strategy</h4>
                         <p className="text-muted-foreground">{state.data.strategyDescription}</p>
                     </div>
                     <div className="space-y-4">
-                        <h4 className="font-semibold text-lg">Estimated Monthly Yield</h4>
-                        <p className="text-3xl font-bold text-primary">${state.data.estimatedMonthlyYield.toFixed(2)}</p>
+                        <h4 className="font-bold text-lg">Est. Monthly Yield</h4>
+                        <p className="text-3xl font-bold text-accent">${state.data.estimatedMonthlyYield.toFixed(2)}</p>
                         <p className="text-sm text-muted-foreground">Based on your investment amount.</p>
                     </div>
                 </div>
-                <Separator />
+                <Separator className="border-t-2 border-dashed border-foreground/50"/>
                  <div>
-                    <h4 className="font-semibold text-lg">Potential Risks</h4>
-                    <div className="mt-2 flex items-start gap-3 rounded-md border border-amber-500/50 bg-amber-500/10 p-4 text-sm">
-                      <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
-                      <p className="text-amber-800 dark:text-amber-300">{state.data.risks}</p>
+                    <h4 className="font-bold text-lg">Potential Risks</h4>
+                    <div className="mt-2 flex items-start gap-3 border-2 border-destructive/50 bg-destructive/10 p-4 text-sm">
+                      <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
+                      <p className="text-foreground">{state.data.risks}</p>
                     </div>
                   </div>
             </CardContent>
         </Card>
       ) : (
-          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 p-12 text-center">
+          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
               <Sparkles className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">Waiting for your criteria</h3>
+              <h3 className="mt-4 text-lg font-semibold">Your AI-powered suggestion will appear here.</h3>
               <p className="mb-4 mt-2 text-sm text-muted-foreground">
-                Your AI-powered suggestion will appear here once you submit the form.
+                Submit your criteria to see the magic happen.
               </p>
           </div>
       )}
