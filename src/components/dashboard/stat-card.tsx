@@ -8,7 +8,7 @@ import {
 interface StatCardProps {
   title: string;
   value: string;
-  description: string;
+  description:string;
   icon: React.ReactNode;
 }
 
@@ -20,12 +20,16 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <Card className='brutalist-shadow'>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-bold uppercase tracking-wider">{title}</CardTitle>
-        {icon}
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+        <div className="space-y-1">
+          <CardTitle className="text-sm font-bold uppercase tracking-wider">{title}</CardTitle>
+          <div className="text-2xl font-bold">{value}</div>
+        </div>
+        <div className='p-2 bg-secondary/50 border-2 border-foreground'>
+          {icon}
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+      <CardContent className='p-6 pt-0'>
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>

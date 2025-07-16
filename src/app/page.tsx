@@ -128,7 +128,7 @@ export default function Dashboard() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className='hover:bg-card'>
                 <TableHead>Date</TableHead>
                 <TableHead>Protocol</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
@@ -137,14 +137,14 @@ export default function Dashboard() {
             </TableHeader>
             <TableBody>
               {distributionHistory.map((dist) => (
-                <TableRow key={dist.id}>
+                <TableRow key={dist.id} className='hover:bg-muted/50'>
                   <TableCell>
-                    <div className="font-medium">{dist.date}</div>
+                    <div className="font-bold">{dist.date}</div>
                   </TableCell>
-                  <TableCell>{dist.protocol}</TableCell>
-                  <TableCell className="text-right">${dist.amount.toFixed(2)}</TableCell>
+                  <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
+                  <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className="border-green-500 bg-green-900/50 text-green-400">
+                    <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground brutalist-border">
                       {dist.status}
                     </Badge>
                   </TableCell>
