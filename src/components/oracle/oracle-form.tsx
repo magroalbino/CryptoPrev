@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -71,7 +72,7 @@ function SubmitButton() {
 export default function OracleForm() {
   const { toast } = useToast();
   const initialState: OracleState = { data: null, error: null };
-  const [state, formAction] = useFormState(getOracleSuggestion, initialState);
+  const [state, formAction] = useActionState(getOracleSuggestion, initialState);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
