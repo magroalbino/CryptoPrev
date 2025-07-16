@@ -22,27 +22,29 @@ export default function AppHeader() {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground bg-background px-4 md:px-6">
-      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+      <div className="hidden md:flex md:items-center md:gap-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+          className="flex items-center gap-2 text-lg font-semibold"
         >
           <Logo className="h-8 w-8" />
           <span className="font-bold text-lg">CryptoPrev</span>
         </Link>
-        {navItems.map((item) => (
-            <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                    "transition-colors hover:text-accent",
-                    pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
-                )}
-            >
-                {item.label}
-            </Link>
-        ))}
-      </nav>
+        <nav className="flex items-center gap-5 text-sm">
+          {navItems.map((item) => (
+              <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                      "transition-colors hover:text-accent",
+                      pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
+                  )}
+              >
+                  {item.label}
+              </Link>
+          ))}
+        </nav>
+      </div>
       <Sheet>
         <SheetTrigger asChild>
           <Button
