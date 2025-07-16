@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Sparkles, Landmark } from 'lucide-react';
+import { LayoutDashboard, Sparkles, Bot } from 'lucide-react';
 
 import {
   Sidebar,
@@ -17,11 +17,11 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Landmark className="h-6 w-6 text-primary" />
-          <span className="text-lg font-semibold">CryptoPrev</span>
+          <Bot className="h-7 w-7 text-primary" />
+          <span className="text-xl font-semibold">CryptoPrev</span>
         </div>
       </SidebarHeader>
       <SidebarMenu>
@@ -30,6 +30,7 @@ export default function AppSidebar() {
             asChild
             isActive={pathname === '/'}
             tooltip="Dashboard"
+            size="lg"
           >
             <Link href="/">
               <LayoutDashboard />
@@ -42,6 +43,7 @@ export default function AppSidebar() {
             asChild
             isActive={pathname.startsWith('/oracle')}
             tooltip="DeFi Oracle"
+            size="lg"
           >
             <Link href="/oracle">
               <Sparkles />
