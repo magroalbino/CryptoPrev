@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Sparkles, PanelLeft } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,38 +13,39 @@ import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
 
 const navItems = [
-    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/oracle', label: 'DeFi Oracle', icon: Sparkles },
+    { href: '/', label: 'Dashboard' },
+    { href: '/oracle', label: 'DeFi Oracle' },
 ]
 
 export default function AppHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground bg-background px-4 md:px-6">
-      <div className="hidden md:flex md:items-center md:gap-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/50 px-4 backdrop-blur-sm md:px-6">
+      <nav className="hidden w-full items-center gap-6 md:flex">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold"
+          className="mr-auto flex items-center gap-2 text-lg font-semibold"
         >
           <Logo className="h-8 w-8" />
           <span className="font-bold text-lg">CryptoPrev</span>
         </Link>
-        <nav className="flex items-center gap-5 text-sm">
-          {navItems.map((item) => (
-              <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                      "transition-colors hover:text-accent",
-                      pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
-                  )}
-              >
-                  {item.label}
-              </Link>
-          ))}
-        </nav>
-      </div>
+        <div className="flex items-center gap-1 rounded-sm border-2 border-foreground bg-secondary/50 p-1">
+        {navItems.map((item) => (
+            <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0'>
+                <Link
+                    href={item.href}
+                    className={cn(
+                        "transition-colors",
+                        pathname === item.href ? "text-foreground" : "text-muted-foreground"
+                    )}
+                >
+                    {item.label}
+                </Link>
+            </Button>
+        ))}
+        </div>
+      </nav>
       <Sheet>
         <SheetTrigger asChild>
           <Button
@@ -56,7 +57,7 @@ export default function AppHeader() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className='brutalist-border'>
+        <SheetContent side="left" className='brutalist-border glassmorphic'>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="#"
@@ -80,9 +81,6 @@ export default function AppHeader() {
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        {/* Potentially add user menu or other actions here */}
-      </div>
     </header>
   );
 }

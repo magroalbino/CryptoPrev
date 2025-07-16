@@ -16,15 +16,15 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 48 96% 58%;
+    --accent: 150 86% 58%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 48 96% 58%;
+    --ring: 150 86% 58%;
     --radius: 0.1rem;
-    --chart-1: 48 96% 58%;
+    --chart-1: 150 86% 58%;
     --chart-2: 0 0% 98%;
     --chart-3: 240 3.7% 15.9%;
     --chart-4: 43 74% 66%;
@@ -44,15 +44,15 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 48 96% 58%;
+    --accent: 150 86% 58%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 48 96% 58%;
+    --ring: 150 86% 58%;
     --radius: 0.1rem;
-    --chart-1: 48 96% 58%;
+    --chart-1: 150 86% 58%;
     --chart-2: 0 0% 98%;
     --chart-3: 240 3.7% 15.9%;
     --chart-4: 280 65% 60%;
@@ -69,11 +69,41 @@
   }
 }
 
+@layer utilities {
+  .animated-gradient {
+    background-size: 200% 200%;
+    background-image: linear-gradient(
+      -45deg,
+      hsl(240 10% 3.9%) 0%,
+      hsl(240 4% 10%) 25%,
+      hsl(150 10% 8%) 50%,
+      hsl(240 4% 10%) 75%,
+      hsl(240 10% 3.9%) 100%
+    );
+    animation: AnimateBG 15s ease infinite;
+  }
+
+  @keyframes AnimateBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}
+
 @layer components {
   .brutalist-shadow {
     @apply shadow-[4px_4px_0px_0px_hsl(var(--foreground))];
   }
   .brutalist-border {
     @apply border-2 border-foreground;
+  }
+  .glassmorphic {
+    @apply bg-card/50 backdrop-blur-sm;
   }
 }

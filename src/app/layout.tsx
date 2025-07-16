@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import AppHeader from '@/components/layout/header';
 import {Toaster} from '@/components/ui/toaster';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'CryptoPrev - Smart Yields',
@@ -23,10 +24,10 @@ export default function RootLayout({
           rel="stylesheet"
         ></link>
       </head>
-      <body className="font-sans antialiased">
+      <body className={cn("font-sans antialiased", "animated-gradient")}>
         <div className="flex min-h-screen w-full flex-col">
           <AppHeader />
-          <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-8">
+          <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             {children}
           </main>
         </div>
