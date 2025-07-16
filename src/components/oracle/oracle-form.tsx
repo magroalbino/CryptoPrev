@@ -52,7 +52,7 @@ const formSchema = z.object({
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full">
+    <Button type="submit" disabled={pending} size="lg" className="w-full">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -93,18 +93,12 @@ export default function OracleForm() {
   }, [state.error, toast]);
 
   return (
-    <div className="grid gap-8 lg:grid-cols-3">
-      <Card className="lg:col-span-1">
-        <form action={formAction} className="space-y-8">
-          <CardHeader>
-            <CardTitle>Analysis Criteria</CardTitle>
-            <CardDescription>
-              Tell us your preferences and we'll find the best strategy.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+    <div className="grid gap-8">
+      <Card>
+        <form action={formAction}>
+          <CardContent className="pt-6">
             <Form {...form}>
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="stablecoin"
@@ -156,10 +150,10 @@ export default function OracleForm() {
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex flex-col space-y-1"
+                          className="flex items-center space-x-4"
                           name={field.name}
                         >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-x-2 space-y-0">
                             <FormControl>
                               <RadioGroupItem value="low" />
                             </FormControl>
@@ -167,7 +161,7 @@ export default function OracleForm() {
                               Low
                             </FormLabel>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-x-2 space-y-0">
                             <FormControl>
                               <RadioGroupItem value="medium" />
                             </FormControl>
@@ -175,7 +169,7 @@ export default function OracleForm() {
                               Medium
                             </FormLabel>
                           </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-x-2 space-y-0">
                             <FormControl>
                               <RadioGroupItem value="high" />
                             </FormControl>
@@ -192,71 +186,58 @@ export default function OracleForm() {
               </div>
             </Form>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="border-t px-6 py-4">
             <SubmitButton />
           </CardFooter>
         </form>
       </Card>
-
-      <div className="lg:col-span-2">
-        <Card className="min-h-full">
-          <CardHeader>
-            <CardTitle>AI-Powered Suggestion</CardTitle>
-            <CardDescription>
-              Our oracle's recommendation will appear here.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {state.data ? (
-              <div className="space-y-6">
-                <div className="flex flex-col gap-4 rounded-lg border bg-background p-4 sm:flex-row sm:items-center sm:justify-between">
+      
+      {state.data ? (
+        <Card>
+            <CardHeader>
+                <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold">{state.data.protocolName}</h3>
-                    <p className="text-sm text-muted-foreground">{state.data.lockupPeriod}</p>
+                    <CardTitle className="text-2xl">{state.data.protocolName}</CardTitle>
+                    <CardDescription>{state.data.lockupPeriod}</CardDescription>
                   </div>
-                  <div className="flex items-center gap-2 rounded-full border border-green-500 bg-green-500/10 px-4 py-2">
-                    <BadgePercent className="h-5 w-5 text-green-700 dark:text-green-400" />
-                    <span className="text-xl font-bold text-green-700 dark:text-green-400">{state.data.apy.toFixed(2)}% APY</span>
+                  <div className="flex items-center gap-2 rounded-lg border bg-accent/10 px-4 py-2 text-accent">
+                    <BadgePercent className="h-6 w-6" />
+                    <span className="text-2xl font-bold">{state.data.apy.toFixed(2)}% APY</span>
                   </div>
                 </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold">Strategy</h4>
-                    <p className="text-sm text-muted-foreground">{state.data.strategyDescription}</p>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <h4 className="font-semibold">Estimated Monthly Yield</h4>
-                    <p className="text-lg font-semibold text-primary">${state.data.estimatedMonthlyYield.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground">Based on your investment amount.</p>
-                  </div>
-                  
-                  <Separator />
-
-                  <div>
-                    <h4 className="font-semibold">Potential Risks</h4>
-                    <div className="flex items-start gap-2 rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-sm">
-                      <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <Separator />
+                <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-4">
+                        <h4 className="font-semibold text-lg">Strategy</h4>
+                        <p className="text-muted-foreground">{state.data.strategyDescription}</p>
+                    </div>
+                    <div className="space-y-4">
+                        <h4 className="font-semibold text-lg">Estimated Monthly Yield</h4>
+                        <p className="text-3xl font-bold text-primary">${state.data.estimatedMonthlyYield.toFixed(2)}</p>
+                        <p className="text-sm text-muted-foreground">Based on your investment amount.</p>
+                    </div>
+                </div>
+                <Separator />
+                 <div>
+                    <h4 className="font-semibold text-lg">Potential Risks</h4>
+                    <div className="mt-2 flex items-start gap-3 rounded-md border border-amber-500/50 bg-amber-500/10 p-4 text-sm">
+                      <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
                       <p className="text-amber-800 dark:text-amber-300">{state.data.risks}</p>
                     </div>
                   </div>
-                </div>
-
-              </div>
-            ) : (
-                <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
-                    <div className="text-center text-muted-foreground">
-                        <Sparkles className="mx-auto h-12 w-12" />
-                        <p className="mt-2">Your results will be displayed here.</p>
-                    </div>
-                </div>
-            )}
-          </CardContent>
+            </CardContent>
         </Card>
-      </div>
+      ) : (
+          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 p-12 text-center">
+              <Sparkles className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-semibold">Waiting for your criteria</h3>
+              <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                Your AI-powered suggestion will appear here once you submit the form.
+              </p>
+          </div>
+      )}
     </div>
   );
 }

@@ -61,7 +61,7 @@ const distributionHistory = [
 
 export default function Dashboard() {
   return (
-    <div className="flex-1 space-y-4">
+    <div className="flex-1 space-y-6">
       <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <div className="flex items-center space-x-2">
@@ -94,8 +94,8 @@ export default function Dashboard() {
           icon={<Activity className="text-primary" />}
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-7">
-        <Card className="col-span-1 lg:col-span-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
           <CardHeader>
             <CardTitle>Historical Yield (APY)</CardTitle>
             <CardDescription>
@@ -106,38 +106,17 @@ export default function Dashboard() {
             <YieldChart />
           </CardContent>
         </Card>
-        <div className="col-span-1 flex flex-col gap-4 lg:col-span-3">
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle>Lock-up Period</CardTitle>
-              <CardDescription>
-                Your funds are locked to maximize yield.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-lg border bg-background p-4 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Minimum lock-up period
-                </p>
-                <p className="text-2xl font-bold">30 Days</p>
-                <p className="text-xs text-muted-foreground">
-                  Withdrawals are processed after this period.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle>Investment Growth</CardTitle>
-              <CardDescription>
-                Projected growth of your initial investment.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ProjectionChart initialInvestment={10000} />
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Investment Growth</CardTitle>
+            <CardDescription>
+              Projected growth of your initial investment.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProjectionChart initialInvestment={10000} />
+          </CardContent>
+        </Card>
       </div>
       <Card>
         <CardHeader>
