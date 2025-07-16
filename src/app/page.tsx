@@ -27,39 +27,46 @@ import DepositDialog from '@/components/dashboard/deposit-dialog';
 import StatCard from '@/components/dashboard/stat-card';
 import YieldChart from '@/components/dashboard/yield-chart';
 import ProjectionChart from '@/components/dashboard/projection-chart';
+import { db, formatTimestamp, admin } from '@/lib/firebase';
 
-const distributionHistory = [
-  {
-    id: 'dist_1',
-    date: '2024-07-01',
-    amount: 45.23,
-    status: 'Paid',
-    protocol: 'Aave',
-  },
-  {
-    id: 'dist_2',
-    date: '2024-06-01',
-    amount: 42.88,
-    status: 'Paid',
-    protocol: 'Compound',
-  },
-  {
-    id: 'dist_3',
-    date: '2024-05-01',
-    amount: 44.1,
-    status: 'Paid',
-    protocol: 'Aave',
-  },
-  {
-    id: 'dist_4',
-    date: '2024-04-01',
-    amount: 41.5,
-    status: 'Paid',
-    protocol: 'Curve',
-  },
-];
+async function getDashboardData() {
+  const userId = 'user_1'; // In a real app, this would be the logged-in user's ID
+  
+  const userDocRef = db.collection('users').doc(userId);
+  const distributionsRef = db.collection('distributions').where('userId', '==', userId).orderBy('date', 'desc').limit(5);
 
-export default function Dashboard() {
+  const userDocPromise = userDocRef.get();
+  const distributionsPromise = distributionsRef.get();
+
+  const [userDoc, distributionsSnapshot] = await Promise.all([userDocPromise, distributionsPromise]);
+
+  if (!userDoc.exists) {
+    // This is a good place to create a new user document if one doesn't exist
+    // For now, we'll throw an error
+    throw new Error('User not found. Please sign up.');
+  }
+
+  const userData = userDoc.data()!;
+  
+  const distributionHistory = distributionsSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      date: formatTimestamp(data.date as admin.firestore.Timestamp),
+      amount: data.amount,
+      status: data.status,
+      protocol: data.protocol,
+    };
+  });
+
+  return { userData, distributionHistory };
+}
+
+
+export default async function Dashboard() {
+  const { userData, distributionHistory } = await getDashboardData();
+  const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
+
   return (
     <div className="flex-1 space-y-6">
       <div className="flex items-center justify-between space-y-2">
@@ -71,13 +78,13 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Current Balance"
-          value="$10,482.50"
+          value={`$${Number(userData.currentBalance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
           description="+1.2% from last month"
           icon={<Wallet className="text-accent" />}
         />
         <StatCard
           title="Accumulated Rewards"
-          value="$482.50"
+          value={`$${Number(userData.accumulatedRewards).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
           description="Total since inception"
           icon={<CircleDollarSign className="text-accent" />}
         />
@@ -89,8 +96,8 @@ export default function Dashboard() {
         />
         <StatCard
           title="Active Protocol"
-          value="Aave v3"
-          description="Current APY: 5.2%"
+          value={userData.activeProtocol}
+          description={`Current APY: ${userData.activeProtocolApy}%`}
           icon={<Activity className="text-accent" />}
         />
       </div>
@@ -114,7 +121,7 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ProjectionChart initialInvestment={10000} />
+            <ProjectionChart initialInvestment={initialInvestment} />
           </CardContent>
         </Card>
       </div>
