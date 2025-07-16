@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeft, Wallet } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,21 +16,40 @@ import Logo from '@/components/logo';
 const navItems = [
     { href: '/', label: 'Dashboard' },
     { href: '/oracle', label: 'DeFi Oracle' },
+    { href: '/simulator', label: 'Simulator' },
 ]
 
 export default function AppHeader() {
   const pathname = usePathname();
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
+  const handleConnectWallet = () => {
+    if (walletAddress) {
+      setWalletAddress(null);
+    } else {
+      // In a real app, this would trigger MetaMask/WalletConnect
+      // For this simulation, we'll just set a dummy address
+      const dummyAddress = '0xAbCd...1234';
+      setWalletAddress(dummyAddress);
+    }
+  };
+
+  const formatAddress = (address: string) => {
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/50 px-4 backdrop-blur-sm md:px-6">
-      <nav className="hidden w-full items-center gap-6 md:flex">
+      <div className='flex items-center gap-6'>
         <Link
           href="/"
-          className="mr-auto flex items-center gap-2 text-lg font-semibold"
+          className="flex items-center gap-2 text-lg font-semibold"
         >
           <Logo className="h-8 w-8" />
           <span className="font-bold text-lg">CryptoPrev</span>
         </Link>
+      </div>
+      <nav className="hidden w-full items-center justify-center gap-6 md:flex">
         <div className="flex items-center gap-1 rounded-sm border-2 border-foreground bg-secondary/50 p-1">
         {navItems.map((item) => (
             <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0'>
@@ -46,6 +66,12 @@ export default function AppHeader() {
         ))}
         </div>
       </nav>
+      <div className="ml-auto flex items-center gap-4">
+        <Button onClick={handleConnectWallet} variant={walletAddress ? 'outline' : 'default'}>
+            <Wallet className="mr-2 h-4 w-4" />
+            {walletAddress ? formatAddress(walletAddress) : 'Connect Wallet'}
+        </Button>
+      </div>
       <Sheet>
         <SheetTrigger asChild>
           <Button

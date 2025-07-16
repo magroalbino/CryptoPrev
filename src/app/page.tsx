@@ -24,6 +24,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import DepositDialog from '@/components/dashboard/deposit-dialog';
+import WithdrawDialog from '@/components/dashboard/withdraw-dialog';
 import StatCard from '@/components/dashboard/stat-card';
 import YieldChart from '@/components/dashboard/yield-chart';
 import ProjectionChart from '@/components/dashboard/projection-chart';
@@ -89,6 +90,7 @@ export default async function Dashboard() {
       <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <div className="flex items-center space-x-2">
+          <WithdrawDialog />
           <DepositDialog />
         </div>
       </div>
