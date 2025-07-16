@@ -52,7 +52,7 @@ const formSchema = z.object({
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} size="lg" className="w-full" variant="secondary">
+    <Button type="submit" disabled={pending} size="lg" className="w-full md:w-auto" variant="secondary">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -104,12 +104,12 @@ export default function OracleForm() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
                 <FormField
                   control={form.control}
                   name="stablecoin"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='flex-1'>
                       <FormLabel className="font-bold">Stablecoin</FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -136,7 +136,7 @@ export default function OracleForm() {
                   control={form.control}
                   name="investmentAmount"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='flex-1'>
                       <FormLabel className="font-bold">Investment Amount ($)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="e.g. 1000" {...field} className="brutalist-border"/>
@@ -150,13 +150,13 @@ export default function OracleForm() {
                   control={form.control}
                   name="riskTolerance"
                   render={({ field }) => (
-                    <FormItem className="space-y-3">
+                    <FormItem className="flex-1 space-y-3">
                       <FormLabel className="font-bold">Risk Tolerance</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex items-center space-x-4 pt-2"
+                          className="flex h-10 items-center space-x-4 pt-2"
                           name={field.name}
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -189,12 +189,10 @@ export default function OracleForm() {
                     </FormItem>
                   )}
                 />
+                <SubmitButton />
               </div>
             </Form>
           </CardContent>
-          <CardFooter className="border-t-2 border-foreground px-6 py-4">
-            <SubmitButton />
-          </CardFooter>
         </form>
       </Card>
       
