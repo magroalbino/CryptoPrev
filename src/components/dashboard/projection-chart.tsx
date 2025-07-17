@@ -31,7 +31,7 @@ const generateProjectionData = (
   return data;
 };
 
-type ProjectionPeriod = '1y' | '5y' | '10y';
+type ProjectionPeriod = '1y' | '5y' | '10y' | '30y';
 
 export default function ProjectionChart({
   initialInvestment,
@@ -44,6 +44,7 @@ export default function ProjectionChart({
     '1y': 1,
     '5y': 5,
     '10y': 10,
+    '30y': 30,
   };
 
   const data = generateProjectionData(
@@ -63,6 +64,7 @@ export default function ProjectionChart({
           <TabsTrigger value="1y">1 Year</TabsTrigger>
           <TabsTrigger value="5y">5 Years</TabsTrigger>
           <TabsTrigger value="10y">10 Years</TabsTrigger>
+          <TabsTrigger value="30y">30 Years</TabsTrigger>
         </TabsList>
       </Tabs>
       <ChartContainer config={chartConfig} className="h-[150px] w-full">
