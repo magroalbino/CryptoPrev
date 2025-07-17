@@ -7,12 +7,20 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { BarChart, PiggyBank, Target } from 'lucide-react';
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import { ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 
 type SimulationResult = {
   year: number;
   value: number;
 }[];
+
+const chartConfig = {
+  value: {
+    label: "Value",
+    color: "hsl(var(--accent))",
+  },
+} satisfies ChartConfig;
+
 
 export default function SimulatorForm() {
     const [result, setResult] = useState<SimulationResult | null>(null);
@@ -103,14 +111,14 @@ export default function SimulatorForm() {
                        result.length > 0 ? (
                         <div className='space-y-6'>
                             <div className="h-[250px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <RechartsBarChart data={result}>
+                                <ChartContainer config={chartConfig}>
+                                    <RechartsBarChart accessibilityLayer data={result}>
                                         <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false}/>
                                         <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
                                         <Tooltip content={<ChartTooltipContent formatter={(value) => `$${Number(value).toLocaleString()}`} />} cursor={{fill: 'hsl(var(--accent) / 0.2)'}}/>
-                                        <Bar dataKey="value" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="value" fill="var(--color-value)" radius={[4, 4, 0, 0]} />
                                     </RechartsBarChart>
-                                </ResponsiveContainer>
+                                </ChartContainer>
                             </div>
                              <div className="flex items-center justify-center p-6 bg-secondary/50 border-2 border-foreground brutalist-shadow text-center">
                                 <div className='space-y-2'>
