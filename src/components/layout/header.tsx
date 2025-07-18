@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,17 +23,11 @@ const navItems = [
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const dummyAddress = '0xAbCd...1234';
 
   const handleConnectWallet = () => {
-    if (walletAddress) {
-      setWalletAddress(null);
-    } else {
-      // In a real app, this would trigger MetaMask/WalletConnect
-      // For this simulation, we'll just set a dummy address
-      const dummyAddress = '0xAbCd...1234';
-      setWalletAddress(dummyAddress);
-    }
+    setIsConnected(!isConnected);
   };
 
   const formatAddress = (address: string) => {
@@ -68,9 +63,9 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <Button onClick={handleConnectWallet} variant={walletAddress ? 'outline' : 'default'}>
+        <Button onClick={handleConnectWallet} variant={isConnected ? 'outline' : 'default'}>
             <Wallet className="mr-2 h-4 w-4" />
-            {walletAddress ? formatAddress(walletAddress) : 'Connect Wallet'}
+            {isConnected ? formatAddress(dummyAddress) : 'Connect Wallet'}
         </Button>
       </div>
       <Sheet>
