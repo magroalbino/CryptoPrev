@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { getAuth, signInWithCustomToken, onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { app, isFirebaseEnabled } from './firebase'; // Use the initialized 'app'
+import { app, isFirebaseEnabled } from './firebase-client'; // Use the initialized 'app'
 import { ethers } from 'ethers';
 
 interface AuthContextType {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isFirebaseEnabled) {
+    if (!isFirebaseEnabled || !app) {
       setLoading(false);
       return;
     }
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => useContext(AuthContext);
 
 export const signInWithWeb3 = async () => {
-  if (!isFirebaseEnabled) {
+  if (!isFirebaseEnabled || !app) {
     alert("Firebase is not configured. Cannot sign in.");
     return;
   }
@@ -66,7 +66,7 @@ export const signInWithWeb3 = async () => {
     
     console.log("Address:", address);
     console.log("Signature:", signature);
-
+    
     // This part will fail without a backend to create a custom token.
     // const auth = getAuth(app);
     // await signInWithCustomToken(auth, customToken);
@@ -80,7 +80,7 @@ export const signInWithWeb3 = async () => {
 };
 
 export const signOutFirebase = async () => {
-  if (!isFirebaseEnabled) {
+  if (!isFirebaseEnabled || !app) {
     alert("Firebase is not configured.");
     return;
   }

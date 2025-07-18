@@ -1,15 +1,11 @@
 import {
   Activity,
-  ArrowUpRight,
   Calendar,
   CircleDollarSign,
-  Landmark,
   Wallet,
-  Clock,
   Hourglass,
 } from 'lucide-react';
-
-import {Badge} from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -25,14 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DepositDialog from '@/components/dashboard/deposit-dialog';
 import WithdrawDialog from '@/components/dashboard/withdraw-dialog';
 import StatCard from '@/components/dashboard/stat-card';
 import YieldChart from '@/components/dashboard/yield-chart';
 import ProjectionChart from '@/components/dashboard/projection-chart';
-import { db, formatTimestamp, admin, isFirebaseEnabled } from '@/lib/firebase';
 import LockupDialog from '@/components/dashboard/lockup-dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { db, formatTimestamp, admin, isFirebaseEnabled } from '@/lib/firebase-server';
 
 async function getDashboardData() {
   if (!isFirebaseEnabled) {
@@ -46,13 +42,13 @@ async function getDashboardData() {
         lockupPeriod: 12,
       },
       transactions: [
-        { id: '1', date: '2024-06-30', amount: 45.50, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-        { id: '6', date: '2024-06-01', amount: 1000, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-        { id: '2', date: '2024-05-31', amount: 42.10, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-        { id: '3', date: '2024-04-30', amount: 48.90, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-        { id: '7', date: '2024-04-15', amount: 500, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-        { id: '4', date: '2024-03-31', amount: 39.20, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-        { id: '5', date: '2024-02-29', amount: 41.80, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+        { id: '1', date: 'June 30, 2024', amount: 45.5, status: 'Paid', protocol: 'Aave', type: 'Yield' },
+        { id: '6', date: 'June 1, 2024', amount: 1000, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
+        { id: '2', date: 'May 31, 2024', amount: 42.1, status: 'Paid', protocol: 'Aave', type: 'Yield' },
+        { id: '3', date: 'April 30, 2024', amount: 48.9, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+        { id: '7', date: 'April 15, 2024', amount: 500, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
+        { id: '4', date: 'March 31, 2024', amount: 39.2, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+        { id: '5', date: 'February 29, 2024', amount: 41.8, status: 'Paid', protocol: 'Compound', type: 'Yield' },
       ],
     };
   }
@@ -95,7 +91,6 @@ export default async function Dashboard() {
   
   const distributionHistory = transactions.filter(t => t.type === 'Yield');
   const depositHistory = transactions.filter(t => t.type === 'Deposit');
-
 
   return (
     <div className="flex-1 space-y-6">
