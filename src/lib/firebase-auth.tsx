@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { getAuth, signInWithCustomToken, onAuthStateChanged, User, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app, isFirebaseEnabled } from './firebase-client'; // Use the initialized 'app'
 import { ethers } from 'ethers';
 
@@ -19,6 +20,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!isFirebaseEnabled || !app) {
       setLoading(false);
+      // For a non-Firebase setup, we can simulate a logged-out state.
+      setUser(null);
       return;
     }
     const auth = getAuth(app);
@@ -35,58 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
-export const signInWithWeb3 = async () => {
-  if (!isFirebaseEnabled || !app) {
-    alert("Firebase is not configured. Cannot sign in.");
-    return;
-  }
-  try {
-    if (!window.ethereum) {
-      alert("MetaMask is not installed. Please install it to use this feature.");
-      return;
-    }
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const accounts = await provider.send('eth_requestAccounts', []);
-    const address = accounts[0];
-    const signer = await provider.getSigner();
-    
-    // In a real app, you would get this nonce from your backend to prevent replay attacks
-    const message = `Sign this message to log into CryptoPrev. Nonce: ${Date.now()}`;
-    const signature = await signer.signMessage(message);
-
-    // In a real app, you would send the address and signature to your backend,
-    // which would verify the signature and create a custom Firebase token.
-    // For this demo, we'll simulate this process on the client-side, which is NOT secure for production.
-    // The backend would use firebase-admin to create the token.
-    // e.g., const customToken = await admin.auth().createCustomToken(address);
-    //
-    // Since we don't have a backend function, we can't create a real custom token.
-    // This is a placeholder for the concept. A real implementation requires a backend.
-    
-    console.log("Address:", address);
-    console.log("Signature:", signature);
-    
-    // This part will fail without a backend to create a custom token.
-    // const auth = getAuth(app);
-    // await signInWithCustomToken(auth, customToken);
-    
-    alert(`Logged in with address: ${address}. (Note: Real Firebase Auth token generation requires a backend and is simulated here)`);
-
-  } catch (error) {
-    console.error("Error signing in with Web3:", error);
-    alert("Failed to sign in. See console for details.");
-  }
-};
-
+// This is a placeholder for a real signOut.
 export const signOutFirebase = async () => {
-  if (!isFirebaseEnabled || !app) {
-    alert("Firebase is not configured.");
-    return;
-  }
-  const auth = getAuth(app);
-  await signOut(auth);
+    console.log("User signed out (simulation).");
 };
+
 
 declare global {
     interface Window {

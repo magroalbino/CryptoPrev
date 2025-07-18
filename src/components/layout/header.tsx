@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeft, Wallet } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
-import { useAuth, signInWithWeb3, signOutFirebase } from '@/lib/firebase-auth';
 
 const navItems = [
     { href: '/', label: 'Dashboard' },
@@ -24,13 +24,26 @@ const navItems = [
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const [userAddress, setUserAddress] = useState<string | null>(null);
   
   const handleConnectWallet = async () => {
-    if (user) {
-      await signOutFirebase();
+    if (userAddress) {
+      // Disconnect
+      setUserAddress(null);
     } else {
-      await signInWithWeb3();
+      // Connect
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          // Request account access
+          const accounts = await provider.send('eth_requestAccounts', []);
+          setUserAddress(accounts[0]);
+        } catch (error) {
+          console.error("User rejected the request.");
+        }
+      } else {
+        alert('MetaMask is not installed. Please install it to use this feature.');
+      }
     }
   };
 
@@ -67,9 +80,9 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <Button onClick={handleConnectWallet} variant={user ? 'outline' : 'default'}>
+        <Button onClick={handleConnectWallet} variant={userAddress ? 'outline' : 'default'}>
             <Wallet className="mr-2 h-4 w-4" />
-            {user ? formatAddress(user.uid) : 'Connect Wallet'}
+            {userAddress ? formatAddress(userAddress) : 'Connect Wallet'}
         </Button>
       </div>
       <Sheet>
