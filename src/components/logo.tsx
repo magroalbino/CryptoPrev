@@ -10,21 +10,21 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      d="M16 28c6.627 0 12-5.373 12-12S22.627 4 16 4 4 9.373 4 16s5.373 12 12 12z"
+      d="M11.925 24.195a10 10 0 1 0 0-16.39"
       stroke="hsl(var(--primary))"
       strokeWidth={2.5}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M11 19l3.5-3.5 3.5 3.5 3.5-3.5"
-      stroke="hsl(var(--accent))"
+      d="M20.075 24.195a10 10 0 0 0 0-16.39"
+      stroke="hsl(var(--primary))"
       strokeWidth={2.5}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M11 14l3.5 3.5"
+      d="M16 16v12M16 4v3"
       stroke="hsl(var(--accent))"
       strokeWidth={2.5}
       strokeLinecap="round"
