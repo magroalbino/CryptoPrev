@@ -106,12 +106,6 @@ export default function DepositDialog() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="usdc">USDC</SelectItem>
-                    <SelectItem value="usdt" disabled>
-                      USDT (coming soon)
-                    </SelectItem>
-                    <SelectItem value="dai" disabled>
-                      DAI (coming soon)
-                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
