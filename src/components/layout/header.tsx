@@ -17,6 +17,7 @@ const navItems = [
     { href: '/', label: 'Dashboard' },
     { href: '/oracle', label: 'DeFi Oracle' },
     { href: '/simulator', label: 'Simulator' },
+    { href: '/learn', label: 'DeFi Learn' },
 ]
 
 export default function AppHeader() {
