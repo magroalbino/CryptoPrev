@@ -10,6 +10,7 @@ interface StatCardProps {
   value: string;
   description:string;
   icon: React.ReactNode;
+  action?: React.ReactNode;
 }
 
 export default function StatCard({
@@ -17,6 +18,7 @@ export default function StatCard({
   value,
   description,
   icon,
+  action,
 }: StatCardProps) {
   return (
     <Card className='brutalist-shadow'>
@@ -29,8 +31,9 @@ export default function StatCard({
           {icon}
         </div>
       </CardHeader>
-      <CardContent className='p-6 pt-0'>
+      <CardContent className='p-6 pt-0 flex items-center justify-between'>
         <p className="text-xs text-muted-foreground">{description}</p>
+        {action}
       </CardContent>
     </Card>
   );

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeft, Wallet } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
+import { useAuth, signInWithWeb3, signOutFirebase } from '@/lib/firebase-auth';
 
 const navItems = [
     { href: '/', label: 'Dashboard' },
@@ -23,11 +24,14 @@ const navItems = [
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const [isConnected, setIsConnected] = useState(false);
-  const dummyAddress = '0xAbCd...1234';
-
-  const handleConnectWallet = () => {
-    setIsConnected(!isConnected);
+  const { user } = useAuth();
+  
+  const handleConnectWallet = async () => {
+    if (user) {
+      await signOutFirebase();
+    } else {
+      await signInWithWeb3();
+    }
   };
 
   const formatAddress = (address: string) => {
@@ -63,9 +67,9 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <Button onClick={handleConnectWallet} variant={isConnected ? 'outline' : 'default'}>
+        <Button onClick={handleConnectWallet} variant={user ? 'outline' : 'default'}>
             <Wallet className="mr-2 h-4 w-4" />
-            {isConnected ? formatAddress(dummyAddress) : 'Connect Wallet'}
+            {user ? formatAddress(user.uid) : 'Connect Wallet'}
         </Button>
       </div>
       <Sheet>

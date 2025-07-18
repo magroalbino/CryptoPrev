@@ -36,6 +36,8 @@ export default function DepositDialog() {
   const { toast } = useToast();
 
   const handleDeposit = () => {
+    // In a real app, this would trigger a blockchain transaction.
+    // For now, it just shows a success message.
     toast({
       title: 'Deposit Successful',
       description: 'Your funds have been received and are being put to work.',
@@ -57,7 +59,7 @@ export default function DepositDialog() {
             Choose your preferred method to add funds to your CryptoPrev account.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="pix" className="w-full">
+        <Tabs defaultValue="crypto" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="pix"><PixIcon className="mr-2"/> PIX</TabsTrigger>
             <TabsTrigger value="card"><CreditCard className="mr-2"/> Card</TabsTrigger>
@@ -106,6 +108,7 @@ export default function DepositDialog() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="usdc">USDC</SelectItem>
+                    <SelectItem value="dai">DAI</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
