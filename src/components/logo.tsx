@@ -9,27 +9,31 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <path
-      d="M11.925 24.195a10 10 0 1 0 0-16.39"
+    <rect
+      x="4"
+      y="4"
+      width="24"
+      height="24"
+      rx="4"
       stroke="hsl(var(--primary))"
       strokeWidth={2.5}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path
-      d="M20.075 24.195a10 10 0 0 0 0-16.39"
+    <circle
+      cx="16"
+      cy="16"
+      r="6"
       stroke="hsl(var(--primary))"
       strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
     />
     <path
-      d="M16 16v12M16 4v3"
+      d="M16 16L20.2426 11.7574"
       stroke="hsl(var(--accent))"
       strokeWidth={2.5}
       strokeLinecap="round"
-      strokeLinejoin="round"
     />
+    <circle cx="23" cy="9" r="2" fill="hsl(var(--accent))" />
   </svg>
 );
 
