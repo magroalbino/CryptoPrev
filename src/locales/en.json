@@ -1,0 +1,217 @@
+{
+  "header": {
+    "dashboard": "Dashboard",
+    "oracle": "DeFi Oracle",
+    "simulator": "Simulator",
+    "learn": "DeFi Learn",
+    "connectWallet": "Connect Wallet",
+    "toggleLanguage": "Toggle language",
+    "english": "English",
+    "portuguese": "Português"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "loading": "Loading dashboard...",
+    "connectWalletPrompt": {
+      "title": "Please Connect Your Wallet",
+      "description": "Connect your wallet to view your dashboard and manage your funds."
+    },
+    "cards": {
+      "balance": {
+        "title": "Current Balance",
+        "description": "+1.2% from last month"
+      },
+      "rewards": {
+        "title": "Accumulated Rewards",
+        "description": "Total since inception"
+      },
+      "lockup": {
+        "title": "Lock-up Period",
+        "value_one": "{{count}} Month",
+        "value_other": "{{count}} Months",
+        "description": "Configurable period"
+      },
+      "protocol": {
+        "title": "Active Protocol",
+        "description": "Current APY: {{apy}}%"
+      }
+    },
+    "charts": {
+      "yield": {
+        "title": "Historical Yield (APY)",
+        "description": "Performance over the last 6 months."
+      },
+      "growth": {
+        "title": "Investment Growth",
+        "description": "Projected growth of your initial investment."
+      }
+    },
+    "history": {
+      "title": "Transaction History",
+      "description": "A record of your deposits and yield distributions.",
+      "yieldTab": "Yield History",
+      "depositsTab": "Deposit History",
+      "table": {
+        "date": "Date",
+        "protocol": "Protocol",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "paid": "Paid",
+        "completed": "Completed"
+      }
+    }
+  },
+  "deposit": {
+    "button": "Deposit Funds",
+    "title": "Deposit Funds",
+    "description": "Choose your preferred method to add funds to your CryptoPrev account.",
+    "tabs": {
+      "card": "Card",
+      "crypto": "Crypto"
+    },
+    "pix": {
+      "scan": "Scan the QR code with your bank's app to pay.",
+      "simulation": "This is a simulated transaction."
+    },
+    "card": {
+      "number": "Card Number",
+      "expires": "Expires"
+    },
+    "crypto": {
+      "coin": "Coin",
+      "selectPlaceholder": "Select stablecoin",
+      "amount": "Amount ($)"
+    },
+    "confirmButton": "Confirm Deposit",
+    "toast": {
+      "success": {
+        "title": "Deposit Successful",
+        "description": "Your funds have been received and are being put to work."
+      }
+    }
+  },
+  "withdraw": {
+    "button": "Withdraw Funds",
+    "title": "Withdraw Funds",
+    "description": "Enter the amount you wish to withdraw to your connected wallet.",
+    "amountLabel": "Amount (USDC)",
+    "addressLabel": "Wallet Address",
+    "notConnected": "Not connected",
+    "addressDescription": "Funds will be sent to your connected wallet.",
+    "confirmButton": "Confirm Withdrawal",
+    "toast": {
+      "success": {
+        "title": "Withdrawal Initiated",
+        "description": "Your funds are being processed and will be sent to your wallet."
+      }
+    }
+  },
+  "lockup": {
+    "title": "Configure Lock-up Period",
+    "description": "Choose how long you want to lock your funds for potentially higher yields.",
+    "months_one": "{{count}} Month",
+    "months_other": "{{count}} Months",
+    "updateButton": "Update Period",
+    "toast": {
+      "success": {
+        "title": "Lock-up Period Updated",
+        "description": "Your new lock-up period is {{count}} months."
+      }
+    }
+  },
+  "learn": {
+    "title": "DeFi Learn",
+    "description": "Your AI-powered guide to the world of Decentralized Finance.",
+    "topics": {
+      "whatIsDeFi": "What is DeFi?",
+      "whatIsApy": "What is APY (Annual Percentage Yield)?",
+      "whatAreSmartContracts": "What are Smart Contracts?",
+      "whatAreStablecoins": "What are Stablecoins?",
+      "whatIsImpermanentLoss": "What is Impermanent Loss?",
+      "whatAreTheRisks": "What are the risks of DeFi?",
+      "whatIsLiquidityPool": "What is a Liquidity Pool?",
+      "whatIsYieldFarming": "What is Yield Farming?"
+    },
+    "error": "Sorry, there was an error fetching the explanation. Please try again."
+  },
+  "oracle": {
+    "title": "DeFi Oracle",
+    "description": "Let our AI find the best DeFi protocols to maximize your yield.",
+    "form": {
+      "title": "Oracle Parameters",
+      "description": "Provide your criteria to get AI-powered DeFi suggestions.",
+      "stablecoin": {
+        "label": "Stablecoin",
+        "placeholder": "Select a stablecoin"
+      },
+      "amount": {
+        "label": "Investment Amount ($)"
+      },
+      "risk": {
+        "label": "Risk Tolerance",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "analyzingButton": "Analyzing...",
+      "getSuggestionsButton": "Get Suggestions",
+      "error": {
+        "title": "An error occurred"
+      }
+    },
+    "results": {
+      "strategy": "Strategy",
+      "monthlyYield": "Est. Monthly Yield",
+      "basedOnInvestment": "Based on your investment amount.",
+      "risks": "Potential Risks"
+    },
+    "placeholder": {
+      "title": "Your AI-powered suggestions will appear here.",
+      "description": "Submit your criteria to see the magic happen."
+    }
+  },
+  "simulator": {
+    "title": "Retirement Simulator",
+    "description": "Project your financial future. See how your investments can grow over time.",
+    "form": {
+      "title": "Simulation Parameters",
+      "description": "Enter your details to project your investment growth.",
+      "currentAge": {
+        "label": "Current Age"
+      },
+      "retirementAge": {
+        "label": "Retirement Age"
+      },
+      "initialInvestment": {
+        "label": "Initial Investment ($)"
+      },
+      "monthlyContribution": {
+        "label": "Monthly Contribution ($)"
+      },
+      "apy": {
+        "label": "Expected APY (%)"
+      },
+      "submitButton": "Run Simulation"
+    },
+    "results": {
+      "title": "Projected Growth",
+      "description": "Here's how your investment could grow over time.",
+      "total": {
+        "label": "At Retirement (Age {{age}})",
+        "description": "Projected Total Value"
+      }
+    },
+    "placeholder": {
+      "default": {
+        "title": "Your projection will appear here.",
+        "description": "Fill in your details and run the simulation to see your financial future."
+      },
+      "invalid": {
+        "title": "Invalid Age Range",
+        "description": "Please ensure your retirement age is greater than your current age."
+      }
+    }
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "header": {
+    "dashboard": "Painel",
+    "oracle": "Oráculo DeFi",
+    "simulator": "Simulador",
+    "learn": "Aprenda DeFi",
+    "connectWallet": "Conectar Carteira",
+    "toggleLanguage": "Mudar idioma",
+    "english": "Inglês",
+    "portuguese": "Português"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "loading": "Carregando o painel...",
+    "connectWalletPrompt": {
+      "title": "Por Favor, Conecte Sua Carteira",
+      "description": "Conecte sua carteira para ver seu painel e gerenciar seus fundos."
+    },
+    "cards": {
+      "balance": {
+        "title": "Saldo Atual",
+        "description": "+1.2% desde o último mês"
+      },
+      "rewards": {
+        "title": "Recompensas Acumuladas",
+        "description": "Total desde o início"
+      },
+      "lockup": {
+        "title": "Período de Carência",
+        "value_one": "{{count}} Mês",
+        "value_other": "{{count}} Meses",
+        "description": "Período configurável"
+      },
+      "protocol": {
+        "title": "Protocolo Ativo",
+        "description": "APY Atual: {{apy}}%"
+      }
+    },
+    "charts": {
+      "yield": {
+        "title": "Rendimento Histórico (APY)",
+        "description": "Desempenho nos últimos 6 meses."
+      },
+      "growth": {
+        "title": "Crescimento do Investimento",
+        "description": "Crescimento projetado do seu investimento inicial."
+      }
+    },
+    "history": {
+      "title": "Histórico de Transações",
+      "description": "Um registro dos seus depósitos e distribuições de rendimento.",
+      "yieldTab": "Histórico de Rendimentos",
+      "depositsTab": "Histórico de Depósitos",
+      "table": {
+        "date": "Data",
+        "protocol": "Protocolo",
+        "amount": "Valor",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "paid": "Pago",
+        "completed": "Concluído"
+      }
+    }
+  },
+  "deposit": {
+    "button": "Depositar Fundos",
+    "title": "Depositar Fundos",
+    "description": "Escolha seu método preferido para adicionar fundos à sua conta CryptoPrev.",
+    "tabs": {
+      "card": "Cartão",
+      "crypto": "Cripto"
+    },
+    "pix": {
+      "scan": "Escaneie o QR code com o aplicativo do seu banco para pagar.",
+      "simulation": "Esta é uma transação simulada."
+    },
+    "card": {
+      "number": "Número do Cartão",
+      "expires": "Expira em"
+    },
+    "crypto": {
+      "coin": "Moeda",
+      "selectPlaceholder": "Selecione a stablecoin",
+      "amount": "Valor ($)"
+    },
+    "confirmButton": "Confirmar Depósito",
+    "toast": {
+      "success": {
+        "title": "Depósito Bem-sucedido",
+        "description": "Seus fundos foram recebidos e estão sendo aplicados."
+      }
+    }
+  },
+  "withdraw": {
+    "button": "Sacar Fundos",
+    "title": "Sacar Fundos",
+    "description": "Insira o valor que deseja sacar para a sua carteira conectada.",
+    "amountLabel": "Valor (USDC)",
+    "addressLabel": "Endereço da Carteira",
+    "notConnected": "Não conectado",
+    "addressDescription": "Os fundos serão enviados para a sua carteira conectada.",
+    "confirmButton": "Confirmar Saque",
+    "toast": {
+      "success": {
+        "title": "Saque Iniciado",
+        "description": "Seus fundos estão sendo processados e serão enviados para sua carteira."
+      }
+    }
+  },
+  "lockup": {
+    "title": "Configurar Período de Carência",
+    "description": "Escolha por quanto tempo você deseja bloquear seus fundos para rendimentos potencialmente maiores.",
+    "months_one": "{{count}} Mês",
+    "months_other": "{{count}} Meses",
+    "updateButton": "Atualizar Período",
+    "toast": {
+      "success": {
+        "title": "Período de Carência Atualizado",
+        "description": "Seu novo período de carência é de {{count}} meses."
+      }
+    }
+  },
+  "learn": {
+    "title": "Aprenda DeFi",
+    "description": "Seu guia para o mundo de Finanças Descentralizadas, com o poder da IA.",
+    "topics": {
+      "whatIsDeFi": "O que é DeFi?",
+      "whatIsApy": "O que é APY (Rendimento Percentual Anual)?",
+      "whatAreSmartContracts": "O que são Contratos Inteligentes?",
+      "whatAreStablecoins": "O que são Stablecoins?",
+      "whatIsImpermanentLoss": "O que é Perda Impermanente?",
+      "whatAreTheRisks": "Quais são os riscos de DeFi?",
+      "whatIsLiquidityPool": "O que é uma Pool de Liquidez?",
+      "whatIsYieldFarming": "O que é Yield Farming?"
+    },
+    "error": "Desculpe, ocorreu um erro ao buscar a explicação. Por favor, tente novamente."
+  },
+  "oracle": {
+    "title": "Oráculo DeFi",
+    "description": "Deixe nossa IA encontrar os melhores protocolos DeFi para maximizar seu rendimento.",
+    "form": {
+      "title": "Parâmetros do Oráculo",
+      "description": "Forneça seus critérios para obter sugestões de DeFi com IA.",
+      "stablecoin": {
+        "label": "Stablecoin",
+        "placeholder": "Selecione uma stablecoin"
+      },
+      "amount": {
+        "label": "Valor do Investimento ($)"
+      },
+      "risk": {
+        "label": "Tolerância ao Risco",
+        "low": "Baixa",
+        "medium": "Média",
+        "high": "Alta"
+      },
+      "analyzingButton": "Analisando...",
+      "getSuggestionsButton": "Obter Sugestões",
+      "error": {
+        "title": "Ocorreu um erro"
+      }
+    },
+    "results": {
+      "strategy": "Estratégia",
+      "monthlyYield": "Rendimento Mensal Est.",
+      "basedOnInvestment": "Baseado no valor do seu investimento.",
+      "risks": "Riscos Potenciais"
+    },
+    "placeholder": {
+      "title": "Suas sugestões com IA aparecerão aqui.",
+      "description": "Envie seus critérios para ver a mágica acontecer."
+    }
+  },
+  "simulator": {
+    "title": "Simulador de Aposentadoria",
+    "description": "Projete seu futuro financeiro. Veja como seus investimentos podem crescer ao longo do tempo.",
+    "form": {
+      "title": "Parâmetros da Simulação",
+      "description": "Insira seus dados para projetar o crescimento do seu investimento.",
+      "currentAge": {
+        "label": "Idade Atual"
+      },
+      "retirementAge": {
+        "label": "Idade de Aposentadoria"
+      },
+      "initialInvestment": {
+        "label": "Investimento Inicial ($)"
+      },
+      "monthlyContribution": {
+        "label": "Contribuição Mensal ($)"
+      },
+      "apy": {
+        "label": "APY Esperado (%)"
+      },
+      "submitButton": "Executar Simulação"
+    },
+    "results": {
+      "title": "Crescimento Projetado",
+      "description": "Veja como seu investimento pode crescer ao longo do tempo.",
+      "total": {
+        "label": "Na Aposentadoria (Idade {{age}})",
+        "description": "Valor Total Projetado"
+      }
+    },
+    "placeholder": {
+      "default": {
+        "title": "Sua projeção aparecerá aqui.",
+        "description": "Preencha seus dados e execute a simulação para ver seu futuro financeiro."
+      },
+      "invalid": {
+        "title": "Intervalo de Idade Inválido",
+        "description": "Por favor, certifique-se de que sua idade de aposentadoria é maior que sua idade atual."
+      }
+    }
+  }
+}

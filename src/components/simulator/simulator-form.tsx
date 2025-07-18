@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { BarChart, PiggyBank, Target } from 'lucide-react';
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
+import { useAppTranslation } from '@/hooks/use-app-translation';
+
 
 type SimulationResult = {
   year: number;
@@ -24,6 +26,8 @@ const chartConfig = {
 
 export default function SimulatorForm() {
     const [result, setResult] = useState<SimulationResult | null>(null);
+    const { t } = useAppTranslation();
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -60,39 +64,39 @@ export default function SimulatorForm() {
             <Card>
                 <form onSubmit={handleSubmit}>
                     <CardHeader>
-                        <CardTitle>Simulation Parameters</CardTitle>
+                        <CardTitle>{t('simulator.form.title')}</CardTitle>
                         <CardDescription>
-                            Enter your details to project your investment growth.
+                            {t('simulator.form.description')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="currentAge">Current Age</Label>
+                                <Label htmlFor="currentAge">{t('simulator.form.currentAge.label')}</Label>
                                 <Input id="currentAge" name="currentAge" type="number" defaultValue="30" />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="retirementAge">Retirement Age</Label>
+                                <Label htmlFor="retirementAge">{t('simulator.form.retirementAge.label')}</Label>
                                 <Input id="retirementAge" name="retirementAge" type="number" defaultValue="65" />
                             </div>
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="initialInvestment">Initial Investment ($)</Label>
+                            <Label htmlFor="initialInvestment">{t('simulator.form.initialInvestment.label')}</Label>
                             <Input id="initialInvestment" name="initialInvestment" type="number" defaultValue="5000" />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="monthlyContribution">Monthly Contribution ($)</Label>
+                            <Label htmlFor="monthlyContribution">{t('simulator.form.monthlyContribution.label')}</Label>
                             <Input id="monthlyContribution" name="monthlyContribution" type="number" defaultValue="500" />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="apy">Expected APY (%)</Label>
+                            <Label htmlFor="apy">{t('simulator.form.apy.label')}</Label>
                             <Input id="apy" name="apy" type="number" defaultValue="7.5" step="0.1" />
                         </div>
                     </CardContent>
                     <CardFooter>
                         <Button type="submit" className="w-full" size="lg">
                             <BarChart className="mr-2"/>
-                            Run Simulation
+                            {t('simulator.form.submitButton')}
                         </Button>
                     </CardFooter>
                 </form>
@@ -101,9 +105,9 @@ export default function SimulatorForm() {
         <div className='lg:col-span-3'>
             <Card className="min-h-full">
                 <CardHeader>
-                    <CardTitle>Projected Growth</CardTitle>
+                    <CardTitle>{t('simulator.results.title')}</CardTitle>
                     <CardDescription>
-                        Here's how your investment could grow over time.
+                        {t('simulator.results.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -122,27 +126,27 @@ export default function SimulatorForm() {
                             </div>
                              <div className="flex items-center justify-center p-6 bg-secondary/50 border-2 border-foreground brutalist-shadow text-center">
                                 <div className='space-y-2'>
-                                    <p className='text-muted-foreground'>At Retirement (Age {result[result.length-1].year})</p>
+                                    <p className='text-muted-foreground'>{t('simulator.results.total.label', { age: result[result.length-1].year })}</p>
                                     <p className='text-4xl font-bold text-primary'>${result[result.length - 1].value.toLocaleString()}</p>
-                                    <p className='text-muted-foreground'>Projected Total Value</p>
+                                    <p className='text-muted-foreground'>{t('simulator.results.total.description')}</p>
                                 </div>
                             </div>
                         </div>
                        ) : (
                          <div className="flex min-h-[300px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
                             <Target className="mx-auto h-12 w-12 text-muted-foreground" />
-                            <h3 className="mt-4 text-lg font-semibold">Invalid Age Range</h3>
+                            <h3 className="mt-4 text-lg font-semibold">{t('simulator.placeholder.invalid.title')}</h3>
                             <p className="mb-4 mt-2 text-sm text-muted-foreground">
-                                Please ensure your retirement age is greater than your current age.
+                                {t('simulator.placeholder.invalid.description')}
                             </p>
                         </div>
                        )
                     ) : (
                         <div className="flex min-h-[300px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
                             <PiggyBank className="mx-auto h-12 w-12 text-muted-foreground" />
-                            <h3 className="mt-4 text-lg font-semibold">Your projection will appear here.</h3>
+                            <h3 className="mt-4 text-lg font-semibold">{t('simulator.placeholder.default.title')}</h3>
                             <p className="mb-4 mt-2 text-sm text-muted-foreground">
-                                Fill in your details and run the simulation to see your financial future.
+                                {t('simulator.placeholder.default.description')}
                             </p>
                         </div>
                     )}

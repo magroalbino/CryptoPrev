@@ -10,25 +10,23 @@ import {
 import { explainDeFiConcept } from '@/ai/flows/explain-defi-concept';
 import { Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-
-const defiTopics = [
-  'What is DeFi?',
-  'What is APY (Annual Percentage Yield)?',
-  'What are Smart Contracts?',
-  'What are Stablecoins?',
-  'What is Impermanent Loss?',
-  'What are the risks of DeFi?',
-  'What is a Liquidity Pool?',
-  'What is Yield Farming?',
-];
-
-type ExplanationCache = {
-  [key: string]: string;
-};
+import { useAppTranslation } from '@/hooks/use-app-translation';
 
 export default function LearnAccordion() {
   const [loadingTopic, setLoadingTopic] = useState<string | null>(null);
-  const [explanations, setExplanations] = useState<ExplanationCache>({});
+  const [explanations, setExplanations] = useState<{ [key: string]: string }>({});
+  const { t } = useAppTranslation();
+
+  const defiTopics = [
+    t('learn.topics.whatIsDeFi'),
+    t('learn.topics.whatIsApy'),
+    t('learn.topics.whatAreSmartContracts'),
+    t('learn.topics.whatAreStablecoins'),
+    t('learn.topics.whatIsImpermanentLoss'),
+    t('learn.topics.whatAreTheRisks'),
+    t('learn.topics.whatIsLiquidityPool'),
+    t('learn.topics.whatIsYieldFarming'),
+  ];
 
   const handleValueChange = async (value: string) => {
     if (!value || explanations[value]) {
@@ -38,13 +36,20 @@ export default function LearnAccordion() {
 
     setLoadingTopic(value);
     try {
-      const result = await explainDeFiConcept({ concept: value });
+      // We pass the english version to the AI flow
+      const conceptKey = Object.keys(t('learn.topics', { returnObjects: true }) as any).find(
+        key => t(`learn.topics.${key}`) === value
+      ) || '';
+      
+      const englishConcept = t(`learn.topics.${conceptKey}`, { lng: 'en' });
+
+      const result = await explainDeFiConcept({ concept: englishConcept });
       setExplanations((prev) => ({ ...prev, [value]: result.explanation }));
     } catch (error) {
       console.error('Failed to get explanation:', error);
       setExplanations((prev) => ({
         ...prev,
-        [value]: 'Sorry, there was an error fetching the explanation. Please try again.',
+        [value]: t('learn.error'),
       }));
     } finally {
       setLoadingTopic(null);

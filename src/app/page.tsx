@@ -1,9 +1,11 @@
+'use client';
 import {
   Activity,
-  Calendar,
-  CircleDollarSign,
   Wallet,
   Hourglass,
+  CircleDollarSign,
+  Landmark,
+  ArrowDownLeft,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -28,74 +30,72 @@ import StatCard from '@/components/dashboard/stat-card';
 import YieldChart from '@/components/dashboard/yield-chart';
 import ProjectionChart from '@/components/dashboard/projection-chart';
 import LockupDialog from '@/components/dashboard/lockup-dialog';
-import { db, formatTimestamp, admin, isFirebaseEnabled } from '@/lib/firebase-server';
+import { useAuth } from '@/lib/firebase-auth';
+import { useEffect, useState } from 'react';
+import { useAppTranslation } from '@/hooks/use-app-translation';
 
-async function getDashboardData() {
-  if (!isFirebaseEnabled) {
-    // Return mock data if Firebase is not configured
-    return {
-      userData: {
-        currentBalance: 5250.75,
-        accumulatedRewards: 250.75,
-        activeProtocol: 'Compound',
-        activeProtocolApy: 5.2,
-        lockupPeriod: 12,
-      },
-      transactions: [
-        { id: '1', date: 'June 30, 2024', amount: 45.5, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-        { id: '6', date: 'June 1, 2024', amount: 1000, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-        { id: '2', date: 'May 31, 2024', amount: 42.1, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-        { id: '3', date: 'April 30, 2024', amount: 48.9, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-        { id: '7', date: 'April 15, 2024', amount: 500, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-        { id: '4', date: 'March 31, 2024', amount: 39.2, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-        { id: '5', date: 'February 29, 2024', amount: 41.8, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-      ],
-    };
-  }
+// Mock data, in a real app this would come from a backend/firestore
+const mockData = {
+  userData: {
+    currentBalance: 5250.75,
+    accumulatedRewards: 250.75,
+    activeProtocol: 'Compound',
+    activeProtocolApy: 5.2,
+    lockupPeriod: 12,
+  },
+  transactions: [
+    { id: '1', date: 'June 30, 2024', amount: 45.5, status: 'Paid', protocol: 'Aave', type: 'Yield' },
+    { id: '6', date: 'June 1, 2024', amount: 1000, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
+    { id: '2', date: 'May 31, 2024', amount: 42.1, status: 'Paid', protocol: 'Aave', type: 'Yield' },
+    { id: '3', date: 'April 30, 2024', amount: 48.9, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+    { id: '7', date: 'April 15, 2024', amount: 500, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
+    { id: '4', date: 'March 31, 2024', amount: 39.2, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+    { id: '5', date: 'February 29, 2024', amount: 41.8, status: 'Paid', protocol: 'Compound', type: 'Yield' },
+  ],
+};
 
-  const userId = 'user_1'; // In a real app, this would be the logged-in user's ID
-  
-  const userDocRef = db.collection('users').doc(userId);
-  const transactionsRef = db.collection('transactions').where('userId', '==', userId).orderBy('date', 'desc').limit(10);
+export default function Dashboard() {
+  const { web3UserAddress, loading } = useAuth();
+  const [dashboardData, setDashboardData] = useState(mockData);
+  const { t } = useAppTranslation();
 
-  const userDocPromise = userDocRef.get();
-  const transactionsPromise = transactionsRef.get();
+  // In a real app, you would fetch user-specific data here based on web3UserAddress
+  useEffect(() => {
+    if (web3UserAddress) {
+      // fetch data for this user
+      setDashboardData(mockData);
+    }
+  }, [web3UserAddress]);
 
-  const [userDoc, transactionsSnapshot] = await Promise.all([userDocPromise, transactionsPromise]);
-
-  if (!userDoc.exists) {
-    throw new Error('User not found. Please sign up or add a "user_1" document to your Firestore.');
-  }
-
-  const userData = userDoc.data()!;
-  
-  const transactions = transactionsSnapshot.docs.map(doc => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      date: formatTimestamp(data.date as admin.firestore.Timestamp),
-      amount: data.amount,
-      status: data.status,
-      protocol: data.protocol || 'N/A',
-      type: data.type,
-    };
-  });
-
-  return { userData, transactions };
-}
-
-
-export default async function Dashboard() {
-  const { userData, transactions } = await getDashboardData();
+  const { userData, transactions } = dashboardData;
   const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
   
   const distributionHistory = transactions.filter(t => t.type === 'Yield');
   const depositHistory = transactions.filter(t => t.type === 'Deposit');
 
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p>{t('dashboard.loading')}</p>
+      </div>
+    );
+  }
+
+  if (!web3UserAddress) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">{t('dashboard.connectWalletPrompt.title')}</h2>
+          <p className="text-muted-foreground">{t('dashboard.connectWalletPrompt.description')}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 space-y-6">
       <div className="flex items-center justify-between space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
         <div className="flex items-center space-x-2">
           <WithdrawDialog />
           <DepositDialog />
@@ -103,37 +103,37 @@ export default async function Dashboard() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Current Balance"
+          title={t('dashboard.cards.balance.title')}
           value={`$${Number(userData.currentBalance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
-          description="+1.2% from last month"
+          description={t('dashboard.cards.balance.description')}
           icon={<Wallet className="text-accent" />}
         />
         <StatCard
-          title="Accumulated Rewards"
+          title={t('dashboard.cards.rewards.title')}
           value={`$${Number(userData.accumulatedRewards).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
-          description="Total since inception"
+          description={t('dashboard.cards.rewards.description')}
           icon={<CircleDollarSign className="text-accent" />}
         />
         <StatCard
-          title="Lock-up Period"
-          value={`${userData.lockupPeriod} Months`}
-          description="Configurable period"
+          title={t('dashboard.cards.lockup.title')}
+          value={t('dashboard.cards.lockup.value', { count: userData.lockupPeriod })}
+          description={t('dashboard.cards.lockup.description')}
           icon={<Hourglass className="text-accent" />}
           action={<LockupDialog currentPeriod={userData.lockupPeriod} />}
         />
         <StatCard
-          title="Active Protocol"
+          title={t('dashboard.cards.protocol.title')}
           value={userData.activeProtocol}
-          description={`Current APY: ${userData.activeProtocolApy}%`}
+          description={t('dashboard.cards.protocol.description', { apy: userData.activeProtocolApy })}
           icon={<Activity className="text-accent" />}
         />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Historical Yield (APY)</CardTitle>
+            <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
             <CardDescription>
-              Performance over the last 6 months.
+              {t('dashboard.charts.yield.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
@@ -142,9 +142,9 @@ export default async function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Investment Growth</CardTitle>
+            <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
             <CardDescription>
-              Projected growth of your initial investment.
+              {t('dashboard.charts.growth.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -154,25 +154,25 @@ export default async function Dashboard() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
+          <CardTitle>{t('dashboard.history.title')}</CardTitle>
           <CardDescription>
-            A record of your deposits and yield distributions.
+            {t('dashboard.history.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
            <Tabs defaultValue="yield">
             <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="yield">Yield History</TabsTrigger>
-                <TabsTrigger value="deposits">Deposit History</TabsTrigger>
+                <TabsTrigger value="yield">{t('dashboard.history.yieldTab')}</TabsTrigger>
+                <TabsTrigger value="deposits">{t('dashboard.history.depositsTab')}</TabsTrigger>
             </TabsList>
             <TabsContent value="yield">
                 <Table>
                     <TableHeader>
                     <TableRow className='hover:bg-card'>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Protocol</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                        <TableHead>{t('dashboard.history.table.protocol')}</TableHead>
+                        <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                        <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
                     </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -185,7 +185,7 @@ export default async function Dashboard() {
                         <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
                         <TableCell className="text-center">
                             <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground brutalist-border">
-                            {dist.status}
+                            {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
                             </Badge>
                         </TableCell>
                         </TableRow>
@@ -197,9 +197,9 @@ export default async function Dashboard() {
                  <Table>
                     <TableHeader>
                     <TableRow className='hover:bg-card'>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                        <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                        <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
                     </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -211,7 +211,7 @@ export default async function Dashboard() {
                         <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
                         <TableCell className="text-center">
                              <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground brutalist-border">
-                                {deposit.status}
+                                {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
                             </Badge>
                         </TableCell>
                         </TableRow>

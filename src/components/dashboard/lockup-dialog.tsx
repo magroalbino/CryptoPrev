@@ -14,18 +14,22 @@ import { useToast } from '@/hooks/use-toast';
 import { Edit2 } from 'lucide-react';
 import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useAppTranslation } from '@/hooks/use-app-translation';
+
 
 export default function LockupDialog({ currentPeriod }: { currentPeriod: number }) {
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState(String(currentPeriod));
   const { toast } = useToast();
+  const { t } = useAppTranslation();
+
 
   const handleUpdate = () => {
     // In a real app, this would update the user's settings in Firestore
     console.log("Updating lock-up period to:", selectedPeriod);
     toast({
-      title: 'Lock-up Period Updated',
-      description: `Your new lock-up period is ${selectedPeriod} months.`,
+      title: t('lockup.toast.success.title'),
+      description: t('lockup.toast.success.description', { count: Number(selectedPeriod) }),
     });
     setOpen(false);
   };
@@ -39,9 +43,9 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Configure Lock-up Period</DialogTitle>
+          <DialogTitle>{t('lockup.title')}</DialogTitle>
           <DialogDescription>
-            Choose how long you want to lock your funds for potentially higher yields.
+            {t('lockup.description')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -56,7 +60,7 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
                   htmlFor="r1"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
-                  3 Months
+                  {t('lockup.months', { count: 3 })}
                 </Label>
               </div>
               <div>
@@ -65,7 +69,7 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
                   htmlFor="r2"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
-                  6 Months
+                   {t('lockup.months', { count: 6 })}
                 </Label>
               </div>
               <div>
@@ -74,14 +78,14 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
                   htmlFor="r3"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
-                  12 Months
+                   {t('lockup.months', { count: 12 })}
                 </Label>
               </div>
             </RadioGroup>
         </div>
         <DialogFooter>
           <Button type="button" onClick={handleUpdate} className="w-full">
-            Update Period
+            {t('lockup.updateButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

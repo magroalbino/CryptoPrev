@@ -41,6 +41,7 @@ import {
   RadioGroupItem,
 } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
+import { useAppTranslation } from '@/hooks/use-app-translation';
 
 const formSchema = z.object({
   stablecoin: z.string().min(1, 'Please select a stablecoin.'),
@@ -52,17 +53,18 @@ const formSchema = z.object({
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { t } = useAppTranslation();
   return (
     <Button type="submit" disabled={pending} size="lg" className="w-full md:w-auto" variant="secondary">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Analyzing...
+          {t('oracle.form.analyzingButton')}
         </>
       ) : (
         <>
           <Sparkles className="mr-2 h-4 w-4" />
-          Get Suggestions
+          {t('oracle.form.getSuggestionsButton')}
         </>
       )}
     </Button>
@@ -71,6 +73,7 @@ function SubmitButton() {
 
 export default function OracleForm() {
   const { toast } = useToast();
+  const { t } = useAppTranslation();
   const initialState: OracleState = { data: null, error: null };
   const [state, formAction] = useActionState(getOracleSuggestion, initialState);
 
@@ -87,20 +90,20 @@ export default function OracleForm() {
     if (state.error) {
       toast({
         variant: 'destructive',
-        title: 'An error occurred',
+        title: t('oracle.form.error.title'),
         description: state.error,
       });
     }
-  }, [state.error, toast]);
+  }, [state.error, toast, t]);
 
   return (
     <div className="grid gap-8">
       <Card>
         <form action={formAction}>
           <CardHeader>
-            <CardTitle>Oracle Parameters</CardTitle>
+            <CardTitle>{t('oracle.form.title')}</CardTitle>
             <CardDescription>
-              Provide your criteria to get AI-powered DeFi suggestions.
+              {t('oracle.form.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -111,7 +114,7 @@ export default function OracleForm() {
                   name="stablecoin"
                   render={({ field }) => (
                     <FormItem className='flex-1'>
-                      <FormLabel className="font-bold">Stablecoin</FormLabel>
+                      <FormLabel className="font-bold">{t('oracle.form.stablecoin.label')}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -119,7 +122,7 @@ export default function OracleForm() {
                       >
                         <FormControl>
                           <SelectTrigger className="brutalist-border">
-                            <SelectValue placeholder="Select a stablecoin" />
+                            <SelectValue placeholder={t('oracle.form.stablecoin.placeholder')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="brutalist-border">
@@ -138,7 +141,7 @@ export default function OracleForm() {
                   name="investmentAmount"
                   render={({ field }) => (
                     <FormItem className='flex-1'>
-                      <FormLabel className="font-bold">Investment Amount ($)</FormLabel>
+                      <FormLabel className="font-bold">{t('oracle.form.amount.label')}</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="e.g. 1000" {...field} className="brutalist-border"/>
                       </FormControl>
@@ -152,7 +155,7 @@ export default function OracleForm() {
                   name="riskTolerance"
                   render={({ field }) => (
                     <FormItem className="flex-1 space-y-3">
-                      <FormLabel className="font-bold">Risk Tolerance</FormLabel>
+                      <FormLabel className="font-bold">{t('oracle.form.risk.label')}</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
@@ -165,7 +168,7 @@ export default function OracleForm() {
                               <RadioGroupItem value="low" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              Low
+                              {t('oracle.form.risk.low')}
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -173,7 +176,7 @@ export default function OracleForm() {
                               <RadioGroupItem value="medium" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              Medium
+                              {t('oracle.form.risk.medium')}
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -181,7 +184,7 @@ export default function OracleForm() {
                               <RadioGroupItem value="high" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              High
+                              {t('oracle.form.risk.high')}
                             </FormLabel>
                           </FormItem>
                         </RadioGroup>
@@ -216,17 +219,17 @@ export default function OracleForm() {
                     <CardContent className="space-y-6">
                         <Separator className="border-t-2 border-dashed border-foreground/50"/>
                         <div className="space-y-4">
-                            <h4 className="font-bold text-lg">Strategy</h4>
+                            <h4 className="font-bold text-lg">{t('oracle.results.strategy')}</h4>
                             <p className="text-muted-foreground text-sm">{suggestion.strategyDescription}</p>
                         </div>
                         <div className="space-y-4">
-                            <h4 className="font-bold text-lg">Est. Monthly Yield</h4>
+                            <h4 className="font-bold text-lg">{t('oracle.results.monthlyYield')}</h4>
                             <p className="text-3xl font-bold text-accent">${suggestion.estimatedMonthlyYield.toFixed(2)}</p>
-                            <p className="text-sm text-muted-foreground">Based on your investment amount.</p>
+                            <p className="text-sm text-muted-foreground">{t('oracle.results.basedOnInvestment')}</p>
                         </div>
                         <Separator className="border-t-2 border-dashed border-foreground/50"/>
                          <div>
-                            <h4 className="font-bold text-lg">Potential Risks</h4>
+                            <h4 className="font-bold text-lg">{t('oracle.results.risks')}</h4>
                             <div className="mt-2 flex items-start gap-3 border-2 border-destructive/50 bg-destructive/10 p-4 text-sm">
                               <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
                               <p className="text-foreground">{suggestion.risks}</p>
@@ -239,9 +242,9 @@ export default function OracleForm() {
       ) : (
           <div className="flex min-h-[400px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
               <Sparkles className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">Your AI-powered suggestions will appear here.</h3>
+              <h3 className="mt-4 text-lg font-semibold">{t('oracle.placeholder.title')}</h3>
               <p className="mb-4 mt-2 text-sm text-muted-foreground">
-                Submit your criteria to see the magic happen.
+                {t('oracle.placeholder.description')}
               </p>
           </div>
       )}

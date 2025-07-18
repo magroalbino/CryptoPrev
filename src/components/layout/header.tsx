@@ -2,9 +2,15 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PanelLeft, Wallet } from 'lucide-react';
+import { PanelLeft, Wallet, Languages } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Sheet,
   SheetContent,
@@ -13,17 +19,16 @@ import {
 import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
 import { useAuth } from '@/lib/firebase-auth';
-
-const navItems = [
-    { href: '/', label: 'Dashboard' },
-    { href: '/oracle', label: 'DeFi Oracle' },
-    { href: '/simulator', label: 'Simulator' },
-    { href: '/learn', label: 'DeFi Learn' },
-]
+import { useAppTranslation } from '@/hooks/use-app-translation';
 
 export default function AppHeader() {
   const pathname = usePathname();
   const { web3UserAddress, signInWithWeb3, signOut } = useAuth();
+  const { t, i18n } = useAppTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
   
   const handleConnectWallet = async () => {
     if (web3UserAddress) {
@@ -36,6 +41,13 @@ export default function AppHeader() {
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   }
+
+  const navItems = [
+      { href: '/', label: t('header.dashboard') },
+      { href: '/oracle', label: t('header.oracle') },
+      { href: '/simulator', label: t('header.simulator') },
+      { href: '/learn', label: t('header.learn') },
+  ]
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/50 px-4 backdrop-blur-sm md:px-6">
@@ -66,9 +78,26 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Languages className="h-5 w-5" />
+                    <span className="sr-only">{t('header.toggleLanguage')}</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => changeLanguage('en')}>
+                    {t('header.english')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeLanguage('pt')}>
+                    {t('header.portuguese')}
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+
         <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
             <Wallet className="mr-2 h-4 w-4" />
-            {web3UserAddress ? formatAddress(web3UserAddress) : 'Connect Wallet'}
+            {web3UserAddress ? formatAddress(web3UserAddress) : t('header.connectWallet')}
         </Button>
       </div>
       <Sheet>

@@ -24,6 +24,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Landmark, Wallet, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useAppTranslation } from '@/hooks/use-app-translation';
+
 
 const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -34,13 +36,15 @@ const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function DepositDialog() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useAppTranslation();
+
 
   const handleDeposit = () => {
     // In a real app, this would trigger a blockchain transaction.
     // For now, it just shows a success message.
     toast({
-      title: 'Deposit Successful',
-      description: 'Your funds have been received and are being put to work.',
+      title: t('deposit.toast.success.title'),
+      description: t('deposit.toast.success.description'),
     });
     setOpen(false);
   };
@@ -49,40 +53,40 @@ export default function DepositDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Landmark className="mr-2 h-4 w-4" /> Deposit Funds
+          <Landmark className="mr-2 h-4 w-4" /> {t('deposit.button')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Deposit Funds</DialogTitle>
+          <DialogTitle>{t('deposit.title')}</DialogTitle>
           <DialogDescription>
-            Choose your preferred method to add funds to your CryptoPrev account.
+            {t('deposit.description')}
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="crypto" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="pix"><PixIcon className="mr-2"/> PIX</TabsTrigger>
-            <TabsTrigger value="card"><CreditCard className="mr-2"/> Card</TabsTrigger>
-            <TabsTrigger value="crypto"><Wallet className="mr-2"/> Crypto</TabsTrigger>
+            <TabsTrigger value="card"><CreditCard className="mr-2"/> {t('deposit.tabs.card')}</TabsTrigger>
+            <TabsTrigger value="crypto"><Wallet className="mr-2"/> {t('deposit.tabs.crypto')}</TabsTrigger>
           </TabsList>
           <TabsContent value="pix">
             <div className="flex flex-col items-center gap-4 py-4 text-center">
-                <p className="text-sm text-muted-foreground">Scan the QR code with your bank's app to pay.</p>
+                <p className="text-sm text-muted-foreground">{t('deposit.pix.scan')}</p>
                 <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2">
                     <Image src="https://placehold.co/200x200.png" alt="PIX QR Code" width={200} height={200} data-ai-hint="qr code"/>
                 </div>
-                <p className="text-xs text-muted-foreground">This is a simulated transaction.</p>
+                <p className="text-xs text-muted-foreground">{t('deposit.pix.simulation')}</p>
             </div>
           </TabsContent>
           <TabsContent value="card">
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="card-number">Card Number</Label>
+                <Label htmlFor="card-number">{t('deposit.card.number')}</Label>
                 <Input id="card-number" placeholder="0000 0000 0000 0000" />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="expiry-date">Expires</Label>
+                  <Label htmlFor="expiry-date">{t('deposit.card.expires')}</Label>
                   <Input id="expiry-date" placeholder="MM/YY" />
                 </div>
                 <div className="space-y-2">
@@ -90,7 +94,7 @@ export default function DepositDialog() {
                   <Input id="cvc" placeholder="123" />
                 </div>
                  <div className="space-y-2">
-                  <Label htmlFor="amount-card">Amount ($)</Label>
+                  <Label htmlFor="amount-card">{t('deposit.crypto.amount')}</Label>
                   <Input id="amount-card" type="number" defaultValue="1000" />
                 </div>
               </div>
@@ -100,11 +104,11 @@ export default function DepositDialog() {
              <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="stablecoin" className="text-right">
-                  Coin
+                  {t('deposit.crypto.coin')}
                 </Label>
                 <Select defaultValue="usdc">
                   <SelectTrigger id="stablecoin" className="col-span-3">
-                    <SelectValue placeholder="Select stablecoin" />
+                    <SelectValue placeholder={t('deposit.crypto.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="usdc">USDC</SelectItem>
@@ -114,7 +118,7 @@ export default function DepositDialog() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="amount-crypto" className="text-right">
-                  Amount
+                  {t('deposit.crypto.amount')}
                 </Label>
                 <Input
                   id="amount-crypto"
@@ -128,7 +132,7 @@ export default function DepositDialog() {
         </Tabs>
         <DialogFooter>
           <Button type="submit" onClick={handleDeposit} className="w-full">
-            Confirm Deposit
+            {t('deposit.confirmButton')}
           </Button>
         </DialogFooter>
       </DialogContent>
