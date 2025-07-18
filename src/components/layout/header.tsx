@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeft, Wallet } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
+import { useAuth } from '@/lib/firebase-auth';
 
 const navItems = [
     { href: '/', label: 'Dashboard' },
@@ -24,26 +23,13 @@ const navItems = [
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const [userAddress, setUserAddress] = useState<string | null>(null);
+  const { web3UserAddress, signInWithWeb3, signOut } = useAuth();
   
   const handleConnectWallet = async () => {
-    if (userAddress) {
-      // Disconnect
-      setUserAddress(null);
+    if (web3UserAddress) {
+      await signOut();
     } else {
-      // Connect
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          const provider = new ethers.BrowserProvider(window.ethereum);
-          // Request account access
-          const accounts = await provider.send('eth_requestAccounts', []);
-          setUserAddress(accounts[0]);
-        } catch (error) {
-          console.error("User rejected the request.");
-        }
-      } else {
-        alert('MetaMask is not installed. Please install it to use this feature.');
-      }
+      await signInWithWeb3();
     }
   };
 
@@ -80,9 +66,9 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <Button onClick={handleConnectWallet} variant={userAddress ? 'outline' : 'default'}>
+        <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
             <Wallet className="mr-2 h-4 w-4" />
-            {userAddress ? formatAddress(userAddress) : 'Connect Wallet'}
+            {web3UserAddress ? formatAddress(web3UserAddress) : 'Connect Wallet'}
         </Button>
       </div>
       <Sheet>
@@ -99,7 +85,7 @@ export default function AppHeader() {
         <SheetContent side="left" className='brutalist-border glassmorphic'>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="#"
+              href="/"
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Logo className="h-8 w-8" />
