@@ -66,7 +66,7 @@ const generateDashboardData = (address: string) => {
         
         return {
             id: `${i}-${seed}`,
-            date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: '2024'}),
+            date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'}),
             amount: isYield ? monthlyYield * (0.8 + random(7+i) * 0.4) : 500 + random(8+i) * 1500,
             status: isYield ? 'Paid' : 'Completed',
             protocol: isYield ? protocols[Math.floor(random(9+i) * 3)] : 'N/A',
