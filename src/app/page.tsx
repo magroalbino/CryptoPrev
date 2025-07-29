@@ -45,61 +45,81 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-// Mock data, in a real app this would come from a backend/firestore
-const mockData = {
-  userData: {
-    currentBalance: 5250.75,
-    accumulatedRewards: 250.75,
-    monthlyYield: 45.50,
-    activeProtocol: 'Compound',
-    activeProtocolApy: 5.2,
-    lockupPeriod: 12,
-  },
-  transactions: [
-    { id: '1', date: 'June 30, 2024', amount: 45.5, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-    { id: '6', date: 'June 1, 2024', amount: 1000, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-    { id: '2', date: 'May 31, 2024', amount: 42.1, status: 'Paid', protocol: 'Aave', type: 'Yield' },
-    { id: '3', date: 'April 30, 2024', amount: 48.9, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-    { id: '7', date: 'April 15, 2024', amount: 500, status: 'Completed', protocol: 'N/A', type: 'Deposit' },
-    { id: '4', date: 'March 31, 2024', amount: 39.2, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-    { id: '5', date: 'February 29, 2024', amount: 41.8, status: 'Paid', protocol: 'Compound', type: 'Yield' },
-  ],
-  achievements: [
-    { id: '1', name: 'Early Adopter', description: 'Joined CryptoPrev in the first month!', achieved: true },
-    { id: '2', name: 'First Deposit', description: 'You made your first deposit. The journey begins!', achieved: true },
-    { id: '3', name: 'Diamond Hands', description: 'Stayed invested for 3 consecutive months.', achieved: true },
-    { id: '4', name: 'Consistent Contributor', description: 'Made deposits for 2 consecutive months.', achieved: false },
-    { id: '5', name: 'Referral Master', description: 'Successfully referred a new user.', achieved: false },
-  ]
+// Function to generate deterministic, yet unique, data based on wallet address
+const generateDashboardData = (address: string) => {
+    // Use the address to create a seed for pseudo-randomness
+    const seed = parseInt(address.substring(2, 10), 16);
+    const random = (multiplier: number) => (seed * multiplier) % 1;
+
+    const currentBalance = 5000 + random(1) * 10000;
+    const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
+    const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
+    const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
+    const protocols = ['Compound', 'Aave', 'Lido'];
+    const activeProtocol = protocols[Math.floor(random(5) * 3)];
+    const activeProtocolApy = 4.5 + random(6) * 3;
+
+    const transactions = Array.from({ length: 6 }).map((_, i) => {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const isYield = i % 2 === 0; // Alternate between yield and deposit
+        
+        return {
+            id: `${i}-${seed}`,
+            date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: '2024'}),
+            amount: isYield ? monthlyYield * (0.8 + random(7+i) * 0.4) : 500 + random(8+i) * 1500,
+            status: isYield ? 'Paid' : 'Completed',
+            protocol: isYield ? protocols[Math.floor(random(9+i) * 3)] : 'N/A',
+            type: isYield ? 'Yield' : 'Deposit'
+        };
+    });
+
+    const achievements = [
+        { id: '1', name: 'Early Adopter', achieved: random(10) > 0.1 },
+        { id: '2', name: 'First Deposit', achieved: true },
+        { id: '3', name: 'Diamond Hands', achieved: random(11) > 0.3 },
+        { id: '4', name: 'Consistent Contributor', achieved: random(12) > 0.5 },
+        { id: '5', name: 'Referral Master', achieved: random(13) > 0.8 },
+    ];
+
+    return {
+        userData: {
+            currentBalance,
+            accumulatedRewards,
+            monthlyYield,
+            activeProtocol,
+            activeProtocolApy,
+            lockupPeriod,
+        },
+        transactions,
+        achievements,
+    };
 };
+
 
 export default function Dashboard() {
   const { web3UserAddress, loading } = useAuth();
-  const [dashboardData, setDashboardData] = useState(mockData);
+  const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
 
-  // In a real app, you would fetch user-specific data here based on web3UserAddress
   useEffect(() => {
     if (web3UserAddress) {
-      // fetch data for this user
-      setDashboardData(mockData);
+      const data = generateDashboardData(web3UserAddress);
+      setDashboardData(data);
+    } else {
+      setDashboardData(null);
     }
   }, [web3UserAddress]);
 
   const handleClaimYield = () => {
+    if (!dashboardData) return;
     toast({
       title: t('dashboard.rewards.claimToast.title'),
       description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield }),
     });
   }
-
-  const { userData, transactions, achievements } = dashboardData;
-  const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
   
-  const distributionHistory = transactions.filter(t => t.type === 'Yield');
-  const depositHistory = transactions.filter(t => t.type === 'Deposit');
-
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -108,7 +128,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!web3UserAddress) {
+  if (!web3UserAddress || !dashboardData) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
@@ -118,6 +138,12 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const { userData, transactions, achievements } = dashboardData;
+  const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
+  const distributionHistory = transactions.filter((t: any) => t.type === 'Yield');
+  const depositHistory = transactions.filter((t: any) => t.type === 'Deposit');
+
 
   return (
     <div className="flex-1 space-y-6">
@@ -151,7 +177,7 @@ export default function Dashboard() {
         <StatCard
           title={t('dashboard.cards.protocol.title')}
           value={userData.activeProtocol}
-          description={t('dashboard.cards.protocol.description', { apy: userData.activeProtocolApy })}
+          description={t('dashboard.cards.protocol.description', { apy: userData.activeProtocolApy.toFixed(1) })}
           icon={<Activity className="text-accent" />}
         />
       </div>
@@ -178,7 +204,7 @@ export default function Dashboard() {
             <CardContent>
               <TooltipProvider>
                 <div className="flex flex-wrap gap-4">
-                  {achievements.map((ach) => (
+                  {achievements.map((ach: any) => (
                     <Tooltip key={ach.id}>
                       <TooltipTrigger asChild>
                         <div className={cn('relative rounded-md border-2 p-3', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
@@ -245,7 +271,7 @@ export default function Dashboard() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {distributionHistory.map((dist) => (
+                    {distributionHistory.map((dist: any) => (
                         <TableRow key={dist.id} className='hover:bg-muted/50'>
                         <TableCell>
                             <div className="font-bold">{dist.date}</div>
@@ -272,7 +298,7 @@ export default function Dashboard() {
                     </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {depositHistory.map((deposit) => (
+                    {depositHistory.map((deposit: any) => (
                         <TableRow key={deposit.id} className='hover:bg-muted/50'>
                         <TableCell>
                             <div className="font-bold">{deposit.date}</div>
