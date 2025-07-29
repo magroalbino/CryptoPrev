@@ -128,7 +128,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!web3UserAddress || !dashboardData) {
+  if (!web3UserAddress || dashboardData === null) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
