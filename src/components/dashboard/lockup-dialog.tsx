@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Zap, Calendar, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import { cn } from '@/lib/utils';
 
 
 export default function LockupDialog({ currentPeriod }: { currentPeriod: number }) {
@@ -23,6 +24,11 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
   const { toast } = useToast();
   const { t } = useAppTranslation();
 
+  const plans = [
+    { value: "3", title: t('lockup.plans.short.title'), description: t('lockup.plans.short.description'), apy: "5.5%", icon: <Zap/> },
+    { value: "6", title: t('lockup.plans.medium.title'), description: t('lockup.plans.medium.description'), apy: "7.0%", icon: <Calendar/> },
+    { value: "12", title: t('lockup.plans.long.title'), description: t('lockup.plans.long.description'), apy: "8.5%", icon: <Shield/> },
+  ];
 
   const handleUpdate = () => {
     // In a real app, this would update the user's settings in Firestore
@@ -41,7 +47,7 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
           <Edit2 className="h-4 w-4 text-muted-foreground"/>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t('lockup.title')}</DialogTitle>
           <DialogDescription>
@@ -52,35 +58,31 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
            <RadioGroup
               defaultValue={selectedPeriod}
               onValueChange={setSelectedPeriod}
-              className="grid grid-cols-3 gap-4"
+              className="grid grid-cols-1 gap-4 md:grid-cols-3"
             >
-              <div>
-                <RadioGroupItem value="3" id="r1" className="peer sr-only" />
-                <Label
-                  htmlFor="r1"
-                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                >
-                  {t('lockup.months', { count: 3 })}
-                </Label>
-              </div>
-              <div>
-                <RadioGroupItem value="6" id="r2" className="peer sr-only" />
-                <Label
-                  htmlFor="r2"
-                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                >
-                   {t('lockup.months', { count: 6 })}
-                </Label>
-              </div>
-              <div>
-                <RadioGroupItem value="12" id="r3" className="peer sr-only" />
-                <Label
-                  htmlFor="r3"
-                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                >
-                   {t('lockup.months', { count: 12 })}
-                </Label>
-              </div>
+              {plans.map((plan) => (
+                <div key={plan.value}>
+                  <RadioGroupItem value={plan.value} id={`r-${plan.value}`} className="peer sr-only" />
+                  <Label
+                    htmlFor={`r-${plan.value}`}
+                    className={cn(
+                        "flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4",
+                        "hover:bg-accent hover:text-accent-foreground",
+                        "peer-data-[state=checked]:border-primary peer-data-[state=checked]:shadow-lg"
+                    )}
+                  >
+                    <div className="mb-4 text-center">
+                        <div className="mb-2 flex justify-center">{plan.icon}</div>
+                        <p className="font-bold text-lg">{plan.title}</p>
+                        <p className="text-xs text-muted-foreground">{plan.description}</p>
+                    </div>
+                    <div className="mt-auto text-center">
+                        <p className="text-xs font-bold uppercase">{t('lockup.plans.apy')}</p>
+                        <p className="text-xl font-bold text-accent">{plan.apy}</p>
+                    </div>
+                  </Label>
+                </div>
+              ))}
             </RadioGroup>
         </div>
         <DialogFooter>

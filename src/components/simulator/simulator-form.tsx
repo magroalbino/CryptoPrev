@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { BarChart, PiggyBank, Target } from 'lucide-react';
+import { BarChart, PiggyBank, Target, Wallet } from 'lucide-react';
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { useAppTranslation } from '@/hooks/use-app-translation';
@@ -16,6 +16,13 @@ type SimulationResult = {
   value: number;
 }[];
 
+type FullResult = {
+    history: SimulationResult;
+    totalValue: number;
+    monthlyIncome: number;
+    retirementAge: number;
+} | null;
+
 const chartConfig = {
   value: {
     label: "Value",
@@ -25,7 +32,7 @@ const chartConfig = {
 
 
 export default function SimulatorForm() {
-    const [result, setResult] = useState<SimulationResult | null>(null);
+    const [result, setResult] = useState<FullResult>(null);
     const { t } = useAppTranslation();
 
 
@@ -40,7 +47,7 @@ export default function SimulatorForm() {
         
         const yearsToRetire = retirementAge - currentAge;
         if(yearsToRetire <= 0) {
-            setResult([]);
+            setResult({ history: [], totalValue: 0, monthlyIncome: 0, retirementAge });
             return;
         }
 
@@ -50,11 +57,20 @@ export default function SimulatorForm() {
         for (let i = 1; i <= yearsToRetire; i++) {
             currentValue += monthlyContribution * 12;
             currentValue *= (1 + apy);
-            if(i % 5 === 0 || i === 1 || i === yearsToRetire) { // Add data points every 5 years for readability
+            if(i % 5 === 0 || i === 1 || i === yearsToRetire) {
                 data.push({ year: currentAge + i, value: Math.round(currentValue) });
             }
         }
-        setResult(data);
+        
+        // Assuming a safe withdrawal rate of 4% per year for retirement income
+        const monthlyIncome = (currentValue * 0.04) / 12;
+
+        setResult({
+            history: data,
+            totalValue: Math.round(currentValue),
+            monthlyIncome: Math.round(monthlyIncome),
+            retirementAge
+        });
     };
 
 
@@ -112,11 +128,11 @@ export default function SimulatorForm() {
                 </CardHeader>
                 <CardContent>
                     {result ? (
-                       result.length > 0 ? (
+                       result.history.length > 0 ? (
                         <div className='space-y-6'>
                             <div className="h-[250px] w-full">
                                 <ChartContainer config={chartConfig}>
-                                    <RechartsBarChart accessibilityLayer data={result}>
+                                    <RechartsBarChart accessibilityLayer data={result.history}>
                                         <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false}/>
                                         <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
                                         <Tooltip content={<ChartTooltipContent formatter={(value) => `$${Number(value).toLocaleString()}`} />} cursor={{fill: 'hsl(var(--accent) / 0.2)'}}/>
@@ -124,13 +140,22 @@ export default function SimulatorForm() {
                                     </RechartsBarChart>
                                 </ChartContainer>
                             </div>
-                             <div className="flex items-center justify-center p-6 bg-secondary/50 border-2 border-foreground brutalist-shadow text-center">
-                                <div className='space-y-2'>
-                                    <p className='text-muted-foreground'>{t('simulator.results.total.label', { age: result[result.length-1].year })}</p>
-                                    <p className='text-4xl font-bold text-primary'>${result[result.length - 1].value.toLocaleString()}</p>
-                                    <p className='text-muted-foreground'>{t('simulator.results.total.description')}</p>
+                             <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="flex flex-col items-center justify-center p-6 bg-secondary/50 border-2 border-foreground brutalist-shadow text-center">
+                                    <div className='space-y-2'>
+                                        <p className='text-muted-foreground'>{t('simulator.results.total.label', { age: result.retirementAge })}</p>
+                                        <p className='text-4xl font-bold text-primary'>${result.totalValue.toLocaleString()}</p>
+                                        <p className='text-muted-foreground'>{t('simulator.results.total.description')}</p>
+                                    </div>
                                 </div>
-                            </div>
+                                 <div className="flex flex-col items-center justify-center p-6 bg-accent/20 border-2 border-accent brutalist-shadow text-center">
+                                    <div className='space-y-2'>
+                                        <p className='text-muted-foreground'>{t('simulator.results.income.label')}</p>
+                                        <p className='text-4xl font-bold text-accent'>${result.monthlyIncome.toLocaleString()}</p>
+                                        <p className='text-muted-foreground'>{t('simulator.results.income.description')}</p>
+                                    </div>
+                                </div>
+                             </div>
                         </div>
                        ) : (
                          <div className="flex min-h-[300px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">

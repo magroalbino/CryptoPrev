@@ -1,3 +1,4 @@
+
 {
   "header": {
     "dashboard": "Dashboard",
@@ -26,7 +27,7 @@
         "description": "Total since inception"
       },
       "lockup": {
-        "title": "Lock-up Period",
+        "title": "Investment Plan",
         "value_one": "{{count}} Month",
         "value_other": "{{count}} Months",
         "description": "Configurable period"
@@ -34,6 +35,42 @@
       "protocol": {
         "title": "Active Protocol",
         "description": "Current APY: {{apy}}%"
+      }
+    },
+    "rewards": {
+      "title": "Monthly Yield",
+      "description": "Your earnings available for this month.",
+      "available": "Available to Claim",
+      "claimButton": "Claim Monthly Yield",
+      "claimToast": {
+        "title": "Yield Claimed!",
+        "description": "You have successfully claimed ${{amount}}. It has been added to your balance."
+      }
+    },
+    "achievements": {
+      "title": "Achievements",
+      "description": "Milestones you've reached on your journey.",
+      "items": {
+        "earlyadopter": {
+          "name": "Early Adopter",
+          "description": "Joined CryptoPrev in the first month!"
+        },
+        "firstdeposit": {
+          "name": "First Deposit",
+          "description": "You made your first deposit. The journey begins!"
+        },
+        "diamondhands": {
+          "name": "Diamond Hands",
+          "description": "Stayed invested for 3 consecutive months."
+        },
+        "consistentcontributor": {
+          "name": "Consistent Contributor",
+          "description": "Made deposits for 2 consecutive months."
+        },
+        "referralmaster": {
+          "name": "Referral Master",
+          "description": "Successfully referred a new user."
+        }
       }
     },
     "charts": {
@@ -109,14 +146,27 @@
     }
   },
   "lockup": {
-    "title": "Configure Lock-up Period",
-    "description": "Choose how long you want to lock your funds for potentially higher yields.",
-    "months_one": "{{count}} Month",
-    "months_other": "{{count}} Months",
-    "updateButton": "Update Period",
+    "title": "Configure Your Plan",
+    "description": "Choose the plan that best fits your goals. Longer plans offer higher yields.",
+    "plans": {
+      "short": {
+        "title": "Short Term",
+        "description": "Flexibility for near-term goals."
+      },
+      "medium": {
+        "title": "Medium Term",
+        "description": "Balanced growth and access."
+      },
+      "long": {
+        "title": "Long Term",
+        "description": "Maximize your retirement potential."
+      },
+      "apy": "Est. APY"
+    },
+    "updateButton": "Update Plan",
     "toast": {
       "success": {
-        "title": "Lock-up Period Updated",
+        "title": "Plan Updated",
         "description": "Your new lock-up period is {{count}} months."
       }
     }
@@ -201,6 +251,10 @@
       "total": {
         "label": "At Retirement (Age {{age}})",
         "description": "Projected Total Value"
+      },
+      "income": {
+        "label": "Est. Monthly Income",
+        "description": "During retirement"
       }
     },
     "placeholder": {

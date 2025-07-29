@@ -1,3 +1,4 @@
+
 {
   "header": {
     "dashboard": "Painel",
@@ -26,7 +27,7 @@
         "description": "Total desde o início"
       },
       "lockup": {
-        "title": "Período de Carência",
+        "title": "Plano de Investimento",
         "value_one": "{{count}} Mês",
         "value_other": "{{count}} Meses",
         "description": "Período configurável"
@@ -34,6 +35,42 @@
       "protocol": {
         "title": "Protocolo Ativo",
         "description": "APY Atual: {{apy}}%"
+      }
+    },
+    "rewards": {
+      "title": "Rendimento Mensal",
+      "description": "Seus ganhos disponíveis para este mês.",
+      "available": "Disponível para Saque",
+      "claimButton": "Sacar Rendimento Mensal",
+      "claimToast": {
+        "title": "Rendimento Sacado!",
+        "description": "Você sacou ${{amount}} com sucesso. O valor foi adicionado ao seu saldo."
+      }
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "description": "Marcos que você alcançou em sua jornada.",
+      "items": {
+        "earlyadopter": {
+          "name": "Pioneiro",
+          "description": "Entrou na CryptoPrev no primeiro mês!"
+        },
+        "firstdeposit": {
+          "name": "Primeiro Depósito",
+          "description": "Você fez seu primeiro depósito. A jornada começa!"
+        },
+        "diamondhands": {
+          "name": "Mãos de Diamante",
+          "description": "Permaneceu investido por 3 meses consecutivos."
+        },
+        "consistentcontributor": {
+          "name": "Contribuinte Consistente",
+          "description": "Fez depósitos por 2 meses consecutivos."
+        },
+        "referralmaster": {
+          "name": "Mestre da Indicação",
+          "description": "Indicou um novo usuário com sucesso."
+        }
       }
     },
     "charts": {
@@ -109,14 +146,27 @@
     }
   },
   "lockup": {
-    "title": "Configurar Período de Carência",
-    "description": "Escolha por quanto tempo você deseja bloquear seus fundos para rendimentos potencialmente maiores.",
-    "months_one": "{{count}} Mês",
-    "months_other": "{{count}} Meses",
-    "updateButton": "Atualizar Período",
+    "title": "Configure Seu Plano",
+    "description": "Escolha o plano que melhor se adapta aos seus objetivos. Planos mais longos oferecem rendimentos maiores.",
+    "plans": {
+      "short": {
+        "title": "Curto Prazo",
+        "description": "Flexibilidade para metas de curto prazo."
+      },
+      "medium": {
+        "title": "Médio Prazo",
+        "description": "Crescimento e acesso equilibrados."
+      },
+      "long": {
+        "title": "Longo Prazo",
+        "description": "Maximize seu potencial de aposentadoria."
+      },
+      "apy": "APY Est."
+    },
+    "updateButton": "Atualizar Plano",
     "toast": {
       "success": {
-        "title": "Período de Carência Atualizado",
+        "title": "Plano Atualizado",
         "description": "Seu novo período de carência é de {{count}} meses."
       }
     }
@@ -173,7 +223,7 @@
     }
   },
   "simulator": {
-    "title": "Simulador de Aposentadoria",
+    "title": "Simulador de Previdência",
     "description": "Projete seu futuro financeiro. Veja como seus investimentos podem crescer ao longo do tempo.",
     "form": {
       "title": "Parâmetros da Simulação",
@@ -201,6 +251,10 @@
       "total": {
         "label": "Na Aposentadoria (Idade {{age}})",
         "description": "Valor Total Projetado"
+      },
+      "income": {
+        "label": "Renda Mensal Est.",
+        "description": "Durante a aposentadoria"
       }
     },
     "placeholder": {

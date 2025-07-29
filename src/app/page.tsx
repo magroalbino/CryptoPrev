@@ -6,6 +6,7 @@ import {
   CircleDollarSign,
   Landmark,
   ArrowDownLeft,
+  Trophy,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -33,12 +34,21 @@ import LockupDialog from '@/components/dashboard/lockup-dialog';
 import { useAuth } from '@/lib/firebase-auth';
 import { useEffect, useState } from 'react';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 // Mock data, in a real app this would come from a backend/firestore
 const mockData = {
   userData: {
     currentBalance: 5250.75,
     accumulatedRewards: 250.75,
+    monthlyYield: 45.50,
     activeProtocol: 'Compound',
     activeProtocolApy: 5.2,
     lockupPeriod: 12,
@@ -52,12 +62,20 @@ const mockData = {
     { id: '4', date: 'March 31, 2024', amount: 39.2, status: 'Paid', protocol: 'Compound', type: 'Yield' },
     { id: '5', date: 'February 29, 2024', amount: 41.8, status: 'Paid', protocol: 'Compound', type: 'Yield' },
   ],
+  achievements: [
+    { id: '1', name: 'Early Adopter', description: 'Joined CryptoPrev in the first month!', achieved: true },
+    { id: '2', name: 'First Deposit', description: 'You made your first deposit. The journey begins!', achieved: true },
+    { id: '3', name: 'Diamond Hands', description: 'Stayed invested for 3 consecutive months.', achieved: true },
+    { id: '4', name: 'Consistent Contributor', description: 'Made deposits for 2 consecutive months.', achieved: false },
+    { id: '5', name: 'Referral Master', description: 'Successfully referred a new user.', achieved: false },
+  ]
 };
 
 export default function Dashboard() {
   const { web3UserAddress, loading } = useAuth();
   const [dashboardData, setDashboardData] = useState(mockData);
   const { t } = useAppTranslation();
+  const { toast } = useToast();
 
   // In a real app, you would fetch user-specific data here based on web3UserAddress
   useEffect(() => {
@@ -67,7 +85,14 @@ export default function Dashboard() {
     }
   }, [web3UserAddress]);
 
-  const { userData, transactions } = dashboardData;
+  const handleClaimYield = () => {
+    toast({
+      title: t('dashboard.rewards.claimToast.title'),
+      description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield }),
+    });
+  }
+
+  const { userData, transactions, achievements } = dashboardData;
   const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
   
   const distributionHistory = transactions.filter(t => t.type === 'Yield');
@@ -128,29 +153,71 @@ export default function Dashboard() {
           icon={<Activity className="text-accent" />}
         />
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
-            <CardDescription>
-              {t('dashboard.charts.yield.description')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <YieldChart />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
-            <CardDescription>
-              {t('dashboard.charts.growth.description')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ProjectionChart initialInvestment={initialInvestment} />
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="col-span-1 space-y-6">
+           <Card>
+            <CardHeader>
+              <CardTitle>{t('dashboard.rewards.title')}</CardTitle>
+              <CardDescription>{t('dashboard.rewards.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-4xl font-bold text-accent">${userData.monthlyYield.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground">{t('dashboard.rewards.available')}</p>
+            </CardContent>
+            <CardContent>
+              <Button onClick={handleClaimYield} className="w-full">{t('dashboard.rewards.claimButton')}</Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('dashboard.achievements.title')}</CardTitle>
+              <CardDescription>{t('dashboard.achievements.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TooltipProvider>
+                <div className="flex flex-wrap gap-4">
+                  {achievements.map((ach) => (
+                    <Tooltip key={ach.id}>
+                      <TooltipTrigger asChild>
+                        <div className={cn('relative rounded-md border-2 p-3', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
+                           <Trophy className={cn('h-8 w-8', ach.achieved ? 'text-accent-foreground' : 'text-muted-foreground')} />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.replace(/\s+/g, '').toLowerCase()}.name`)}</p>
+                        <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.replace(/\s+/g, '').toLowerCase()}.description`)}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              </TooltipProvider>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="md:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
+                <CardDescription>
+                  {t('dashboard.charts.yield.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pl-2">
+                <YieldChart />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
+                <CardDescription>
+                  {t('dashboard.charts.growth.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ProjectionChart initialInvestment={initialInvestment} />
+              </CardContent>
+            </Card>
+        </div>
       </div>
       <Card>
         <CardHeader>
