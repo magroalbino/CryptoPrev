@@ -57,7 +57,7 @@ export default function YieldChart() {
           tickMargin={8}
           tickFormatter={(value) => `${value}%`}
         />
-        <Tooltip cursor={false} content={<ChartTooltipContent />} />
+        <Tooltip cursor={false} content={<ChartTooltipContent formatter={(value, name) => [`${value}%`, name]} />} />
         <Line
           dataKey="apy"
           type="monotone"

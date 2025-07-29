@@ -116,7 +116,7 @@ export default function Dashboard() {
     if (!dashboardData) return;
     toast({
       title: t('dashboard.rewards.claimToast.title'),
-      description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield }),
+      description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield.toFixed(2) }),
     });
   }
   

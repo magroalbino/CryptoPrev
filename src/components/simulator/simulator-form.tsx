@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { BarChart, PiggyBank, Target, Wallet } from 'lucide-react';
+import { BarChart, PiggyBank, Target } from 'lucide-react';
 import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { useAppTranslation } from '@/hooks/use-app-translation';
@@ -133,9 +133,15 @@ export default function SimulatorForm() {
                             <div className="h-[250px] w-full">
                                 <ChartContainer config={chartConfig}>
                                     <RechartsBarChart accessibilityLayer data={result.history}>
-                                        <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false}/>
+                                        <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('simulator.results.ageAbbr', { age: value })}/>
                                         <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
-                                        <Tooltip content={<ChartTooltipContent formatter={(value) => `$${Number(value).toLocaleString()}`} />} cursor={{fill: 'hsl(var(--accent) / 0.2)'}}/>
+                                        <Tooltip content={<ChartTooltipContent formatter={(value, name, props) => {
+                                            const age = props.payload.year;
+                                            return [
+                                                `$${Number(value).toLocaleString()}`,
+                                                t('simulator.results.tooltipLabel', { age })
+                                            ];
+                                        }} />} cursor={{fill: 'hsl(var(--accent) / 0.2)'}}/>
                                         <Bar dataKey="value" fill="var(--color-value)" radius={[4, 4, 0, 0]} />
                                     </RechartsBarChart>
                                 </ChartContainer>

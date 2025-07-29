@@ -255,7 +255,9 @@
       "income": {
         "label": "Renda Mensal Est.",
         "description": "Durante a aposentadoria"
-      }
+      },
+      "ageAbbr": "Idade {{age}}",
+      "tooltipLabel": "Valor aos {{age}} anos"
     },
     "placeholder": {
       "default": {

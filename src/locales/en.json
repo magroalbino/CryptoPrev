@@ -255,7 +255,9 @@
       "income": {
         "label": "Est. Monthly Income",
         "description": "During retirement"
-      }
+      },
+      "ageAbbr": "Age {{age}}",
+      "tooltipLabel": "Value at Age {{age}}"
     },
     "placeholder": {
       "default": {
