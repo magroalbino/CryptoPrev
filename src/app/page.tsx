@@ -1,4 +1,5 @@
 
+
 'use client';
 import {
   Activity,
@@ -46,12 +47,11 @@ import {
 import { cn } from '@/lib/utils';
 
 // Function to generate deterministic, yet unique, data based on wallet address
-const generateDashboardData = (address: string) => {
+const generateDashboardData = (address: string, currentBalance: number) => {
     // Use the address to create a seed for pseudo-randomness
     const seed = parseInt(address.substring(2, 10), 16);
     const random = (multiplier: number) => (seed * multiplier) % 1;
 
-    const currentBalance = 5000 + random(1) * 10000;
     const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
     const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
     const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
@@ -76,7 +76,7 @@ const generateDashboardData = (address: string) => {
 
     const achievements = [
         { id: '1', name: 'Early Adopter', achieved: random(10) > 0.1 },
-        { id: '2', name: 'First Deposit', achieved: true },
+        { id: '2', name: 'First Deposit', achieved: currentBalance > 0 },
         { id: '3', name: 'Diamond Hands', achieved: random(11) > 0.3 },
         { id: '4', name: 'Consistent Contributor', achieved: random(12) > 0.5 },
         { id: '5', name: 'Referral Master', achieved: random(13) > 0.8 },
@@ -98,19 +98,19 @@ const generateDashboardData = (address: string) => {
 
 
 export default function Dashboard() {
-  const { web3UserAddress, loading } = useAuth();
+  const { web3UserAddress, usdcBalance, loading } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (web3UserAddress) {
-      const data = generateDashboardData(web3UserAddress);
+    if (web3UserAddress && usdcBalance !== null) {
+      const data = generateDashboardData(web3UserAddress, usdcBalance);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress]);
+  }, [web3UserAddress, usdcBalance]);
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
