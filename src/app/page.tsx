@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Activity,
@@ -42,6 +43,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 // Mock data, in a real app this would come from a backend/firestore
 const mockData = {
