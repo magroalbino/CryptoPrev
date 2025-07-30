@@ -3,6 +3,7 @@
   "header": {
     "dashboard": "Dashboard",
     "oracle": "DeFi Oracle",
+    "planner": "AI Planner",
     "simulator": "Simulator",
     "learn": "DeFi Learn",
     "connectWallet": "Connect Wallet",
@@ -268,6 +269,57 @@
         "title": "Invalid Age Range",
         "description": "Please ensure your retirement age is greater than your current age."
       }
+    }
+  },
+  "planner": {
+    "title": "AI Financial Planner",
+    "description": "Get a personalized retirement plan powered by AI.",
+    "form": {
+      "title": "Your Financial Goals",
+      "description": "Tell us about your goals, and our AI will create a custom plan for you.",
+      "currentAge": {
+        "label": "Current Age"
+      },
+      "retirementAge": {
+        "label": "Desired Retirement Age"
+      },
+      "initialInvestment": {
+        "label": "Initial Investment ($)"
+      },
+      "monthlyContribution": {
+        "label": "Monthly Contribution ($)"
+      },
+      "desiredMonthlyIncome": {
+        "label": "Desired Monthly Income ($)"
+      },
+      "analyzingButton": "Generating Plan...",
+      "getPlanButton": "Get My Plan",
+      "error": {
+        "title": "An error occurred"
+      }
+    },
+    "results": {
+      "title": "Your Personalized AI Plan",
+      "description": "Here is the step-by-step plan our AI has generated for your goals.",
+      "feasible": {
+        "title": "Goal is On Track!"
+      },
+      "infeasible": {
+        "title": "Action Recommended"
+      },
+      "advice": {
+        "title": "Actionable Advice"
+      },
+      "projectedValue": {
+        "label": "Projected Value at Retirement"
+      },
+      "projectedIncome": {
+        "label": "Projected Monthly Income"
+      }
+    },
+    "placeholder": {
+      "title": "Your AI-powered plan will appear here.",
+      "description": "Fill out your financial goals to generate your personalized retirement plan."
     }
   }
 }

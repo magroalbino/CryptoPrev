@@ -3,6 +3,7 @@
   "header": {
     "dashboard": "Painel",
     "oracle": "Oráculo DeFi",
+    "planner": "Planejador IA",
     "simulator": "Simulador",
     "learn": "Aprenda DeFi",
     "connectWallet": "Conectar Carteira",
@@ -268,6 +269,57 @@
         "title": "Intervalo de Idade Inválido",
         "description": "Por favor, certifique-se de que sua idade de aposentadoria é maior que sua idade atual."
       }
+    }
+  },
+    "planner": {
+    "title": "Planejador Financeiro com IA",
+    "description": "Receba um plano de aposentadoria personalizado com o poder da IA.",
+    "form": {
+      "title": "Seus Objetivos Financeiros",
+      "description": "Conte-nos sobre seus objetivos, e nossa IA criará um plano personalizado para você.",
+      "currentAge": {
+        "label": "Idade Atual"
+      },
+      "retirementAge": {
+        "label": "Idade de Aposentadoria Desejada"
+      },
+      "initialInvestment": {
+        "label": "Investimento Inicial ($)"
+      },
+      "monthlyContribution": {
+        "label": "Contribuição Mensal ($)"
+      },
+      "desiredMonthlyIncome": {
+        "label": "Renda Mensal Desejada ($)"
+      },
+      "analyzingButton": "Gerando Plano...",
+      "getPlanButton": "Obter Meu Plano",
+      "error": {
+        "title": "Ocorreu um erro"
+      }
+    },
+    "results": {
+      "title": "Seu Plano Personalizado com IA",
+      "description": "Aqui está o plano passo a passo que nossa IA gerou para seus objetivos.",
+      "feasible": {
+        "title": "Meta no Caminho Certo!"
+      },
+      "infeasible": {
+        "title": "Ação Recomendada"
+      },
+      "advice": {
+        "title": "Conselho Prático"
+      },
+      "projectedValue": {
+        "label": "Valor Projetado na Aposentadoria"
+      },
+      "projectedIncome": {
+        "label": "Renda Mensal Projetada"
+      }
+    },
+    "placeholder": {
+      "title": "Seu plano com IA aparecerá aqui.",
+      "description": "Preencha seus objetivos financeiros para gerar seu plano de aposentadoria personalizado."
     }
   }
 }

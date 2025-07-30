@@ -45,6 +45,7 @@ export default function AppHeader() {
   const navItems = [
       { href: '/', label: t('header.dashboard') },
       { href: '/oracle', label: t('header.oracle') },
+      { href: '/planner', label: t('header.planner') },
       { href: '/simulator', label: t('header.simulator') },
       { href: '/learn', label: t('header.learn') },
   ]
