@@ -59,9 +59,9 @@ You will receive the user's current situation and their goals. Assume a safe ave
 User Data:
 - Current Age: {{{currentAge}}}
 - Desired Retirement Age: {{{retirementAge}}}
-- Initial Investment: ${{{initialInvestment}}}
-- Monthly Contribution: ${{{monthlyContribution}}}
-- Desired Monthly Retirement Income: ${{{desiredMonthlyIncome}}}
+- Initial Investment: \${{{initialInvestment}}}
+- Monthly Contribution: \${{{monthlyContribution}}}
+- Desired Monthly Retirement Income: \${{{desiredMonthlyIncome}}}
 - Risk Tolerance: {{{riskTolerance}}}
 
 Tasks:
