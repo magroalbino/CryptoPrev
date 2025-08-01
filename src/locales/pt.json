@@ -272,8 +272,8 @@
         "title": "Crescimento Projetado",
         "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
       },
-      "ageAbbr": "Idade {age}",
-      "tooltipLabel": "Valor aos {age} anos"
+      "ageAbbr": "Idade {{age}}",
+      "tooltipLabel": "Valor aos {{age}} anos"
     },
     "placeholder": {
       "title": "Seu plano com IA aparecerá aqui.",
