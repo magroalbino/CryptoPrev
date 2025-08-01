@@ -4,7 +4,6 @@
     "dashboard": "Painel",
     "oracle": "Oráculo DeFi",
     "planner": "Planejador IA",
-    "simulator": "Simulador",
     "trade": "Trocar",
     "learn": "Aprenda DeFi",
     "connectWallet": "Conectar Carteira",
@@ -224,54 +223,6 @@
       "description": "Envie seus critérios para ver a mágica acontecer."
     }
   },
-  "simulator": {
-    "title": "Simulador de Previdência",
-    "description": "Projete seu futuro financeiro. Veja como seus investimentos podem crescer ao longo do tempo.",
-    "form": {
-      "title": "Parâmetros da Simulação",
-      "description": "Insira seus dados para projetar o crescimento do seu investimento.",
-      "currentAge": {
-        "label": "Idade Atual"
-      },
-      "retirementAge": {
-        "label": "Idade de Aposentadoria"
-      },
-      "initialInvestment": {
-        "label": "Investimento Inicial ($)"
-      },
-      "monthlyContribution": {
-        "label": "Contribuição Mensal ($)"
-      },
-      "apy": {
-        "label": "APY Esperado (%)"
-      },
-      "submitButton": "Executar Simulação"
-    },
-    "results": {
-      "title": "Crescimento Projetado",
-      "description": "Veja como seu investimento pode crescer ao longo do tempo.",
-      "total": {
-        "label": "Na Aposentadoria (Idade {{age}})",
-        "description": "Valor Total Projetado"
-      },
-      "income": {
-        "label": "Renda Mensal Est.",
-        "description": "Durante a aposentadoria"
-      },
-      "ageAbbr": "Idade {{age}}",
-      "tooltipLabel": "Valor aos {{age}} anos"
-    },
-    "placeholder": {
-      "default": {
-        "title": "Sua projeção aparecerá aqui.",
-        "description": "Preencha seus dados e execute a simulação para ver seu futuro financeiro."
-      },
-      "invalid": {
-        "title": "Intervalo de Idade Inválido",
-        "description": "Por favor, certifique-se de que sua idade de aposentadoria é maior que sua idade atual."
-      }
-    }
-  },
     "planner": {
     "title": "Planejador Financeiro com IA",
     "description": "Receba um plano de aposentadoria personalizado com o poder da IA.",
@@ -320,7 +271,9 @@
       "growthChart": {
         "title": "Crescimento Projetado",
         "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
-      }
+      },
+      "ageAbbr": "Idade {{age}}",
+      "tooltipLabel": "Valor aos {{age}} anos"
     },
     "placeholder": {
       "title": "Seu plano com IA aparecerá aqui.",

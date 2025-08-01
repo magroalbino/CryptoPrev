@@ -4,7 +4,6 @@
     "dashboard": "Dashboard",
     "oracle": "DeFi Oracle",
     "planner": "AI Planner",
-    "simulator": "Simulator",
     "trade": "Trade",
     "learn": "DeFi Learn",
     "connectWallet": "Connect Wallet",
@@ -224,54 +223,6 @@
       "description": "Submit your criteria to see the magic happen."
     }
   },
-  "simulator": {
-    "title": "Retirement Simulator",
-    "description": "Project your financial future. See how your investments can grow over time.",
-    "form": {
-      "title": "Simulation Parameters",
-      "description": "Enter your details to project your investment growth.",
-      "currentAge": {
-        "label": "Current Age"
-      },
-      "retirementAge": {
-        "label": "Retirement Age"
-      },
-      "initialInvestment": {
-        "label": "Initial Investment ($)"
-      },
-      "monthlyContribution": {
-        "label": "Monthly Contribution ($)"
-      },
-      "apy": {
-        "label": "Expected APY (%)"
-      },
-      "submitButton": "Run Simulation"
-    },
-    "results": {
-      "title": "Projected Growth",
-      "description": "Here's how your investment could grow over time.",
-      "total": {
-        "label": "At Retirement (Age {{age}})",
-        "description": "Projected Total Value"
-      },
-      "income": {
-        "label": "Est. Monthly Income",
-        "description": "During retirement"
-      },
-      "ageAbbr": "Age {{age}}",
-      "tooltipLabel": "Value at Age {{age}}"
-    },
-    "placeholder": {
-      "default": {
-        "title": "Your projection will appear here.",
-        "description": "Fill in your details and run the simulation to see your financial future."
-      },
-      "invalid": {
-        "title": "Invalid Age Range",
-        "description": "Please ensure your retirement age is greater than your current age."
-      }
-    }
-  },
   "planner": {
     "title": "AI Financial Planner",
     "description": "Get a personalized retirement plan powered by AI.",
@@ -320,7 +271,9 @@
       "growthChart": {
         "title": "Projected Growth",
         "description": "This chart illustrates your potential investment growth over time."
-      }
+      },
+      "ageAbbr": "Age {{age}}",
+      "tooltipLabel": "Value at Age {{age}}"
     },
     "placeholder": {
       "title": "Your AI-powered plan will appear here.",

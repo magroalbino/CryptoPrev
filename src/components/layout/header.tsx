@@ -46,7 +46,6 @@ export default function AppHeader() {
       { href: '/', label: t('header.dashboard') },
       { href: '/oracle', label: t('header.oracle') },
       { href: '/planner', label: t('header.planner') },
-      { href: '/simulator', label: t('header.simulator') },
       { href: '/trade', label: t('header.trade') },
       { href: '/learn', label: t('header.learn') },
   ]
@@ -80,10 +79,6 @@ export default function AppHeader() {
         </div>
       </nav>
       <div className="ml-auto flex items-center gap-4">
-        <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
-            <Wallet className="mr-2 h-4 w-4" />
-            {web3UserAddress ? formatAddress(web3UserAddress) : t('header.connectWallet')}
-        </Button>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -100,6 +95,10 @@ export default function AppHeader() {
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+        <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
+            <Wallet className="mr-2 h-4 w-4" />
+            {web3UserAddress ? formatAddress(web3UserAddress) : t('header.connectWallet')}
+        </Button>
       </div>
       <Sheet>
         <SheetTrigger asChild>
