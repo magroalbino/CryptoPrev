@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 
@@ -262,18 +262,39 @@ export default function PlannerForm() {
                     </CardHeader>
                     <CardContent>
                         <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                            <BarChart accessibilityLayer data={chartData}>
-                                <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('simulator.results.ageAbbr', { age: value })}/>
+                            <AreaChart
+                                accessibilityLayer
+                                data={chartData}
+                                margin={{
+                                  left: 12,
+                                  right: 12,
+                                }}
+                                >
+                                <defs>
+                                    <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
+                                    <stop
+                                        offset="5%"
+                                        stopColor="hsl(var(--accent))"
+                                        stopOpacity={0.8}
+                                    />
+                                    <stop
+                                        offset="95%"
+                                        stopColor="hsl(var(--accent))"
+                                        stopOpacity={0.1}
+                                    />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('planner.results.ageAbbr', { age: value })}/>
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
                                 <Tooltip
                                     cursor={{fill: 'hsl(var(--accent) / 0.2)'}}
                                     content={<ChartTooltipContent formatter={(value, name, props) => {
                                         const age = props.payload.year;
-                                        return [`$${Number(value).toLocaleString()}`, t('simulator.results.tooltipLabel', { age })];
+                                        return [`$${Number(value).toLocaleString()}`, t('planner.results.tooltipLabel', { age: age })];
                                     }} />}
                                 />
-                                <Bar dataKey="value" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
-                            </BarChart>
+                                <Area dataKey="value" type="natural" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" stackId="a" />
+                            </AreaChart>
                         </ChartContainer>
                     </CardContent>
                 </Card>

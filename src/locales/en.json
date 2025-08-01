@@ -272,8 +272,8 @@
         "title": "Projected Growth",
         "description": "This chart illustrates your potential investment growth over time."
       },
-      "ageAbbr": "Age {{age}}",
-      "tooltipLabel": "Value at Age {{age}}"
+      "ageAbbr": "Age {age}",
+      "tooltipLabel": "Value at Age {age}"
     },
     "placeholder": {
       "title": "Your AI-powered plan will appear here.",
