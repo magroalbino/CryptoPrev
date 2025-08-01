@@ -5,6 +5,7 @@
     "oracle": "DeFi Oracle",
     "planner": "AI Planner",
     "simulator": "Simulator",
+    "trade": "Trade",
     "learn": "DeFi Learn",
     "connectWallet": "Connect Wallet",
     "toggleLanguage": "Toggle language",
@@ -320,6 +321,23 @@
     "placeholder": {
       "title": "Your AI-powered plan will appear here.",
       "description": "Fill out your financial goals to generate your personalized retirement plan."
+    }
+  },
+  "trade": {
+    "title": "Trade Crypto",
+    "description": "Easily swap your crypto assets for stablecoins to use on the platform.",
+    "form": {
+      "title": "Swap Tokens",
+      "description": "Select the assets you want to trade.",
+      "from": "From",
+      "to": "To",
+      "selectPlaceholder": "Select a token",
+      "rateDisclaimer": "Rate is simulated and does not include fees.",
+      "submitButton": "Execute Trade"
+    },
+    "toast": {
+      "title": "Trade Executed (Simulation)",
+      "description": "Successfully swapped {{fromAmount}} {{fromToken}} for {{toAmount}} {{toToken}}."
     }
   }
 }
