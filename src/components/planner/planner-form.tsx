@@ -13,7 +13,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
 import { useAppTranslation } from '@/hooks/use-app-translation';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
@@ -80,16 +79,30 @@ export default function PlannerForm() {
     }
   }, [state.error, toast, t]);
   
-  const generateProjectionData = (result: PlannerState['data']) => {
+  const generateProjectionData = (result: PlannerState['data'], startAge: number, endAge: number) => {
     if (!result) return [];
     
-    const years = Array.from({length: 5}).map((_, i) => {
-        const year = new Date().getFullYear() + (i * 5);
-        return { year, value: result.projectedTotalValue * (0.2 + i * 0.2) };
-    });
-    years.push({ year: new Date().getFullYear() + 25, value: result.projectedTotalValue });
-    return years;
+    const yearsToRetire = endAge - startAge;
+    const data = [];
+    
+    // Create about 5-6 points for the chart
+    const step = Math.max(1, Math.floor(yearsToRetire / 5));
+
+    for (let i = 0; i <= yearsToRetire; i += step) {
+      if (i > yearsToRetire) break;
+      const age = startAge + i;
+      const fraction = i / yearsToRetire;
+      // Simple linear interpolation for visualization. A real calculation would be exponential.
+      const value = result.projectedTotalValue * fraction; 
+      data.push({ year: age, value: Math.round(value) });
+    }
+    // Ensure the final value is accurate
+    data.push({ year: endAge, value: result.projectedTotalValue });
+
+    return data;
   }
+
+  const chartData = state.data ? generateProjectionData(state.data, form.getValues('currentAge'), form.getValues('retirementAge')) : [];
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
@@ -241,6 +254,29 @@ export default function PlannerForm() {
                         </div>
                     </div>
                 </div>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('planner.results.growthChart.title')}</CardTitle>
+                        <CardDescription>{t('planner.results.growthChart.description')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                            <BarChart accessibilityLayer data={chartData}>
+                                <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('simulator.results.ageAbbr', { age: value })}/>
+                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
+                                <Tooltip
+                                    cursor={{fill: 'hsl(var(--accent) / 0.2)'}}
+                                    content={<ChartTooltipContent formatter={(value, name, props) => {
+                                        const age = props.payload.year;
+                                        return [`$${Number(value).toLocaleString()}`, t('simulator.results.tooltipLabel', { age })];
+                                    }} />}
+                                />
+                                <Bar dataKey="value" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
 
               </div>
             ) : (

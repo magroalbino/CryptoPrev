@@ -316,6 +316,10 @@
       },
       "projectedIncome": {
         "label": "Renda Mensal Projetada"
+      },
+      "growthChart": {
+        "title": "Crescimento Projetado",
+        "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
       }
     },
     "placeholder": {

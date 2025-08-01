@@ -316,6 +316,10 @@
       },
       "projectedIncome": {
         "label": "Projected Monthly Income"
+      },
+      "growthChart": {
+        "title": "Projected Growth",
+        "description": "This chart illustrates your potential investment growth over time."
       }
     },
     "placeholder": {
