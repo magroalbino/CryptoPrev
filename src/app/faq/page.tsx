@@ -1,5 +1,5 @@
 'use client';
-import LearnAccordion from '@/components/faq/faq-accordion';
+import FAQAccordion from '@/components/faq/faq-accordion';
 import { useAppTranslation } from '@/hooks/use-app-translation';
 
 export default function FAQPage() {
@@ -12,7 +12,7 @@ export default function FAQPage() {
           {t('faq.description')}
         </p>
       </div>
-      <LearnAccordion />
+      <FAQAccordion />
     </div>
   );
 }
