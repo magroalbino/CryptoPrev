@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { getFinancialPlan } from "@/ai/flows/personal-financial-planner";
 import type { FinancialPlannerOutput } from "@/ai/flows/personal-financial-planner";
+import { headers } from "next/headers";
 
 const formSchema = z.object({
     currentAge: z.coerce.number().min(18),
@@ -22,6 +23,16 @@ export async function getPlannerSuggestion(
   prevState: PlannerState,
   formData: FormData
 ): Promise<PlannerState> {
+
+  // Get language from cookie to pass to the AI flow
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie");
+  const i18nextCookie = cookieHeader
+    ?.split(';')
+    .find(c => c.trim().startsWith('i18next='));
+  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'en';
+
+
   const validatedFields = formSchema.safeParse({
     currentAge: formData.get("currentAge"),
     retirementAge: formData.get("retirementAge"),
@@ -40,7 +51,10 @@ export async function getPlannerSuggestion(
   }
 
   try {
-    const result = await getFinancialPlan(validatedFields.data);
+    const result = await getFinancialPlan({
+        ...validatedFields.data,
+        language: language as 'en' | 'pt',
+    });
     return { data: result, error: null };
   } catch (e) {
     console.error(e);
