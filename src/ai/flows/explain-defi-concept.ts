@@ -12,14 +12,14 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ExplainDeFiConceptInputSchema = z.object({
-  concept: z.string().describe('The DeFi concept to be explained.'),
+  concept: z.string().describe('The DeFi concept or question to be explained.'),
 });
 export type ExplainDeFiConceptInput = z.infer<typeof ExplainDeFiConceptInputSchema>;
 
 const ExplainDeFiConceptOutputSchema = z.object({
   explanation: z
     .string()
-    .describe('A clear and concise explanation of the DeFi concept, suitable for a beginner.'),
+    .describe('A clear and concise explanation of the concept, suitable for a beginner.'),
 });
 export type ExplainDeFiConceptOutput = z.infer<typeof ExplainDeFiConceptOutputSchema>;
 
@@ -33,11 +33,12 @@ const prompt = ai.definePrompt({
   name: 'explainDeFiConceptPrompt',
   input: {schema: ExplainDeFiConceptInputSchema},
   output: {schema: ExplainDeFiConceptOutputSchema},
-  prompt: `You are a DeFi (Decentralized Finance) expert with a talent for explaining complex topics in a simple, easy-to-understand way.
+  prompt: `You are a helpful assistant for a decentralized finance (DeFi) application called CryptoPrev.
+CryptoPrev is an AI-powered platform that helps users plan for retirement by maximizing yield on their stablecoin investments. It offers tools like an AI Oracle to find the best DeFi protocols, and an AI Planner to create personalized retirement strategies.
 
-A user wants to understand the following concept: {{{concept}}}
+A user has a question from the FAQ section. Your task is to provide a clear, concise, and easy-to-understand explanation for the following question. Avoid jargon where possible, or explain it if you must use it. Use an analogy if it helps.
 
-Provide a clear and concise explanation that a beginner could easily grasp. Avoid jargon where possible, or explain it if you must use it. Use an analogy if it helps to clarify the concept. The response should be in plain text.`,
+User's Question: "{{{concept}}}"`,
 });
 
 const explainDeFiConceptFlow = ai.defineFlow(

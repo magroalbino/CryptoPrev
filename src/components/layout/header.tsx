@@ -47,7 +47,7 @@ export default function AppHeader() {
       { href: '/oracle', label: t('header.oracle') },
       { href: '/planner', label: t('header.planner') },
       { href: '/trade', label: t('header.trade') },
-      { href: '/learn', label: t('header.learn') },
+      { href: '/faq', label: t('header.faq') },
   ]
 
   return (

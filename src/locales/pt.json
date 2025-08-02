@@ -5,7 +5,7 @@
     "oracle": "Oráculo DeFi",
     "planner": "Planejador IA",
     "trade": "Trocar",
-    "learn": "Aprenda DeFi",
+    "faq": "FAQ",
     "connectWallet": "Conectar Carteira",
     "toggleLanguage": "Mudar idioma",
     "english": "Inglês",
@@ -172,17 +172,17 @@
       }
     }
   },
-  "learn": {
-    "title": "Aprenda DeFi",
-    "description": "Seu guia para o mundo de Finanças Descentralizadas, com o poder da IA.",
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "description": "Seu guia para o mundo de CryptoPrev e Finanças Descentralizadas, com o poder da IA.",
     "topics": {
+      "whatIsCryptoPrev": "Qual o objetivo do CryptoPrev?",
+      "howDoesItWork": "Como o CryptoPrev gera rendimentos?",
       "whatIsDeFi": "O que é DeFi?",
       "whatIsApy": "O que é APY (Rendimento Percentual Anual)?",
       "whatAreSmartContracts": "O que são Contratos Inteligentes?",
       "whatAreStablecoins": "O que são Stablecoins?",
-      "whatIsImpermanentLoss": "O que é Perda Impermanente?",
       "whatAreTheRisks": "Quais são os riscos de DeFi?",
-      "whatIsLiquidityPool": "O que é uma Pool de Liquidez?",
       "whatIsYieldFarming": "O que é Yield Farming?"
     },
     "error": "Desculpe, ocorreu um erro ao buscar a explicação. Por favor, tente novamente."
