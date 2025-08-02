@@ -9,7 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const FinancialPlannerInputSchema = z.object({
   currentAge: z.number().describe('The current age of the user.'),
