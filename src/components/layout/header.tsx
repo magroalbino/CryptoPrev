@@ -51,7 +51,7 @@ export default function AppHeader() {
   ]
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/50 px-4 backdrop-blur-sm md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/90 px-4 backdrop-blur-sm md:px-6">
       <div className='flex items-center gap-6'>
         <Link
           href="/"
@@ -111,7 +111,7 @@ export default function AppHeader() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className='brutalist-border glassmorphic'>
+        <SheetContent side="left" className='brutalist-border bg-card'>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"

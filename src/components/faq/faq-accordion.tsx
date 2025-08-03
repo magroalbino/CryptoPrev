@@ -58,7 +58,7 @@ export default function FAQAccordion() {
   return (
     <Accordion type="single" collapsible className="w-full space-y-2" onValueChange={handleValueChange}>
       {faqTopics.map((topic) => (
-        <AccordionItem value={topic} key={topic} className="brutalist-border glassmorphic">
+        <AccordionItem value={topic} key={topic} className="brutalist-border bg-card">
           <AccordionTrigger className="p-4 text-left text-lg font-bold hover:no-underline">
             {topic}
           </AccordionTrigger>
