@@ -25,6 +25,7 @@ import { Landmark, Wallet, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import { useAuth } from '@/lib/firebase-auth';
 
 
 const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -35,8 +36,10 @@ const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function DepositDialog() {
   const [open, setOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('1000');
   const { toast } = useToast();
   const { t } = useAppTranslation();
+  const { usdcBalance } = useAuth();
 
 
   const handleDeposit = () => {
@@ -48,12 +51,18 @@ export default function DepositDialog() {
     });
     setOpen(false);
   };
+  
+  const handleSetMax = () => {
+    if (usdcBalance !== null) {
+      setDepositAmount(String(usdcBalance));
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Landmark className="mr-2 h-4 w-4" /> {t('deposit.button')}
+          <Landmark className="mr-2" /> {t('deposit.button')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
@@ -72,7 +81,7 @@ export default function DepositDialog() {
           <TabsContent value="pix">
             <div className="flex flex-col items-center gap-4 py-4 text-center">
                 <p className="text-sm text-muted-foreground">{t('deposit.pix.scan')}</p>
-                <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2">
+                <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2 bg-background">
                     <Image src="https://placehold.co/200x200.png" alt="PIX QR Code" width={200} height={200} data-ai-hint="qr code"/>
                 </div>
                 <p className="text-xs text-muted-foreground">{t('deposit.pix.simulation')}</p>
@@ -112,7 +121,7 @@ export default function DepositDialog() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="usdc">USDC</SelectItem>
-                    <SelectItem value="dai">DAI</SelectItem>
+                    <SelectItem value="dai" disabled>DAI (em breve)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -120,13 +129,25 @@ export default function DepositDialog() {
                 <Label htmlFor="amount-crypto" className="text-right">
                   {t('deposit.crypto.amount')}
                 </Label>
-                <Input
-                  id="amount-crypto"
-                  type="number"
-                  defaultValue="1000"
-                  className="col-span-3"
-                />
+                <div className="col-span-3 relative">
+                   <Input
+                    id="amount-crypto"
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    className="pr-12"
+                    />
+                    <Button variant="ghost" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-7" onClick={handleSetMax}>
+                        Max
+                    </Button>
+                </div>
               </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                    <div/>
+                    <div className="col-span-3 text-xs text-muted-foreground">
+                        {t('deposit.crypto.balance')}: {usdcBalance !== null ? `${usdcBalance.toFixed(2)} USDC` : t('withdraw.notConnected')}
+                    </div>
+                </div>
             </div>
           </TabsContent>
         </Tabs>

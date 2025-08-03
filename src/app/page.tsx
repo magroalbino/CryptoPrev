@@ -6,8 +6,6 @@ import {
   Wallet,
   Hourglass,
   CircleDollarSign,
-  Landmark,
-  ArrowDownLeft,
   Trophy,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +43,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Function to generate deterministic, yet unique, data based on wallet address
 const generateDashboardData = (address: string, currentBalance: number) => {
@@ -98,7 +97,7 @@ const generateDashboardData = (address: string, currentBalance: number) => {
 
 
 export default function Dashboard() {
-  const { web3UserAddress, usdcBalance, loading } = useAuth();
+  const { web3UserAddress, usdcBalance, loading, signInWithWeb3 } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
@@ -122,8 +121,30 @@ export default function Dashboard() {
   
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p>{t('dashboard.loading')}</p>
+      <div className="flex-1 space-y-6">
+        <div className="flex items-center justify-between space-y-2">
+            <Skeleton className='h-9 w-48'/>
+            <div className="flex items-center space-x-2">
+                <Skeleton className='h-10 w-32'/>
+                <Skeleton className='h-10 w-32'/>
+            </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Skeleton className='h-32'/>
+            <Skeleton className='h-32'/>
+            <Skeleton className='h-32'/>
+            <Skeleton className='h-32'/>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+             <div className="col-span-1 space-y-6">
+                 <Skeleton className='h-64'/>
+                 <Skeleton className='h-48'/>
+             </div>
+             <div className="md:col-span-2 space-y-6">
+                 <Skeleton className='h-80'/>
+                 <Skeleton className='h-64'/>
+             </div>
+        </div>
       </div>
     );
   }
@@ -131,9 +152,13 @@ export default function Dashboard() {
   if (!web3UserAddress || dashboardData === null) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">{t('dashboard.connectWalletPrompt.title')}</h2>
-          <p className="text-muted-foreground">{t('dashboard.connectWalletPrompt.description')}</p>
+        <div className="text-center max-w-md mx-auto">
+          <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
+          <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
+           <Button onClick={signInWithWeb3} size="lg">
+            <Wallet className="mr-2" />
+            {t('header.connectWallet')}
+          </Button>
         </div>
       </div>
     );
@@ -203,11 +228,11 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <TooltipProvider>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap justify-center gap-4">
                   {achievements.map((ach: any) => (
                     <Tooltip key={ach.id}>
                       <TooltipTrigger asChild>
-                        <div className={cn('relative rounded-md border-2 p-3', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
+                        <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
                            <Trophy className={cn('h-8 w-8', ach.achieved ? 'text-accent-foreground' : 'text-muted-foreground')} />
                         </div>
                       </TooltipTrigger>
@@ -279,7 +304,7 @@ export default function Dashboard() {
                         <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
                         <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
                         <TableCell className="text-center">
-                            <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground brutalist-border">
+                            <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground">
                             {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
                             </Badge>
                         </TableCell>
@@ -305,7 +330,7 @@ export default function Dashboard() {
                         </TableCell>
                         <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
                         <TableCell className="text-center">
-                             <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground brutalist-border">
+                             <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground">
                                 {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
                             </Badge>
                         </TableCell>

@@ -7,6 +7,7 @@
     "trade": "Swap",
     "faq": "FAQ",
     "connectWallet": "Connect Wallet",
+    "signOut": "Sign Out",
     "toggleLanguage": "Toggle language",
     "english": "English",
     "portuguese": "Português"
@@ -15,8 +16,8 @@
     "title": "Dashboard",
     "loading": "Loading dashboard...",
     "connectWalletPrompt": {
-      "title": "Please Connect Your Wallet",
-      "description": "Connect your wallet to view your dashboard and manage your funds."
+      "title": "Connect Your Wallet to Get Started",
+      "description": "Connect your wallet to view your dashboard, manage your funds, and start planning for your retirement."
     },
     "cards": {
       "balance": {
@@ -120,7 +121,8 @@
     "crypto": {
       "coin": "Coin",
       "selectPlaceholder": "Select stablecoin",
-      "amount": "Amount ($)"
+      "amount": "Amount ($)",
+      "balance": "Your Balance"
     },
     "confirmButton": "Confirm Deposit",
     "toast": {

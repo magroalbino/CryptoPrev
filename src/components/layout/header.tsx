@@ -20,6 +20,12 @@ import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
 import { useAuth } from '@/lib/firebase-auth';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function AppHeader() {
   const pathname = usePathname();
@@ -51,7 +57,7 @@ export default function AppHeader() {
   ]
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b-2 border-foreground/50 bg-background/90 px-4 backdrop-blur-sm md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/90 px-4 backdrop-blur-sm md:px-6">
       <div className='flex items-center gap-6'>
         <Link
           href="/"
@@ -62,7 +68,7 @@ export default function AppHeader() {
         </Link>
       </div>
       <nav className="hidden w-full items-center justify-center gap-6 md:flex">
-        <div className="flex items-center gap-1 rounded-sm border-2 border-foreground bg-secondary/50 p-1">
+        <div className="flex items-center gap-1 rounded-sm border border-border bg-secondary/50 p-1">
         {navItems.map((item) => (
             <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0'>
                 <Link
@@ -95,10 +101,21 @@ export default function AppHeader() {
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-        <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
-            <Wallet className="mr-2 h-4 w-4" />
-            {web3UserAddress ? formatAddress(web3UserAddress) : t('header.connectWallet')}
-        </Button>
+        <TooltipProvider>
+           <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button onClick={handleConnectWallet} variant={web3UserAddress ? 'outline' : 'default'}>
+                        <Wallet className="mr-2" />
+                        {web3UserAddress ? formatAddress(web3UserAddress) : t('header.connectWallet')}
+                    </Button>
+                </TooltipTrigger>
+                {web3UserAddress && (
+                     <TooltipContent>
+                        <p>{t('header.signOut')}</p>
+                    </TooltipContent>
+                )}
+            </Tooltip>
+        </TooltipProvider>
       </div>
       <Sheet>
         <SheetTrigger asChild>
@@ -111,7 +128,7 @@ export default function AppHeader() {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className='brutalist-border bg-card'>
+        <SheetContent side="left" className='border-r border-border'>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"

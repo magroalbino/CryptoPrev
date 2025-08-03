@@ -7,6 +7,7 @@
     "trade": "Trocar",
     "faq": "FAQ",
     "connectWallet": "Conectar Carteira",
+    "signOut": "Desconectar",
     "toggleLanguage": "Mudar idioma",
     "english": "Inglês",
     "portuguese": "Português"
@@ -15,8 +16,8 @@
     "title": "Painel",
     "loading": "Carregando o painel...",
     "connectWalletPrompt": {
-      "title": "Por Favor, Conecte Sua Carteira",
-      "description": "Conecte sua carteira para ver seu painel e gerenciar seus fundos."
+      "title": "Conecte Sua Carteira para Começar",
+      "description": "Conecte sua carteira para ver seu painel, gerenciar seus fundos e começar a planejar sua aposentadoria."
     },
     "cards": {
       "balance": {
@@ -120,7 +121,8 @@
     "crypto": {
       "coin": "Moeda",
       "selectPlaceholder": "Selecione a stablecoin",
-      "amount": "Valor ($)"
+      "amount": "Valor ($)",
+      "balance": "Seu Saldo"
     },
     "confirmButton": "Confirmar Depósito",
     "toast": {
