@@ -4,15 +4,11 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
 import { app, isFirebaseEnabled } from './firebase-client';
-import { ethers } from 'ethers';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 
-// Minimal ERC20 ABI to get the balance
-const erc20Abi = [
-    "function balanceOf(address owner) view returns (uint256)",
-    "function decimals() view returns (uint8)"
-];
-// USDC Contract Address on Ethereum Mainnet
-const USDC_CONTRACT_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+// USDC Contract Address on Solana Mainnet
+const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const SOLANA_RPC_URL = clusterApiUrl('mainnet-beta');
 
 
 interface AuthContextType {
@@ -52,41 +48,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
   
-  const fetchUsdcBalance = async (provider: ethers.BrowserProvider, address: string) => {
+  const fetchUsdcBalance = async (address: string) => {
     try {
-        const usdcContract = new ethers.Contract(USDC_CONTRACT_ADDRESS, erc20Abi, provider);
-        const balance = await usdcContract.balanceOf(address);
-        const decimals = await usdcContract.decimals();
-        const formattedBalance = parseFloat(ethers.formatUnits(balance, decimals));
-        setUsdcBalance(formattedBalance);
+        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+        const ownerPublicKey = new PublicKey(address);
+
+        // Find the associated token account for the user's wallet and the USDC mint
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(ownerPublicKey, {
+            mint: USDC_MINT_ADDRESS
+        });
+
+        if (tokenAccounts.value.length > 0) {
+            const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
+            const balance = tokenAccountInfo.tokenAmount.uiAmount;
+            setUsdcBalance(balance);
+        } else {
+            console.log("User does not have a USDC token account.");
+            setUsdcBalance(0);
+        }
+
     } catch (error) {
-        console.error("Failed to fetch USDC balance:", error);
+        console.error("Failed to fetch Solana USDC balance:", error);
         setUsdcBalance(0); // Default to 0 if fetching fails
     }
   }
 
   const signInWithWeb3 = async () => {
-    if (typeof window.ethereum === 'undefined') {
-        alert('MetaMask is not installed. Please install it to use this feature.');
-        console.error("MetaMask not found");
+    if (typeof window.solana === 'undefined' || !window.solana.isPhantom) {
+        alert('Phantom wallet is not installed. Please install it to use this feature.');
+        console.error("Phantom wallet not found");
         return;
     }
 
     try {
         setLoading(true);
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send('eth_requestAccounts', []);
+        const resp = await window.solana.connect();
+        const address = resp.publicKey.toString();
         
-        if (accounts && accounts.length > 0) {
-            const address = accounts[0];
+        if (address) {
             setWeb3UserAddress(address);
-            await fetchUsdcBalance(provider, address);
+            await fetchUsdcBalance(address);
             // Here you would typically call a backend endpoint to get a custom Firebase token
             // For now, we are just simulating the login by setting the address.
         }
     } catch (error) {
-        console.error("Failed to connect to MetaMask:", error);
-        alert("Failed to connect to MetaMask. Please try again.");
+        console.error("Failed to connect to Phantom wallet:", error);
+        alert("Failed to connect to Phantom. Please try again.");
     } finally {
         setLoading(false);
     }
@@ -97,6 +104,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (isFirebaseEnabled && app) {
       const auth = getAuth(app);
       await firebaseSignOut(auth);
+    }
+    if (window.solana && window.solana.isConnected) {
+        await window.solana.disconnect();
     }
     setWeb3UserAddress(null); // Also clear the web3 address
     setUsdcBalance(null); // Clear the balance
@@ -115,5 +125,6 @@ export const useAuth = () => useContext(AuthContext);
 declare global {
   interface Window {
     ethereum?: any;
+    solana?: any;
   }
 }
