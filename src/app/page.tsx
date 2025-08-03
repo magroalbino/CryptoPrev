@@ -194,7 +194,7 @@ export default function Dashboard() {
         />
         <StatCard
           title={t('dashboard.cards.lockup.title')}
-          value={t('dashboard.cards.lockup.value', { count: userData.lockupPeriod })}
+          value={t('dashboard.cards.lockup.value_other', { count: userData.lockupPeriod })}
           description={t('dashboard.cards.lockup.description')}
           icon={<Hourglass className="text-accent" />}
           action={<LockupDialog currentPeriod={userData.lockupPeriod} />}
@@ -208,7 +208,7 @@ export default function Dashboard() {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         <div className="col-span-1 space-y-6">
-           <Card>
+           <Card className="brutalist-shadow">
             <CardHeader>
               <CardTitle>{t('dashboard.rewards.title')}</CardTitle>
               <CardDescription>{t('dashboard.rewards.description')}</CardDescription>
@@ -221,7 +221,7 @@ export default function Dashboard() {
               <Button onClick={handleClaimYield} className="w-full">{t('dashboard.rewards.claimButton')}</Button>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="brutalist-shadow">
             <CardHeader>
               <CardTitle>{t('dashboard.achievements.title')}</CardTitle>
               <CardDescription>{t('dashboard.achievements.description')}</CardDescription>
@@ -248,7 +248,7 @@ export default function Dashboard() {
           </Card>
         </div>
         <div className="md:col-span-2 space-y-6">
-            <Card>
+            <Card className="brutalist-shadow">
               <CardHeader>
                 <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
                 <CardDescription>
@@ -259,7 +259,7 @@ export default function Dashboard() {
                 <YieldChart />
               </CardContent>
             </Card>
-            <Card>
+            <Card className="brutalist-shadow">
               <CardHeader>
                 <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
                 <CardDescription>
@@ -272,7 +272,7 @@ export default function Dashboard() {
             </Card>
         </div>
       </div>
-      <Card>
+      <Card className="brutalist-shadow">
         <CardHeader>
           <CardTitle>{t('dashboard.history.title')}</CardTitle>
           <CardDescription>

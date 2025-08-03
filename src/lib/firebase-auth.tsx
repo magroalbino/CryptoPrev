@@ -8,8 +8,6 @@ import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const SOLANA_RPC_URL = clusterApiUrl('mainnet-beta');
-
 
 interface AuthContextType {
   user: User | null;
@@ -49,27 +47,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
   const fetchUsdcBalance = async (address: string) => {
+    // Simulate fetching a balance to avoid RPC issues in a prototype environment
+    // Use the wallet address to generate a deterministic, pseudo-random balance
     try {
-        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-        const ownerPublicKey = new PublicKey(address);
-
-        // Find the associated token account for the user's wallet and the USDC mint
-        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(ownerPublicKey, {
-            mint: USDC_MINT_ADDRESS
-        });
-
-        if (tokenAccounts.value.length > 0) {
-            const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
-            const balance = tokenAccountInfo.tokenAmount.uiAmount;
-            setUsdcBalance(balance);
-        } else {
-            console.log("User does not have a USDC token account.");
-            setUsdcBalance(0);
-        }
-
-    } catch (error) {
-        console.error("Failed to fetch Solana USDC balance:", error);
-        setUsdcBalance(0); // Default to 0 if fetching fails
+        const seed = parseInt(address.substring(2, 10), 16);
+        const pseudoRandomBalance = (seed % 10000) * 1.25; // Generate a balance up to 12,500
+        setUsdcBalance(pseudoRandomBalance);
+    } catch(e) {
+        console.error("Failed to generate mock balance", e);
+        setUsdcBalance(0); // Default to 0 on error
     }
   }
 
