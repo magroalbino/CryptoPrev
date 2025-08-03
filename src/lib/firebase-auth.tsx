@@ -48,8 +48,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const fetchUsdcBalance = async (address: string) => {
     // This is a prototype environment. Direct RPC calls to Solana Mainnet can be unreliable
-    // without a dedicated RPC endpoint. We will simulate the balance fetching.
+    // without a dedicated RPC endpoint. We will simulate the balance fetching for stability.
     try {
+        console.log(`Simulating balance for prototype environment for address: ${address}`);
         const seed = parseInt(address.substring(2, 10), 16);
         const pseudoRandomBalance = (seed % 10000) * 1.25; // Generate a balance up to 12,500
         console.log(`Using mock balance for ${address}: ${pseudoRandomBalance}`);
@@ -61,7 +62,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signInWithWeb3 = async () => {
-    if (typeof window.solana === 'undefined' || !window.solana.isPhantom) {
+    // Phantom wallet is expected to be available on the window object
+    const provider = window.solana;
+    if (!provider || !provider.isPhantom) {
         alert('Phantom wallet is not installed. Please install it to use this feature.');
         console.error("Phantom wallet not found");
         return;
@@ -69,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
         setLoading(true);
-        const resp = await window.solana.connect();
+        const resp = await provider.connect({ onlyIfTrusted: false });
         const address = resp.publicKey.toString();
         
         if (address) {
@@ -94,8 +97,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const auth = getAuth(app);
       await firebaseSignOut(auth);
     }
-    if (window.solana && window.solana.isConnected) {
-        await window.solana.disconnect();
+    const provider = window.solana;
+    if (provider && provider.isConnected) {
+        await provider.disconnect();
     }
     setWeb3UserAddress(null); // Also clear the web3 address
     setUsdcBalance(null); // Clear the balance
@@ -114,6 +118,11 @@ export const useAuth = () => useContext(AuthContext);
 declare global {
   interface Window {
     ethereum?: any;
-    solana?: any;
+    solana?: {
+      isPhantom: boolean;
+      connect: (options?: { onlyIfTrusted: boolean }) => Promise<{ publicKey: PublicKey }>;
+      disconnect: () => Promise<void>;
+      isConnected: boolean;
+    };
   }
 }
