@@ -4,7 +4,7 @@
     "dashboard": "Dashboard",
     "oracle": "DeFi Oracle",
     "planner": "AI Planner",
-    "trade": "Trade",
+    "trade": "Swap",
     "faq": "FAQ",
     "connectWallet": "Connect Wallet",
     "toggleLanguage": "Toggle language",
@@ -34,7 +34,7 @@
         "description": "Configurable period"
       },
       "protocol": {
-        "title": "Active Protocol",
+        "title": "Active Strategy",
         "description": "Current APY: {{apy}}%"
       }
     },
@@ -86,12 +86,12 @@
     },
     "history": {
       "title": "Transaction History",
-      "description": "A record of your deposits and yield distributions.",
+      "description": "A record of your deposits and earnings.",
       "yieldTab": "Yield History",
       "depositsTab": "Deposit History",
       "table": {
         "date": "Date",
-        "protocol": "Protocol",
+        "protocol": "Strategy",
         "amount": "Amount",
         "status": "Status"
       },
@@ -189,7 +189,7 @@
   },
   "oracle": {
     "title": "DeFi Oracle",
-    "description": "Let our AI find the best DeFi protocols to maximize your yield.",
+    "description": "Let our AI find the best strategies to maximize your earnings.",
     "form": {
       "title": "Oracle Parameters",
       "description": "Provide your criteria to get AI-powered DeFi suggestions.",
@@ -281,7 +281,7 @@
     }
   },
   "trade": {
-    "title": "Trade Crypto",
+    "title": "Swap Tokens",
     "description": "Easily swap your crypto assets for stablecoins to use on the platform.",
     "form": {
       "title": "Swap Tokens",

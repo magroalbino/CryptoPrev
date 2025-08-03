@@ -34,7 +34,7 @@
         "description": "Período configurável"
       },
       "protocol": {
-        "title": "Protocolo Ativo",
+        "title": "Estratégia Ativa",
         "description": "APY Atual: {{apy}}%"
       }
     },
@@ -86,12 +86,12 @@
     },
     "history": {
       "title": "Histórico de Transações",
-      "description": "Um registro dos seus depósitos e distribuições de rendimento.",
+      "description": "Um registro dos seus depósitos e rendimentos.",
       "yieldTab": "Histórico de Rendimentos",
       "depositsTab": "Histórico de Depósitos",
       "table": {
         "date": "Data",
-        "protocol": "Protocolo",
+        "protocol": "Estratégia",
         "amount": "Valor",
         "status": "Status"
       },
@@ -189,7 +189,7 @@
   },
   "oracle": {
     "title": "Oráculo DeFi",
-    "description": "Deixe nossa IA encontrar os melhores protocolos DeFi para maximizar seu rendimento.",
+    "description": "Deixe nossa IA encontrar as melhores estratégias para maximizar seus rendimentos.",
     "form": {
       "title": "Parâmetros do Oráculo",
       "description": "Forneça seus critérios para obter sugestões de DeFi com IA.",
@@ -281,7 +281,7 @@
     }
   },
   "trade": {
-    "title": "Trocar Cripto",
+    "title": "Trocar Tokens",
     "description": "Troque facilmente seus criptoativos por stablecoins para usar na plataforma.",
     "form": {
       "title": "Trocar Tokens",
