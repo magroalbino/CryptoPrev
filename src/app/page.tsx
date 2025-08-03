@@ -74,11 +74,10 @@ const generateDashboardData = (address: string, currentBalance: number) => {
     });
 
     const achievements = [
-        { id: '1', name: 'Early Adopter', achieved: random(10) > 0.1 },
-        { id: '2', name: 'First Deposit', achieved: currentBalance > 0 },
-        { id: '3', name: 'Diamond Hands', achieved: random(11) > 0.3 },
-        { id: '4', name: 'Consistent Contributor', achieved: random(12) > 0.5 },
-        { id: '5', name: 'Referral Master', achieved: random(13) > 0.8 },
+      { id: '1', name: 'Ant', achieved: random(10) > 0.1, icon: '🐜' },
+      { id: '2', name: 'Turtle', achieved: random(11) > 0.3, icon: '🐢' },
+      { id: '3', name: 'Elephant', achieved: random(12) > 0.7, icon: '🐘' },
+      { id: '4', name: 'Eagle', achieved: random(13) > 0.9, icon: '🦅' },
     ];
 
     return {
@@ -233,12 +232,12 @@ export default function Dashboard() {
                     <Tooltip key={ach.id}>
                       <TooltipTrigger asChild>
                         <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
-                           <Trophy className={cn('h-8 w-8', ach.achieved ? 'text-accent-foreground' : 'text-muted-foreground')} />
+                           <span className={cn('text-2xl', ach.achieved ? '' : 'grayscale')}>{ach.icon}</span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.replace(/\s+/g, '').toLowerCase()}.name`)}</p>
-                        <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.replace(/\s+/g, '').toLowerCase()}.description`)}</p>
+                        <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.name`)}</p>
+                        <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.description`)}</p>
                       </TooltipContent>
                     </Tooltip>
                   ))}

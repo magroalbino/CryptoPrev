@@ -53,25 +53,21 @@
       "title": "Achievements",
       "description": "Milestones you've reached on your journey.",
       "items": {
-        "earlyadopter": {
-          "name": "Early Adopter",
-          "description": "Joined CryptoPrev in the first month!"
+        "ant": {
+          "name": "Ant",
+          "description": "Contribute for 7 days in a row."
         },
-        "firstdeposit": {
-          "name": "First Deposit",
-          "description": "You made your first deposit. The journey begins!"
+        "turtle": {
+          "name": "Turtle",
+          "description": "Contribute for 30 days in a row."
         },
-        "diamondhands": {
-          "name": "Diamond Hands",
-          "description": "Stayed invested for 3 consecutive months."
+        "elephant": {
+          "name": "Elephant",
+          "description": "Contribute for 100 days in a row."
         },
-        "consistentcontributor": {
-          "name": "Consistent Contributor",
-          "description": "Made deposits for 2 consecutive months."
-        },
-        "referralmaster": {
-          "name": "Referral Master",
-          "description": "Successfully referred a new user."
+        "eagle": {
+          "name": "Eagle",
+          "description": "Contribute for 365 days in a row."
         }
       }
     },

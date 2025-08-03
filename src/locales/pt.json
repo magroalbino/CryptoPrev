@@ -53,25 +53,21 @@
       "title": "Conquistas",
       "description": "Marcos que você alcançou em sua jornada.",
       "items": {
-        "earlyadopter": {
-          "name": "Pioneiro",
-          "description": "Entrou na CryptoPrev no primeiro mês!"
+        "ant": {
+          "name": "Formiga",
+          "description": "Contribua por 7 dias seguidos."
         },
-        "firstdeposit": {
-          "name": "Primeiro Depósito",
-          "description": "Você fez seu primeiro depósito. A jornada começa!"
+        "turtle": {
+          "name": "Tartaruga",
+          "description": "Contribua por 30 dias seguidos."
         },
-        "diamondhands": {
-          "name": "Mãos de Diamante",
-          "description": "Permaneceu investido por 3 meses consecutivos."
+        "elephant": {
+          "name": "Elefante",
+          "description": "Contribua por 100 dias seguidos."
         },
-        "consistentcontributor": {
-          "name": "Contribuinte Consistente",
-          "description": "Fez depósitos por 2 meses consecutivos."
-        },
-        "referralmaster": {
-          "name": "Mestre da Indicação",
-          "description": "Indicou um novo usuário com sucesso."
+        "eagle": {
+          "name": "Águia",
+          "description": "Contribua por 365 dias seguidos."
         }
       }
     },

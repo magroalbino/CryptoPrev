@@ -47,11 +47,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
   const fetchUsdcBalance = async (address: string) => {
-    // Simulate fetching a balance to avoid RPC issues in a prototype environment
-    // Use the wallet address to generate a deterministic, pseudo-random balance
+    // This is a prototype environment. Direct RPC calls to Solana Mainnet can be unreliable
+    // without a dedicated RPC endpoint. We will simulate the balance fetching.
     try {
         const seed = parseInt(address.substring(2, 10), 16);
         const pseudoRandomBalance = (seed % 10000) * 1.25; // Generate a balance up to 12,500
+        console.log(`Using mock balance for ${address}: ${pseudoRandomBalance}`);
         setUsdcBalance(pseudoRandomBalance);
     } catch(e) {
         console.error("Failed to generate mock balance", e);
@@ -73,6 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         if (address) {
             setWeb3UserAddress(address);
+            // In a production app, you would fetch the balance from the blockchain.
+            // For this prototype, we'll use a deterministic mock balance based on the address.
             await fetchUsdcBalance(address);
             // Here you would typically call a backend endpoint to get a custom Firebase token
             // For now, we are just simulating the login by setting the address.
