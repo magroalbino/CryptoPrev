@@ -85,21 +85,27 @@ export default function PlannerForm() {
     const yearsToRetire = endAge - startAge;
     const data = [];
     
-    // Create about 5-6 points for the chart
     const step = Math.max(1, Math.floor(yearsToRetire / 5));
 
     for (let i = 0; i <= yearsToRetire; i += step) {
       if (i > yearsToRetire) break;
       const age = startAge + i;
-      const fraction = i / yearsToRetire;
-      // Simple linear interpolation for visualization. A real calculation would be exponential.
-      const value = result.projectedTotalValue * fraction; 
+      // This is a rough approximation for visualization.
+      const growthFactor = Math.pow(1 + 0.07, i); // Assumes a generic 7% annual growth for charting
+      const contributions = result.newMonthlyContribution ? result.newMonthlyContribution * 12 * i : form.getValues('monthlyContribution') * 12 * i;
+      const value = (form.getValues('initialInvestment') * growthFactor) + contributions;
       data.push({ year: age, value: Math.round(value) });
     }
-    // Ensure the final value is accurate
-    data.push({ year: endAge, value: result.projectedTotalValue });
+     // Ensure the final value is accurate
+    const finalAgeIndex = data.findIndex(d => d.year === endAge);
+    if (finalAgeIndex !== -1) {
+      data[finalAgeIndex].value = result.projectedTotalValue;
+    } else {
+       data.push({ year: endAge, value: result.projectedTotalValue });
+    }
 
-    return data;
+
+    return data.sort((a,b) => a.year - b.year);
   }
 
   const chartData = state.data ? generateProjectionData(state.data, form.getValues('currentAge'), form.getValues('retirementAge')) : [];
@@ -123,7 +129,7 @@ export default function PlannerForm() {
                             render={({ field }) => (
                                 <FormItem>
                                 <FormLabel>{t('planner.form.currentAge.label')}</FormLabel>
-                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormControl><Input type="number" {...field} className="font-sans"/></FormControl>
                                 <FormMessage />
                                 </FormItem>
                             )}
@@ -134,7 +140,7 @@ export default function PlannerForm() {
                             render={({ field }) => (
                                 <FormItem>
                                 <FormLabel>{t('planner.form.retirementAge.label')}</FormLabel>
-                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormControl><Input type="number" {...field} className="font-sans"/></FormControl>
                                 <FormMessage />
                                 </FormItem>
                             )}
@@ -146,7 +152,7 @@ export default function PlannerForm() {
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>{t('planner.form.initialInvestment.label')}</FormLabel>
-                            <FormControl><Input type="number" {...field} /></FormControl>
+                            <FormControl><Input type="number" {...field} className="font-sans"/></FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
@@ -157,7 +163,7 @@ export default function PlannerForm() {
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>{t('planner.form.monthlyContribution.label')}</FormLabel>
-                            <FormControl><Input type="number" {...field} /></FormControl>
+                            <FormControl><Input type="number" {...field} className="font-sans"/></FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
@@ -168,7 +174,7 @@ export default function PlannerForm() {
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>{t('planner.form.desiredMonthlyIncome.label')}</FormLabel>
-                            <FormControl><Input type="number" {...field} /></FormControl>
+                            <FormControl><Input type="number" {...field} className="font-sans"/></FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
@@ -223,7 +229,7 @@ export default function PlannerForm() {
             {state.data ? (
               <div className="space-y-6">
                 <div className={cn(
-                    "flex items-start gap-4 rounded-lg border p-4",
+                    "flex items-start gap-4 rounded-lg border-2 p-4",
                     state.data.isFeasible ? "border-green-500/50 bg-green-500/10" : "border-amber-500/50 bg-amber-500/10"
                 )}>
                   {state.data.isFeasible ? <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-green-500" /> : <AlertCircle className="h-6 w-6 flex-shrink-0 text-amber-500" />}
@@ -235,9 +241,9 @@ export default function PlannerForm() {
                   </div>
                 </div>
 
-                <div className="space-y-4 rounded-lg border-2 border-dashed border-muted-foreground/30 p-4">
-                    <h4 className="font-bold text-lg flex items-center gap-2"><Lightbulb/> {t('planner.results.advice.title')}</h4>
-                    <p className='text-primary'>{state.data.actionableAdvice}</p>
+                <div className="space-y-4 rounded-lg border-2 border-dashed border-accent/50 bg-accent/10 p-4">
+                    <h4 className="font-bold text-lg flex items-center gap-2"><Lightbulb className="text-accent"/> {t('planner.results.advice.title')}</h4>
+                    <p className='text-primary text-base'>{state.data.actionableAdvice}</p>
                 </div>
                 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -266,11 +272,12 @@ export default function PlannerForm() {
                                 accessibilityLayer
                                 data={chartData}
                                 margin={{
-                                  left: 12,
+                                  left: 0,
                                   right: 12,
+                                  top: 5
                                 }}
                                 >
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)"/>
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)"/>
                                 <defs>
                                     <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
                                     <stop
@@ -288,13 +295,13 @@ export default function PlannerForm() {
                                 <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('planner.results.ageAbbr', { age: value })}/>
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
                                 <Tooltip
-                                    cursor={{fill: 'hsl(var(--accent) / 0.2)'}}
+                                    cursor={{fill: 'hsl(var(--accent) / 0.1)'}}
                                     content={<ChartTooltipContent formatter={(value, name, props) => {
                                         const age = props.payload.year;
                                         return [`$${Number(value).toLocaleString()}`, t('planner.results.tooltipLabel', { age: age })];
                                     }} />}
                                 />
-                                <Area dataKey="value" type="monotone" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" stackId="a" />
+                                <Area dataKey="value" type="monotone" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" strokeWidth={2} stackId="a" />
                             </AreaChart>
                         </ChartContainer>
                     </CardContent>

@@ -27,11 +27,11 @@ const FinancialPlannerOutputSchema = z.object({
   isFeasible: z.boolean().describe('Whether the goal is feasible with the current plan.'),
   diagnosis: z
     .string()
-    .describe('A brief diagnosis of the user\'s current financial situation regarding their retirement goals.'),
+    .describe('A brief, encouraging diagnosis of the user\'s current financial situation regarding their retirement goals.'),
   actionableAdvice: z
     .string()
     .describe(
-      'Clear, actionable advice for the user. If the plan is not feasible, suggest a new monthly contribution. If it is feasible, suggest other ways to optimize.'
+      'Clear, actionable, and conversational advice for the user. If the plan is not feasible, suggest a new monthly contribution in a conversational tone. If it is feasible, suggest other ways to optimize in a friendly way.'
     ),
   newMonthlyContribution: z
     .number()
@@ -53,7 +53,7 @@ const prompt = ai.definePrompt({
   name: 'personalFinancialPlannerPrompt',
   input: { schema: FinancialPlannerInputSchema },
   output: { schema: FinancialPlannerOutputSchema },
-  prompt: `You are an expert financial planner specializing in retirement for a platform called CryptoPrev. Your goal is to provide clear, actionable advice to help users achieve their retirement goals using DeFi yields.
+  prompt: `You are an expert financial planner specializing in retirement for a platform called CryptoPrev. Your goal is to provide clear, actionable, and encouraging advice to help users achieve their retirement goals using DeFi yields. Your tone should be conversational and easy to understand.
 
 **IMPORTANT: Generate your entire response (diagnosis and actionable advice) in the following language: {{{language}}}.**
 
@@ -71,9 +71,9 @@ Tasks:
 1.  **Calculate Projections**: Calculate the projected total value at retirement and the resulting monthly income based on the user's current contributions and risk tolerance.
 2.  **Diagnose Feasibility**: Compare the projected monthly income with the desired monthly income to determine if the goal is feasible.
 3.  **Generate Diagnosis**: Write a brief, encouraging diagnosis of the user's current plan in the requested language.
-4.  **Provide Actionable Advice**:
-    -   **If the plan is NOT feasible**: Calculate the new monthly contribution required to meet their desired income. Provide this as the primary actionable advice. State clearly: "To reach your goal, you should increase your monthly contribution to $X." (Translated to the requested language).
-    -   **If the plan IS feasible**: Congratulate the user and provide advice on how they could further optimize, such as slightly increasing contributions to build a buffer or considering a different risk profile. (Translated to the requested language).
+4.  **Provide Conversational, Actionable Advice**:
+    -   **If the plan is NOT feasible**: Calculate the new monthly contribution required. Phrase the advice conversationally. For example: "To reach your goal of $X per month, you should increase your monthly contribution to about $Y. This adjustment will put you on the right track!" (Translated to the requested language).
+    -   **If the plan IS feasible**: Congratulate the user! Phrase the advice conversationally. For example: "Great news! Your plan is on track. To build an extra safety net, you could consider increasing your monthly contribution by a small amount, like $20-$50." (Translated to the requested language).
 5.  **Fill Output Schema**: Populate all fields in the output schema accurately. The 'newMonthlyContribution' field should only be set if the plan is not feasible.
 `,
 });
