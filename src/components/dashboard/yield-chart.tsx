@@ -43,7 +43,7 @@ export default function YieldChart() {
           bottom: 0,
         }}
       >
-        <CartesianGrid vertical={false} />
+        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)"/>
         <XAxis
           dataKey="month"
           tickLine={false}

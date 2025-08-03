@@ -71,7 +71,7 @@ export default function ProjectionChart({
       </Tabs>
       <ChartContainer config={chartConfig} className="h-[150px] w-full">
         <LineChart accessibilityLayer data={data}>
-          <CartesianGrid vertical={false} />
+          <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)"/>
           <XAxis dataKey="year" tickLine={false} axisLine={false} tickMargin={8} />
           <YAxis
             domain={['dataMin', 'dataMax']}

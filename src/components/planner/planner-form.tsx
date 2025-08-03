@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 
@@ -107,7 +107,7 @@ export default function PlannerForm() {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
       <div className="lg:col-span-2">
-        <Card>
+        <Card className="brutalist-shadow">
           <form action={formAction}>
             <CardHeader>
               <CardTitle>{t('planner.form.title')}</CardTitle>
@@ -214,7 +214,7 @@ export default function PlannerForm() {
         </Card>
       </div>
       <div className="lg:col-span-3">
-        <Card className="min-h-full">
+        <Card className="brutalist-shadow min-h-full">
           <CardHeader>
             <CardTitle>{t('planner.results.title')}</CardTitle>
             <CardDescription>{t('planner.results.description')}</CardDescription>
@@ -270,6 +270,7 @@ export default function PlannerForm() {
                                   right: 12,
                                 }}
                                 >
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)"/>
                                 <defs>
                                     <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
                                     <stop
@@ -293,7 +294,7 @@ export default function PlannerForm() {
                                         return [`$${Number(value).toLocaleString()}`, t('planner.results.tooltipLabel', { age: age })];
                                     }} />}
                                 />
-                                <Area dataKey="value" type="natural" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" stackId="a" />
+                                <Area dataKey="value" type="monotone" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" stackId="a" />
                             </AreaChart>
                         </ChartContainer>
                     </CardContent>

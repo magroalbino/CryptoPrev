@@ -98,7 +98,7 @@ export default function OracleForm() {
 
   return (
     <div className="grid gap-8">
-      <Card>
+      <Card className="brutalist-shadow">
         <form action={formAction}>
           <CardHeader>
             <CardTitle>{t('oracle.form.title')}</CardTitle>
@@ -203,7 +203,7 @@ export default function OracleForm() {
       {state.data && state.data.suggestions.length > 0 ? (
         <div className="grid gap-6 lg:grid-cols-3">
             {state.data.suggestions.map((suggestion, index) => (
-                <Card key={index}>
+                <Card key={index} className="brutalist-shadow">
                     <CardHeader>
                         <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
                           <div>

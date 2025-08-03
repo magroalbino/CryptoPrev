@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowDownUp, RefreshCw } from 'lucide-react';
+import { ArrowDownUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppTranslation } from '@/hooks/use-app-translation';
 
@@ -58,7 +57,7 @@ export default function TradeForm() {
   };
 
   return (
-    <Card>
+    <Card className="brutalist-shadow">
       <CardHeader>
         <CardTitle>{t('trade.form.title')}</CardTitle>
         <CardDescription>{t('trade.form.description')}</CardDescription>
@@ -124,7 +123,6 @@ export default function TradeForm() {
       </CardContent>
       <CardFooter>
         <Button onClick={handleExecuteTrade} className="w-full" size="lg">
-            <RefreshCw className='mr-2'/>
             {t('trade.form.submitButton')}
         </Button>
       </CardFooter>
