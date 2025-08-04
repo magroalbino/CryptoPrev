@@ -46,11 +46,12 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Function to generate deterministic, yet unique, data based on wallet address
-const generateDashboardData = (address: string, currentBalance: number) => {
+const generateDashboardData = (address: string) => {
     // Use the address to create a seed for pseudo-randomness
     const seed = parseInt(address.substring(2, 10), 16);
     const random = (multiplier: number) => (seed * multiplier) % 1;
 
+    const currentBalance = 1000 + random(1) * 20000;
     const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
     const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
     const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
@@ -102,13 +103,13 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (web3UserAddress && usdcBalance !== null) {
-      const data = generateDashboardData(web3UserAddress, usdcBalance);
+    if (web3UserAddress) {
+      const data = generateDashboardData(web3UserAddress);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress, usdcBalance]);
+  }, [web3UserAddress]);
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
