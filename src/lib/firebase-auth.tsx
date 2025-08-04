@@ -47,19 +47,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
   const fetchUsdcBalance = async (address: string) => {
-    // This is a prototype environment. Direct RPC calls to Solana Mainnet can be unreliable
-    // without a dedicated RPC endpoint. We will simulate the balance fetching for stability.
     try {
-        console.log(`Simulating balance for prototype environment for address: ${address}`);
-        const seed = parseInt(address.substring(2, 10), 16);
-        const pseudoRandomBalance = (seed % 10000) * 1.25; // Generate a balance up to 12,500
-        console.log(`Using mock balance for ${address}: ${pseudoRandomBalance}`);
-        setUsdcBalance(pseudoRandomBalance);
-    } catch(e) {
-        console.error("Failed to generate mock balance", e);
-        setUsdcBalance(0); // Default to 0 on error
+      // Use the official Solana helper to get a reliable RPC endpoint.
+      const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+      const ownerPublicKey = new PublicKey(address);
+
+      // This is the correct method to get all token accounts for a specific mint (USDC)
+      // owned by the user.
+      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(ownerPublicKey, {
+        mint: USDC_MINT_ADDRESS,
+      });
+
+      if (tokenAccounts.value.length > 0) {
+        // Get the first token account (usually users have only one for a given mint).
+        const accountInfo = tokenAccounts.value[0].account;
+        const balance = accountInfo.data.parsed.info.tokenAmount.uiAmount;
+        setUsdcBalance(balance);
+      } else {
+        // User has no USDC token account.
+        setUsdcBalance(0);
+      }
+    } catch (e) {
+      console.error("Failed to fetch real USDC balance:", e);
+      // Fallback to 0 if there's any error with the RPC call.
+      setUsdcBalance(0); 
     }
   }
+
 
   const signInWithWeb3 = async () => {
     // Phantom wallet is expected to be available on the window object
@@ -77,11 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         if (address) {
             setWeb3UserAddress(address);
-            // In a production app, you would fetch the balance from the blockchain.
-            // For this prototype, we'll use a deterministic mock balance based on the address.
             await fetchUsdcBalance(address);
-            // Here you would typically call a backend endpoint to get a custom Firebase token
-            // For now, we are just simulating the login by setting the address.
         }
     } catch (error) {
         console.error("Failed to connect to Phantom wallet:", error);
@@ -123,6 +133,7 @@ declare global {
       connect: (options?: { onlyIfTrusted: boolean }) => Promise<{ publicKey: PublicKey }>;
       disconnect: () => Promise<void>;
       isConnected: boolean;
+      request: (params: { method: string, params?: any[] }) => Promise<any>;
     };
   }
 }
