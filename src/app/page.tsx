@@ -114,7 +114,7 @@ export default function Dashboard() {
       title: t('dashboard.rewards.claimToast.title'),
       description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield.toFixed(2) }),
     });
-  }
+  };
   
   if (loading) {
     return (
