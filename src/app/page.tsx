@@ -50,14 +50,11 @@ export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
-  
-  // Function to generate deterministic, yet unique, data based on wallet address
+
   const generateDashboardData = (address: string, usdcBalanceValue: number | null) => {
-      // Use the address to create a seed for pseudo-randomness
       const seed = parseInt(address.substring(2, 10), 16);
       const random = (multiplier: number) => (seed * multiplier) % 1;
 
-      // Use the real USDC balance as the starting point if available, otherwise simulate it
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue > 0 ? usdcBalanceValue : (1000 + random(1) * 20000);
       const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
       const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
@@ -69,7 +66,7 @@ export default function Dashboard() {
       const transactions = Array.from({ length: 6 }).map((_, i) => {
           const date = new Date();
           date.setMonth(date.getMonth() - i);
-          const isYield = i % 2 === 0; // Alternate between yield and deposit
+          const isYield = i % 2 === 0;
           
           return {
               id: `${i}-${seed}`,
