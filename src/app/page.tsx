@@ -44,63 +44,63 @@ import {
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Function to generate deterministic, yet unique, data based on wallet address
-const generateDashboardData = (address: string, usdcBalance: number | null) => {
-    // Use the address to create a seed for pseudo-randomness
-    const seed = parseInt(address.substring(2, 10), 16);
-    const random = (multiplier: number) => (seed * multiplier) % 1;
-
-    // Use the real USDC balance as the starting point if available, otherwise simulate it
-    const currentBalance = usdcBalance !== null && usdcBalance > 0 ? usdcBalance : (1000 + random(1) * 20000);
-    const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
-    const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
-    const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
-    const protocols = ['Compound', 'Aave', 'Lido'];
-    const activeProtocol = protocols[Math.floor(random(5) * 3)];
-    const activeProtocolApy = 4.5 + random(6) * 3;
-
-    const transactions = Array.from({ length: 6 }).map((_, i) => {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const isYield = i % 2 === 0; // Alternate between yield and deposit
-        
-        return {
-            id: `${i}-${seed}`,
-            date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'}),
-            amount: isYield ? monthlyYield * (0.8 + random(7+i) * 0.4) : 500 + random(8+i) * 1500,
-            status: isYield ? 'Paid' : 'Completed',
-            protocol: isYield ? protocols[Math.floor(random(9+i) * 3)] : 'N/A',
-            type: isYield ? 'Yield' : 'Deposit'
-        };
-    });
-
-    const achievements = [
-      { id: '1', name: 'Ant', achieved: random(10) > 0.1, icon: '🐜' },
-      { id: '2', name: 'Turtle', achieved: random(11) > 0.3, icon: '🐢' },
-      { id: '3', name: 'Elephant', achieved: random(12) > 0.7, icon: '🐘' },
-      { id: '4', name: 'Eagle', achieved: random(13) > 0.9, icon: '🦅' },
-    ];
-
-    return {
-        userData: {
-            currentBalance,
-            accumulatedRewards,
-            monthlyYield,
-            activeProtocol,
-            activeProtocolApy,
-            lockupPeriod,
-        },
-        transactions,
-        achievements,
-    };
-};
-
 
 export default function Dashboard() {
   const { web3UserAddress, usdcBalance, loading, signInWithWeb3 } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
+  
+  // Function to generate deterministic, yet unique, data based on wallet address
+  const generateDashboardData = (address: string, usdcBalanceValue: number | null) => {
+      // Use the address to create a seed for pseudo-randomness
+      const seed = parseInt(address.substring(2, 10), 16);
+      const random = (multiplier: number) => (seed * multiplier) % 1;
+
+      // Use the real USDC balance as the starting point if available, otherwise simulate it
+      const currentBalance = usdcBalanceValue !== null && usdcBalanceValue > 0 ? usdcBalanceValue : (1000 + random(1) * 20000);
+      const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
+      const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
+      const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
+      const protocols = ['Compound', 'Aave', 'Lido'];
+      const activeProtocol = protocols[Math.floor(random(5) * 3)];
+      const activeProtocolApy = 4.5 + random(6) * 3;
+
+      const transactions = Array.from({ length: 6 }).map((_, i) => {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          const isYield = i % 2 === 0; // Alternate between yield and deposit
+          
+          return {
+              id: `${i}-${seed}`,
+              date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'}),
+              amount: isYield ? monthlyYield * (0.8 + random(7+i) * 0.4) : 500 + random(8+i) * 1500,
+              status: isYield ? 'Paid' : 'Completed',
+              protocol: isYield ? protocols[Math.floor(random(9+i) * 3)] : 'N/A',
+              type: isYield ? 'Yield' : 'Deposit'
+          };
+      });
+
+      const achievements = [
+        { id: '1', name: 'Ant', achieved: random(10) > 0.1, icon: '🐜' },
+        { id: '2', name: 'Turtle', achieved: random(11) > 0.3, icon: '🐢' },
+        { id: '3', name: 'Elephant', achieved: random(12) > 0.7, icon: '🐘' },
+        { id: '4', name: 'Eagle', achieved: random(13) > 0.9, icon: '🦅' },
+      ];
+
+      return {
+          userData: {
+              currentBalance,
+              accumulatedRewards,
+              monthlyYield,
+              activeProtocol,
+              activeProtocolApy,
+              lockupPeriod,
+          },
+          transactions,
+          achievements,
+      };
+  };
 
   useEffect(() => {
     if (web3UserAddress) {

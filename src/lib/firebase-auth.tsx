@@ -48,14 +48,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const fetchUsdcBalance = async (address: string) => {
     try {
-        // This is a backup for when the public RPC fails, which is often.
-        // It provides a consistent, albeit simulated, experience.
-        const seed = parseInt(address.substring(2, 10), 16);
-        const random = (multiplier: number) => (seed * multiplier) % 1;
-        const simulatedBalance = 1000 + random(1) * 20000;
-        setUsdcBalance(simulatedBalance / 100); // Simulate a more realistic USDC balance
+        const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+        const publicKey = new PublicKey(address);
+        
+        // Find the token account for USDC
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
+            mint: USDC_MINT_ADDRESS,
+        });
+
+        if (tokenAccounts.value.length > 0) {
+            const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
+            setUsdcBalance(tokenAccountInfo.tokenAmount.uiAmount);
+        } else {
+            // If no USDC account, balance is 0
+            setUsdcBalance(0);
+        }
     } catch (error) {
         console.error("Failed to fetch balance, falling back to simulated data:", error);
+        // Fallback to pseudo-random data on error
         const seed = parseInt(address.substring(2, 10), 16);
         const random = (multiplier: number) => (seed * multiplier) % 1;
         const simulatedBalance = 1000 + random(1) * 20000;
@@ -72,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if ('solana' in window) {
       const provider = window.solana;
       if (provider && typeof provider === 'object' && 'isPhantom' in provider && provider.isPhantom) {
-        return provider;
+        return provider as any;
       }
     }
     return undefined;
@@ -80,27 +90,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const signInWithWeb3 = async () => {
-    const provider = getProvider();
-    if (!provider) {
-        alert('Phantom wallet is not installed. Please install it to use this feature.');
-        console.error("Phantom wallet not found");
-        return;
+    const connect = () => {
+        const provider = getProvider();
+        if (!provider) {
+            alert('Phantom wallet is not installed. Please install it to use this feature.');
+            console.error("Phantom wallet not found");
+            return;
+        }
+
+        provider.connect({ onlyIfTrusted: false })
+            .then(async (resp) => {
+                const address = resp.publicKey.toString();
+                if (address) {
+                    setWeb3UserAddress(address);
+                    await fetchUsdcBalance(address);
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to connect to Phantom wallet:", error);
+                alert("Failed to connect to Phantom. Please try again.");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
-    try {
-        setLoading(true);
-        const resp = await provider.connect({ onlyIfTrusted: false });
-        const address = resp.publicKey.toString();
-        
-        if (address) {
-            setWeb3UserAddress(address);
-            await fetchUsdcBalance(address);
-        }
-    } catch (error) {
-        console.error("Failed to connect to Phantom wallet:", error);
-        alert("Failed to connect to Phantom. Please try again.");
-    } finally {
-        setLoading(false);
+    if (document.readyState === 'complete') {
+        connect();
+    } else {
+        window.addEventListener('load', connect, { once: true });
     }
   };
 
