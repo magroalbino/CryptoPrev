@@ -6,6 +6,7 @@
     "planner": "Planejador IA",
     "trade": "Trocar",
     "faq": "FAQ",
+    "proofOfFunds": "Prova de Fundos",
     "connectWallet": "Conectar Carteira",
     "signOut": "Desconectar",
     "toggleLanguage": "Mudar idioma",
@@ -293,6 +294,18 @@
     "toast": {
       "title": "Troca Executada (Simulação)",
       "description": "Trocou com sucesso {{fromAmount}} {{fromToken}} por {{toAmount}} {{toToken}}."
+    }
+  },
+  "proofOfFunds": {
+    "title": "Prova de Fundos e Transparência",
+    "description": "Acreditamos em transparência total. Aqui está uma visão geral ao vivo das principais métricas da nossa plataforma.",
+    "totalReserves": "Valor Total Bloqueado (TVL)",
+    "activeUsers": "Usuários Ativos",
+    "reservesDescription": "Total de ativos atualmente gerenciados e investidos em todos os protocolos DeFi.",
+    "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
+    "onChain": {
+      "title": "Verificação On-Chain",
+      "description": "Verifique nossas reservas diretamente na blockchain usando os endereços de carteira abaixo."
     }
   }
 }
