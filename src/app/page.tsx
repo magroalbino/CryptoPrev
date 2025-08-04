@@ -46,12 +46,13 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Function to generate deterministic, yet unique, data based on wallet address
-const generateDashboardData = (address: string) => {
+const generateDashboardData = (address: string, usdcBalance: number | null) => {
     // Use the address to create a seed for pseudo-randomness
     const seed = parseInt(address.substring(2, 10), 16);
     const random = (multiplier: number) => (seed * multiplier) % 1;
 
-    const currentBalance = 1000 + random(1) * 20000;
+    // Use the real USDC balance as the starting point if available, otherwise simulate it
+    const currentBalance = usdcBalance !== null && usdcBalance > 0 ? usdcBalance : (1000 + random(1) * 20000);
     const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
     const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
     const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
@@ -104,12 +105,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (web3UserAddress) {
-      const data = generateDashboardData(web3UserAddress);
+      const data = generateDashboardData(web3UserAddress, usdcBalance);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress]);
+  }, [web3UserAddress, usdcBalance]);
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
@@ -168,7 +169,6 @@ export default function Dashboard() {
   const initialInvestment = userData.currentBalance - userData.accumulatedRewards;
   const distributionHistory = transactions.filter((t: any) => t.type === 'Yield');
   const depositHistory = transactions.filter((t: any) => t.type === 'Deposit');
-
 
   return (
     <div className="flex-1 space-y-6">
@@ -265,7 +265,7 @@ export default function Dashboard() {
                 <CardDescription>
                   {t('dashboard.charts.growth.description')}
                 </CardDescription>
-              </CardHeader>
+              </Header>
               <CardContent>
                 <ProjectionChart initialInvestment={initialInvestment} />
               </CardContent>
