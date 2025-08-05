@@ -8,7 +8,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const SOLANA_RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
+const SOLANA_RPC_ENDPOINT = "https://rpc.ankr.com/solana";
 
 interface AuthContextType {
   user: User | null;
