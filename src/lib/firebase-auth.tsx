@@ -4,10 +4,11 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
 import { app, isFirebaseEnabled } from './firebase-client';
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const SOLANA_RPC_ENDPOINT = "https://mainnet.helius-rpc.com/?api-key=0e334185-b1a3-4b52-9418-e37841575459";
 
 interface AuthContextType {
   user: User | null;
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const fetchUsdcBalance = async (address: string) => {
     try {
-        const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+        const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed');
         const publicKey = new PublicKey(address);
         
         // Find the token account for USDC
