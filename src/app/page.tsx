@@ -46,7 +46,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function Dashboard() {
-  const { web3UserAddress, usdcBalance, loading, signInWithWeb3 } = useAuth();
+  const { web3UserAddress, usdcBalance, loading, walletType, connectWallet } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
@@ -105,14 +105,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (web3UserAddress) {
-      // Data will be generated once the user address is available.
-      // The `usdcBalance` might still be loading, but `generateDashboardData` handles null values.
       const data = generateDashboardData(web3UserAddress, usdcBalance);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress, usdcBalance]); // Rerun when address OR balance changes
+  }, [web3UserAddress, usdcBalance]); 
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
@@ -158,7 +156,7 @@ export default function Dashboard() {
         <div className="text-center max-w-md mx-auto">
           <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
           <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
-          <Button onClick={signInWithWeb3} size="lg">
+          <Button onClick={() => connectWallet('solana')} size="lg">
             <Wallet className="mr-2" />
             {t('header.connectWallet')}
           </Button>
@@ -179,8 +177,8 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title={t('dashboard.cards.balance.title')}
-          value={`$${Number(dashboardData.userData.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          description={t('dashboard.cards.balance.description')}
+          value={walletType === 'solana' ? `$${Number(dashboardData.userData.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : t('dashboard.cards.balance.notApplicable')}
+          description={walletType === 'solana' ? t('dashboard.cards.balance.description') : t('dashboard.cards.balance.notApplicableDescription')}
           icon={<Wallet className="text-accent" />}
         />
         <StatCard

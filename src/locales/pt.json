@@ -8,6 +8,8 @@
     "faq": "FAQ",
     "proofOfFunds": "Prova de Fundos",
     "connectWallet": "Conectar Carteira",
+    "connectPhantom": "Conectar Phantom",
+    "connectMetamask": "Conectar MetaMask",
     "signOut": "Desconectar",
     "toggleLanguage": "Mudar idioma",
     "english": "Inglês",
@@ -23,7 +25,9 @@
     "cards": {
       "balance": {
         "title": "Saldo Atual",
-        "description": "+1.2% desde o último mês"
+        "description": "+1.2% desde o último mês",
+        "notApplicable": "N/A",
+        "notApplicableDescription": "Conecte uma carteira Solana"
       },
       "rewards": {
         "title": "Recompensas Acumuladas",

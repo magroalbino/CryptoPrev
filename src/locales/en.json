@@ -8,6 +8,8 @@
     "faq": "FAQ",
     "proofOfFunds": "Proof of Funds",
     "connectWallet": "Connect Wallet",
+    "connectPhantom": "Connect Phantom",
+    "connectMetamask": "Connect MetaMask",
     "signOut": "Sign Out",
     "toggleLanguage": "Toggle language",
     "english": "English",
@@ -23,7 +25,9 @@
     "cards": {
       "balance": {
         "title": "Current Balance",
-        "description": "+1.2% from last month"
+        "description": "+1.2% from last month",
+        "notApplicable": "N/A",
+        "notApplicableDescription": "Connect a Solana wallet"
       },
       "rewards": {
         "title": "Accumulated Rewards",
