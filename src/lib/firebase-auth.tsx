@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
 import { app, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
@@ -34,25 +34,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!isFirebaseEnabled || !app) {
-      setLoading(false);
-      return;
-    }
-    const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-  
-  const fetchUsdcBalance = async (address: string) => {
+  const fetchUsdcBalance = useCallback(async (address: string) => {
     try {
         const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed');
         const publicKey = new PublicKey(address);
         
-        // Find the token account for USDC
         const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
             mint: USDC_MINT_ADDRESS,
         });
@@ -61,26 +47,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
             setUsdcBalance(tokenAccountInfo.tokenAmount.uiAmount);
         } else {
-            // If no USDC account, balance is 0
             setUsdcBalance(0);
         }
     } catch (error) {
         console.error("Failed to fetch balance, falling back to simulated data:", error);
-        // Fallback to pseudo-random data on error
-        const seed = parseInt(address.substring(2, 10), 16);
-        const random = (multiplier: number) => (seed * multiplier) % 1;
-        const simulatedBalance = 1000 + random(1) * 20000;
-        setUsdcBalance(simulatedBalance / 100);
+        setUsdcBalance(0); // Fallback to 0 on error
     }
-  }
+  }, []);
 
+  useEffect(() => {
+    if (web3UserAddress) {
+      fetchUsdcBalance(web3UserAddress);
+    }
+  }, [web3UserAddress, fetchUsdcBalance]);
+
+  useEffect(() => {
+    if (!isFirebaseEnabled || !app) {
+      setLoading(false);
+      return;
+    }
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      // Keep loading true until we check for a wallet connection
+      // setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+  
   const getProvider = (): {
       isPhantom: boolean;
       connect: (options?: { onlyIfTrusted: boolean }) => Promise<{ publicKey: PublicKey }>;
       disconnect: () => Promise<void>;
       isConnected: boolean;
     } | undefined => {
-    if ('solana' in window) {
+    if (typeof window !== 'undefined' && 'solana' in window) {
       const provider = window.solana;
       if (provider && typeof provider === 'object' && 'isPhantom' in provider && provider.isPhantom) {
         return provider as any;
@@ -97,17 +98,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Phantom wallet not found');
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
-      const resp = await provider.connect({ onlyIfTrusted: false });
+      const resp = await provider.connect();
       const address = resp.publicKey.toString();
-      if (address) {
-        setWeb3UserAddress(address);
-        await fetchUsdcBalance(address);
-      }
+      setWeb3UserAddress(address);
     } catch (error) {
       console.error('Failed to connect to Phantom wallet:', error);
       alert('Failed to connect to Phantom. Please try again.');
+      setWeb3UserAddress(null);
+      setUsdcBalance(null);
     } finally {
       setLoading(false);
     }
@@ -115,18 +115,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const signOut = async () => {
-    if (isFirebaseEnabled && app) {
-      const auth = getAuth(app);
-      await firebaseSignOut(auth);
-    }
     const provider = getProvider();
     if (provider && provider.isConnected) {
         await provider.disconnect();
     }
-    setWeb3UserAddress(null); // Also clear the web3 address
-    setUsdcBalance(null); // Clear the balance
+    if (isFirebaseEnabled && app) {
+      const auth = getAuth(app);
+      await firebaseSignOut(auth);
+    }
+    setWeb3UserAddress(null);
+    setUsdcBalance(null);
     console.log("User signed out.");
   };
+  
+  // This effect checks for an already-connected wallet on page load
+  useEffect(() => {
+    const autoConnect = async () => {
+      const provider = getProvider();
+      if (provider) {
+        try {
+          // onlyIfTrusted will connect silently if the user has already approved the site
+          const resp = await provider.connect({ onlyIfTrusted: true });
+          setWeb3UserAddress(resp.publicKey.toString());
+        } catch (error) {
+           // Silently fail if the user is not already connected
+          console.log("Phantom not connected or user chose not to connect.");
+        }
+      }
+      setLoading(false); // We're done with the initial auth flow
+    };
+    
+    autoConnect();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, web3UserAddress, usdcBalance, loading, signInWithWeb3, signOut }}>

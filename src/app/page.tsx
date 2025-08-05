@@ -55,7 +55,11 @@ export default function Dashboard() {
       const seed = parseInt(address.substring(2, 10), 16);
       const random = (multiplier: number) => (seed * multiplier) % 1;
 
-      const currentBalance = usdcBalanceValue !== null && usdcBalanceValue > 0 ? usdcBalanceValue : (1000 + random(1) * 20000);
+      // Use the real balance if available, otherwise, generate mock data as a fallback.
+      const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
+        ? usdcBalanceValue 
+        : (1000 + random(1) * 20000);
+
       const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
       const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
       const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
@@ -101,12 +105,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (web3UserAddress) {
+      // Data will be generated once the user address is available.
+      // The `usdcBalance` might still be loading, but `generateDashboardData` handles null values.
       const data = generateDashboardData(web3UserAddress, usdcBalance);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress, usdcBalance]);
+  }, [web3UserAddress, usdcBalance]); // Rerun when address OR balance changes
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
@@ -116,219 +122,223 @@ export default function Dashboard() {
     });
   };
   
+  if (loading) {
+    return (
+      <div className="flex-1 space-y-6">
+        <div className="flex items-center justify-between space-y-2">
+          <Skeleton className="h-9 w-48" />
+          <div className="flex items-center space-x-2">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="col-span-1 space-y-6">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-48" />
+          </div>
+          <div className="md:col-span-2 space-y-6">
+            <Skeleton className="h-80" />
+            <Skeleton className="h-64" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!web3UserAddress || !dashboardData) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto">
+          <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
+          <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
+          <Button onClick={signInWithWeb3} size="lg">
+            <Wallet className="mr-2" />
+            {t('header.connectWallet')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {loading ? (
-        <div className="flex-1 space-y-6">
-          <div className="flex items-center justify-between space-y-2">
-            <Skeleton className="h-9 w-48" />
-            <div className="flex items-center space-x-2">
-              <Skeleton className="h-10 w-32" />
-              <Skeleton className="h-10 w-32" />
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="col-span-1 space-y-6">
-              <Skeleton className="h-64" />
-              <Skeleton className="h-48" />
-            </div>
-            <div className="md:col-span-2 space-y-6">
-              <Skeleton className="h-80" />
-              <Skeleton className="h-64" />
-            </div>
-          </div>
+    <div className="flex-1 space-y-6">
+      <div className="flex items-center justify-between space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+        <div className="flex items-center space-x-2">
+          <WithdrawDialog />
+          <DepositDialog />
         </div>
-      ) : !web3UserAddress || !dashboardData ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-md mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
-            <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
-            <Button onClick={signInWithWeb3} size="lg">
-              <Wallet className="mr-2" />
-              {t('header.connectWallet')}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="flex-1 space-y-6">
-          <div className="flex items-center justify-between space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
-            <div className="flex items-center space-x-2">
-              <WithdrawDialog />
-              <DepositDialog />
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title={t('dashboard.cards.balance.title')}
-              value={`$${Number(dashboardData.userData.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-              description={t('dashboard.cards.balance.description')}
-              icon={<Wallet className="text-accent" />}
-            />
-            <StatCard
-              title={t('dashboard.cards.rewards.title')}
-              value={`$${Number(dashboardData.userData.accumulatedRewards).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-              description={t('dashboard.cards.rewards.description')}
-              icon={<CircleDollarSign className="text-accent" />}
-            />
-            <StatCard
-              title={t('dashboard.cards.lockup.title')}
-              value={t('dashboard.cards.lockup.value_other', { count: dashboardData.userData.lockupPeriod })}
-              description={t('dashboard.cards.lockup.description')}
-              icon={<Hourglass className="text-accent" />}
-              action={<LockupDialog currentPeriod={dashboardData.userData.lockupPeriod} />}
-            />
-            <StatCard
-              title={t('dashboard.cards.protocol.title')}
-              value={dashboardData.userData.activeProtocol}
-              description={t('dashboard.cards.protocol.description', { apy: dashboardData.userData.activeProtocolApy.toFixed(1) })}
-              icon={<Activity className="text-accent" />}
-            />
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="col-span-1 space-y-6">
-              <Card className="brutalist-shadow">
-                <CardHeader>
-                  <CardTitle>{t('dashboard.rewards.title')}</CardTitle>
-                  <CardDescription>{t('dashboard.rewards.description')}</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-4xl font-bold text-accent">${dashboardData.userData.monthlyYield.toFixed(2)}</p>
-                  <p className="text-sm text-muted-foreground">{t('dashboard.rewards.available')}</p>
-                </CardContent>
-                <CardContent>
-                  <Button onClick={handleClaimYield} className="w-full">{t('dashboard.rewards.claimButton')}</Button>
-                </CardContent>
-              </Card>
-              <Card className="brutalist-shadow">
-                <CardHeader>
-                  <CardTitle>{t('dashboard.achievements.title')}</CardTitle>
-                  <CardDescription>{t('dashboard.achievements.description')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TooltipProvider>
-                    <div className="flex flex-wrap justify-center gap-4">
-                      {dashboardData.achievements.map((ach: any) => (
-                        <Tooltip key={ach.id}>
-                          <TooltipTrigger asChild>
-                            <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
-                              <span className={cn('text-2xl', ach.achieved ? '' : 'grayscale')}>{ach.icon}</span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.name`)}</p>
-                            <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.description`)}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      ))}
-                    </div>
-                  </TooltipProvider>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="md:col-span-2 space-y-6">
-              <Card className="brutalist-shadow">
-                <CardHeader>
-                  <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
-                  <CardDescription>
-                    {t('dashboard.charts.yield.description')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pl-2">
-                  <YieldChart />
-                </CardContent>
-              </Card>
-              <Card className="brutalist-shadow">
-                <CardHeader>
-                  <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
-                  <CardDescription>
-                    {t('dashboard.charts.growth.description')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ProjectionChart initialInvestment={dashboardData.userData.currentBalance - dashboardData.userData.accumulatedRewards} />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title={t('dashboard.cards.balance.title')}
+          value={`$${Number(dashboardData.userData.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          description={t('dashboard.cards.balance.description')}
+          icon={<Wallet className="text-accent" />}
+        />
+        <StatCard
+          title={t('dashboard.cards.rewards.title')}
+          value={`$${Number(dashboardData.userData.accumulatedRewards).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          description={t('dashboard.cards.rewards.description')}
+          icon={<CircleDollarSign className="text-accent" />}
+        />
+        <StatCard
+          title={t('dashboard.cards.lockup.title')}
+          value={t('dashboard.cards.lockup.value_other', { count: dashboardData.userData.lockupPeriod })}
+          description={t('dashboard.cards.lockup.description')}
+          icon={<Hourglass className="text-accent" />}
+          action={<LockupDialog currentPeriod={dashboardData.userData.lockupPeriod} />}
+        />
+        <StatCard
+          title={t('dashboard.cards.protocol.title')}
+          value={dashboardData.userData.activeProtocol}
+          description={t('dashboard.cards.protocol.description', { apy: dashboardData.userData.activeProtocolApy.toFixed(1) })}
+          icon={<Activity className="text-accent" />}
+        />
+      </div>
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="col-span-1 space-y-6">
           <Card className="brutalist-shadow">
             <CardHeader>
-              <CardTitle>{t('dashboard.history.title')}</CardTitle>
-              <CardDescription>
-                {t('dashboard.history.description')}
-              </CardDescription>
+              <CardTitle>{t('dashboard.rewards.title')}</CardTitle>
+              <CardDescription>{t('dashboard.rewards.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-4xl font-bold text-accent">${dashboardData.userData.monthlyYield.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground">{t('dashboard.rewards.available')}</p>
+            </CardContent>
+            <CardContent>
+              <Button onClick={handleClaimYield} className="w-full">{t('dashboard.rewards.claimButton')}</Button>
+            </CardContent>
+          </Card>
+          <Card className="brutalist-shadow">
+            <CardHeader>
+              <CardTitle>{t('dashboard.achievements.title')}</CardTitle>
+              <CardDescription>{t('dashboard.achievements.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="yield">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="yield">{t('dashboard.history.yieldTab')}</TabsTrigger>
-                  <TabsTrigger value="deposits">{t('dashboard.history.depositsTab')}</TabsTrigger>
-                </TabsList>
-                <TabsContent value="yield">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className='hover:bg-card'>
-                        <TableHead>{t('dashboard.history.table.date')}</TableHead>
-                        <TableHead>{t('dashboard.history.table.protocol')}</TableHead>
-                        <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
-                        <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {dashboardData.transactions.filter((t: any) => t.type === 'Yield').map((dist: any) => (
-                        <TableRow key={dist.id} className='hover:bg-muted/50'>
-                          <TableCell>
-                            <div className="font-bold">{dist.date}</div>
-                          </TableCell>
-                          <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
-                          <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
-                          <TableCell className="text-center">
-                            <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground">
-                              {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TabsContent>
-                <TabsContent value="deposits">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className='hover:bg-card'>
-                        <TableHead>{t('dashboard.history.table.date')}</TableHead>
-                        <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
-                        <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {dashboardData.transactions.filter((t: any) => t.type === 'Deposit').map((deposit: any) => (
-                        <TableRow key={deposit.id} className='hover:bg-muted/50'>
-                          <TableCell>
-                            <div className="font-bold">{deposit.date}</div>
-                          </TableCell>
-                          <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
-                          <TableCell className="text-center">
-                            <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground">
-                              {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TabsContent>
-              </Tabs>
+              <TooltipProvider>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {dashboardData.achievements.map((ach: any) => (
+                    <Tooltip key={ach.id}>
+                      <TooltipTrigger asChild>
+                        <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
+                          <span className={cn('text-2xl', ach.achieved ? '' : 'grayscale')}>{ach.icon}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.name`)}</p>
+                        <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.description`)}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              </TooltipProvider>
             </CardContent>
           </Card>
         </div>
-      )}
-    </>
+        <div className="md:col-span-2 space-y-6">
+          <Card className="brutalist-shadow">
+            <CardHeader>
+              <CardTitle>{t('dashboard.charts.yield.title')}</CardTitle>
+              <CardDescription>
+                {t('dashboard.charts.yield.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <YieldChart />
+            </CardContent>
+          </Card>
+          <Card className="brutalist-shadow">
+            <CardHeader>
+              <CardTitle>{t('dashboard.charts.growth.title')}</CardTitle>
+              <CardDescription>
+                {t('dashboard.charts.growth.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ProjectionChart initialInvestment={dashboardData.userData.currentBalance - dashboardData.userData.accumulatedRewards} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      <Card className="brutalist-shadow">
+        <CardHeader>
+          <CardTitle>{t('dashboard.history.title')}</CardTitle>
+          <CardDescription>
+            {t('dashboard.history.description')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="yield">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="yield">{t('dashboard.history.yieldTab')}</TabsTrigger>
+              <TabsTrigger value="deposits">{t('dashboard.history.depositsTab')}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="yield">
+              <Table>
+                <TableHeader>
+                  <TableRow className='hover:bg-card'>
+                    <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                    <TableHead>{t('dashboard.history.table.protocol')}</TableHead>
+                    <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                    <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dashboardData.transactions.filter((t: any) => t.type === 'Yield').map((dist: any) => (
+                    <TableRow key={dist.id} className='hover:bg-muted/50'>
+                      <TableCell>
+                        <div className="font-bold">{dist.date}</div>
+                      </TableCell>
+                      <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
+                      <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground">
+                          {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            <TabsContent value="deposits">
+              <Table>
+                <TableHeader>
+                  <TableRow className='hover:bg-card'>
+                    <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                    <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                    <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dashboardData.transactions.filter((t: any) => t.type === 'Deposit').map((deposit: any) => (
+                    <TableRow key={deposit.id} className='hover:bg-muted/50'>
+                      <TableCell>
+                        <div className="font-bold">{deposit.date}</div>
+                      </TableCell>
+                      <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground">
+                          {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
