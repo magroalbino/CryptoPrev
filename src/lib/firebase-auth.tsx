@@ -91,35 +91,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const signInWithWeb3 = async () => {
-    const connect = () => {
-        const provider = getProvider();
-        if (!provider) {
-            alert('Phantom wallet is not installed. Please install it to use this feature.');
-            console.error("Phantom wallet not found");
-            return;
-        }
-
-        provider.connect({ onlyIfTrusted: false })
-            .then(async (resp) => {
-                const address = resp.publicKey.toString();
-                if (address) {
-                    setWeb3UserAddress(address);
-                    await fetchUsdcBalance(address);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to connect to Phantom wallet:", error);
-                alert("Failed to connect to Phantom. Please try again.");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+    const provider = getProvider();
+    if (!provider) {
+      alert('Phantom wallet is not installed. Please install it to use this feature.');
+      console.error('Phantom wallet not found');
+      return;
     }
-
-    if (document.readyState === 'complete') {
-        connect();
-    } else {
-        window.addEventListener('load', connect, { once: true });
+    try {
+      setLoading(true);
+      const resp = await provider.connect({ onlyIfTrusted: false });
+      const address = resp.publicKey.toString();
+      if (address) {
+        setWeb3UserAddress(address);
+        await fetchUsdcBalance(address);
+      }
+    } catch (error) {
+      console.error('Failed to connect to Phantom wallet:', error);
+      alert('Failed to connect to Phantom. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
