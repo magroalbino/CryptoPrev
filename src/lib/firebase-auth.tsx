@@ -122,7 +122,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     } catch (error) {
       console.error(`Failed to connect to ${type} wallet:`, error);
-      alert(`Failed to connect to ${type}. Please try again.`);
       setWeb3UserAddress(null);
       setWalletType(null);
       setUsdcBalance(null);
