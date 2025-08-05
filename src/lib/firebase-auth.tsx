@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const SOLANA_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+const SOLANA_RPC_ENDPOINT = 'https://rpc.helius.xyz/?api-key=0e39c8c8-3e4b-4f1d-b7f7-3c0a5d3f2d6f';
 
 type WalletType = 'solana' | 'ethereum';
 
