@@ -9,7 +9,13 @@ import { ethers } from 'ethers';
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const SOLANA_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+
+// Pool of public RPC endpoints to increase reliability
+const SOLANA_RPC_ENDPOINTS = [
+    'https://api.mainnet-beta.solana.com',
+    'https://rpc.ankr.com/solana',
+    'https://solana-mainnet.g.alchemy.com/v2/demo', // Alchemy's public demo endpoint
+];
 
 type WalletType = 'solana' | 'ethereum';
 
@@ -33,6 +39,21 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+// Function to get a working connection from the pool
+const getSolanaConnection = (): Connection | null => {
+    for (const endpoint of SOLANA_RPC_ENDPOINTS) {
+        try {
+            // This is a synchronous check, the actual test happens on the first request
+            return new Connection(endpoint, 'confirmed');
+        } catch (e) {
+            console.warn(`Failed to create connection with ${endpoint}, trying next...`);
+        }
+    }
+    console.error("Failed to connect to any Solana RPC endpoint.");
+    return null;
+}
+
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [web3UserAddress, setWeb3UserAddress] = useState<string | null>(null);
@@ -41,8 +62,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUsdcBalance = useCallback(async (address: string) => {
+    const connection = getSolanaConnection();
+    if (!connection) {
+        console.error("Could not establish Solana connection.");
+        setUsdcBalance(0);
+        return;
+    }
+
     try {
-        const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed');
         const publicKey = new PublicKey(address);
         
         const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
