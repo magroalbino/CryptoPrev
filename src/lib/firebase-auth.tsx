@@ -14,7 +14,7 @@ const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwy
 const SOLANA_RPC_ENDPOINTS = [
     'https://api.mainnet-beta.solana.com',
     'https://rpc.ankr.com/solana',
-    'https://solana-mainnet.g.alchemy.com/v2/demo', // Alchemy's public demo endpoint
+    'https://solana-mainnet.g.alchemy.com/v2/demo',
 ];
 
 type WalletType = 'solana' | 'ethereum';
@@ -39,17 +39,20 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-// Function to get a working connection from the pool
-const getSolanaConnection = (): Connection | null => {
+// Function to get a working connection from the pool by actively testing it
+const getWorkingSolanaConnection = async (): Promise<Connection | null> => {
     for (const endpoint of SOLANA_RPC_ENDPOINTS) {
         try {
-            // This is a synchronous check, the actual test happens on the first request
-            return new Connection(endpoint, 'confirmed');
+            const connection = new Connection(endpoint, 'confirmed');
+            // Actively test the connection by fetching the version
+            await connection.getVersion();
+            console.log(`Successfully connected to Solana RPC endpoint: ${endpoint}`);
+            return connection;
         } catch (e) {
-            console.warn(`Failed to create connection with ${endpoint}, trying next...`);
+            console.warn(`Failed to connect or get version from ${endpoint}, trying next...`, e);
         }
     }
-    console.error("Failed to connect to any Solana RPC endpoint.");
+    console.error("Failed to connect to any available Solana RPC endpoint.");
     return null;
 }
 
@@ -62,10 +65,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUsdcBalance = useCallback(async (address: string) => {
-    const connection = getSolanaConnection();
+    const connection = await getWorkingSolanaConnection();
     if (!connection) {
-        console.error("Could not establish Solana connection.");
-        setUsdcBalance(0);
+        console.error("Could not establish a working Solana connection.");
+        setUsdcBalance(0); // Set a fallback value
         return;
     }
 
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUsdcBalance(0);
         }
     } catch (error) {
-        console.error("Failed to fetch Solana balance:", error);
+        console.error("Failed to fetch Solana balance even with a working connection:", error);
         setUsdcBalance(0); // Fallback to 0 on error
     }
   }, []);
