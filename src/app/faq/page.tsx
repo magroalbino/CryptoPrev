@@ -56,7 +56,6 @@ export default function FAQPage() {
       </div>
 
       <div className='space-y-4'>
-        <h2 className='text-2xl font-bold text-center'>{t('faq.commonQuestions')}</h2>
         <FAQAccordion />
       </div>
       
