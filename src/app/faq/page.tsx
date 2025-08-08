@@ -1,7 +1,7 @@
 
 'use client';
-import { useState } from 'react';
-import { useFormStatus, useFormState } from 'react-dom';
+import { useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Loader2, Sparkles, Wand } from 'lucide-react';
 
 import FAQAccordion from '@/components/faq/faq-accordion';
@@ -44,7 +44,7 @@ export default function FAQPage() {
   const { pending } = useFormStatus();
   
   const initialState: GuideState = { answer: null, error: null };
-  const [state, formAction] = useFormState(askAiGuide, initialState);
+  const [state, formAction] = useActionState(askAiGuide, initialState);
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-8">
