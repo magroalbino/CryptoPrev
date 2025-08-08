@@ -9,8 +9,10 @@ export const MOCK_TVL = 12543210.54;
 // Base APY rates for different lock-up periods (in months)
 const BASE_APY_RATES: { [key: number]: number } = {
   3: 0.04,  // 4.0%
-  6: 0.055, // 5.5%
-  12: 0.07, // 7.0%
+  6: 0.05,  // 5.0%
+  12: 0.065, // 6.5%
+  36: 0.08, // 8.0%
+  60: 0.095  // 9.5%
 };
 
 /**
@@ -34,7 +36,7 @@ const getTvlApyBonus = (tvl: number): number => {
 
 /**
  * Calculates the final APY for a given lock-up period, including the TVL bonus.
- * @param lockupPeriod - The lock-up period in months (e.g., 3, 6, 12).
+ * @param lockupPeriod - The lock-up period in months.
  * @param tvl - The Total Value Locked on the platform.
  * @returns The final APY as a decimal (e.g., 0.085 for 8.5%).
  */

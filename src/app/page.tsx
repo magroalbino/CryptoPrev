@@ -55,21 +55,18 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const generateDashboardData = (address: string, usdcBalanceValue: number | null) => {
-      const seed = parseInt(address.substring(2, 10), 16);
-      const random = (multiplier: number) => (seed * multiplier) % 1;
-
       // Use the real balance if available, otherwise, generate mock data as a fallback.
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
         ? usdcBalanceValue 
         : 0;
       
-      const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
+      const lockupPeriod = 12; // Default to 12 months (Committed Plan)
       const activeProtocolApy = getDynamicApy(lockupPeriod);
 
       const accumulatedRewards = currentBalance * activeProtocolApy;
       const monthlyYield = accumulatedRewards / 12;
       const protocols = ['Compound', 'Aave', 'Lido'];
-      const activeProtocol = protocols[Math.floor(random(5) * 3)];
+      const activeProtocol = 'CryptoPrev Strategy';
       
 
       const transactions: any[] = [];
@@ -285,7 +282,7 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ProjectionChart initialInvestment={dashboardData.userData.currentBalance - dashboardData.userData.accumulatedRewards} />
+              <ProjectionChart initialInvestment={dashboardData.userData.currentBalance > 0 ? dashboardData.userData.currentBalance - dashboardData.userData.accumulatedRewards : 1} />
             </CardContent>
           </Card>
         </div>

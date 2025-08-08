@@ -164,19 +164,26 @@
     "title": "Configure Your Plan",
     "description": "Choose the plan that best fits your goals. Longer plans offer higher yields.",
     "plans": {
-      "short": {
-        "title": "Short Term",
-        "description": "Flexibility for near-term goals."
+      "flexible": {
+        "title": "Flexible",
+        "description": "3 months. Basic yield, maximum flexibility."
       },
-      "medium": {
-        "title": "Medium Term",
-        "description": "Balanced growth and access."
+      "strategic": {
+        "title": "Strategic",
+        "description": "6 months. A balanced approach to growth."
       },
-      "long": {
-        "title": "Long Term",
-        "description": "Maximize your retirement potential."
+      "committed": {
+        "title": "Committed",
+        "description": "1 year. Better returns for a solid commitment."
       },
-      "baseApy": "Base APY",
+      "visionary": {
+        "title": "Visionary",
+        "description": "3 years. Higher yields for long-term goals."
+      },
+      "retirement": {
+        "title": "Retirement",
+        "description": "5 years. Maximize your retirement potential."
+      },
       "apy": "Est. APY"
     },
     "updateButton": "Update Plan",

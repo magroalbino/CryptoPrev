@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Edit2, Zap, Calendar, Shield } from 'lucide-react';
+import { Edit2, Zap, Calendar, Shield, Telescope, Goal } from 'lucide-react';
 import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAppTranslation } from '@/hooks/use-app-translation';
@@ -27,9 +27,11 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
   const { t } = useAppTranslation();
 
   const plans = [
-    { value: "3", title: t('lockup.plans.short.title'), description: t('lockup.plans.short.description'), icon: <Zap/> },
-    { value: "6", title: t('lockup.plans.medium.title'), description: t('lockup.plans.medium.description'), icon: <Calendar/> },
-    { value: "12", title: t('lockup.plans.long.title'), description: t('lockup.plans.long.description'), icon: <Shield/> },
+    { value: "3", title: t('lockup.plans.flexible.title'), description: t('lockup.plans.flexible.description'), icon: <Zap/> },
+    { value: "6", title: t('lockup.plans.strategic.title'), description: t('lockup.plans.strategic.description'), icon: <Calendar/> },
+    { value: "12", title: t('lockup.plans.committed.title'), description: t('lockup.plans.committed.description'), icon: <Shield/> },
+    { value: "36", title: t('lockup.plans.visionary.title'), description: t('lockup.plans.visionary.description'), icon: <Telescope/> },
+    { value: "60", title: t('lockup.plans.retirement.title'), description: t('lockup.plans.retirement.description'), icon: <Goal/> },
   ].map(plan => ({
     ...plan,
     apy: getDynamicApy(Number(plan.value))
@@ -52,7 +54,7 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
           <Edit2 className="h-4 w-4 text-muted-foreground"/>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>{t('lockup.title')}</DialogTitle>
           <DialogDescription>
@@ -63,7 +65,7 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
            <RadioGroup
               defaultValue={selectedPeriod}
               onValueChange={setSelectedPeriod}
-              className="grid grid-cols-1 gap-4 md:grid-cols-3"
+              className="grid grid-cols-1 gap-4 md:grid-cols-5"
             >
               {plans.map((plan) => (
                 <div key={plan.value}>
@@ -71,9 +73,9 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
                   <Label
                     htmlFor={`r-${plan.value}`}
                     className={cn(
-                        "flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4",
-                        "hover:bg-accent hover:text-accent-foreground",
-                        "peer-data-[state=checked]:border-primary peer-data-[state=checked]:shadow-lg"
+                        "flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4 transition-all",
+                        "hover:bg-accent hover:text-accent-foreground hover:shadow-lg",
+                        "peer-data-[state=checked]:border-primary peer-data-[state=checked]:shadow-xl"
                     )}
                   >
                     <div className="mb-4 text-center">

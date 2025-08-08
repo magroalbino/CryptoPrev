@@ -164,19 +164,26 @@
     "title": "Configure Seu Plano",
     "description": "Escolha o plano que melhor se adapta aos seus objetivos. Planos mais longos oferecem rendimentos maiores.",
     "plans": {
-      "short": {
-        "title": "Curto Prazo",
-        "description": "Flexibilidade para metas de curto prazo."
+      "flexible": {
+        "title": "Flexível",
+        "description": "3 meses. Rendimento básico, máxima flexibilidade."
       },
-      "medium": {
-        "title": "Médio Prazo",
-        "description": "Crescimento e acesso equilibrados."
+      "strategic": {
+        "title": "Estratégico",
+        "description": "6 meses. Uma abordagem equilibrada para o crescimento."
       },
-      "long": {
-        "title": "Longo Prazo",
-        "description": "Maximize seu potencial de aposentadoria."
+      "committed": {
+        "title": "Comprometido",
+        "description": "1 ano. Melhores retornos por um compromisso sólido."
       },
-      "baseApy": "APY Base",
+      "visionary": {
+        "title": "Visionário",
+        "description": "3 anos. Rendimentos mais altos para metas de longo prazo."
+      },
+      "retirement": {
+        "title": "Aposentadoria",
+        "description": "5 anos. Maximize seu potencial de aposentadoria."
+      },
       "apy": "APY Est."
     },
     "updateButton": "Atualizar Plano",
