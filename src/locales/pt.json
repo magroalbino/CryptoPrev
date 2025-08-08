@@ -221,47 +221,6 @@
     },
     "error": "Desculpe, ocorreu um erro ao buscar a explicação. Por favor, tente novamente."
   },
-  "oracle": {
-    "title": "Oráculo DeFi",
-    "description": "Deixe nossa IA encontrar as melhores estratégias para maximizar seus rendimentos.",
-    "form": {
-      "title": "Parâmetros do Oráculo",
-      "description": "Forneça seus critérios para obter sugestões de DeFi com IA.",
-      "stablecoin": {
-        "label": "Stablecoin",
-        "placeholder": "Selecione uma stablecoin"
-      },
-      "amount": {
-        "label": "Valor do Investimento ($)"
-      },
-      "risk": {
-        "label": "Tolerância ao Risco",
-        "low": "Baixa",
-        "medium": "Média",
-        "high": "Alta"
-      },
-      "analyzingButton": "Analisando...",
-      "getSuggestionsButton": "Obter Sugestões",
-      "error": {
-        "title": "Ocorreu um erro"
-      }
-    },
-    "results": {
-      "strategy": "Estratégia",
-      "monthlyYield": "Rendimento Mensal Est.",
-      "basedOnInvestment": "Baseado no valor do seu investimento.",
-      "risks": "Riscos Potenciais",
-      "selectButton": "Selecionar Estratégia",
-      "toast": {
-        "title": "Estratégia Selecionada!",
-        "description": "{{protocol}} agora é sua estratégia ativa. Confira seu painel."
-      }
-    },
-    "placeholder": {
-      "title": "Suas sugestões com IA aparecerão aqui.",
-      "description": "Envie seus critérios para ver a mágica acontecer."
-    }
-  },
     "planner": {
     "title": "Planejador Financeiro com IA",
     "description": "Receba um plano de aposentadoria personalizado com o poder da IA.",
@@ -312,7 +271,7 @@
         "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
       },
       "ageAbbr": "Idade {{age}}",
-      "tooltipLabel": "Valor aos {{age}} anos"
+      "tooltipLabel": "{{value}} aos {{age}} anos"
     },
     "placeholder": {
       "title": "Seu plano com IA aparecerá aqui.",

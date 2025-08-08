@@ -306,10 +306,15 @@ export default function PlannerForm() {
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${Number(value)/1000}k`}/>
                                 <Tooltip
                                     cursor={{fill: 'hsl(var(--accent) / 0.1)'}}
-                                    content={<ChartTooltipContent formatter={(value, name, props) => {
-                                        const age = props.payload.year;
-                                        return [`$${Number(value).toLocaleString()}`, t('planner.results.tooltipLabel', { age: age })];
-                                    }} />}
+                                    content={<ChartTooltipContent 
+                                        formatter={(value, name, props) => {
+                                            const age = props.payload.year;
+                                            const formattedValue = `$${Number(value).toLocaleString()}`;
+                                            return t('planner.results.tooltipLabel', { value: formattedValue, age: age });
+                                        }} 
+                                        labelClassName="hidden"
+                                        indicator="line"
+                                    />}
                                 />
                                 <Area dataKey="value" type="monotone" fill="url(#fillValue)" fillOpacity={0.4} stroke="hsl(var(--accent))" strokeWidth={2} stackId="a" />
                             </AreaChart>

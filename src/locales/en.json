@@ -312,7 +312,7 @@
         "description": "This chart illustrates your potential investment growth over time."
       },
       "ageAbbr": "Age {{age}}",
-      "tooltipLabel": "Value at Age {{age}}"
+      "tooltipLabel": "{{value}} at age {{age}}"
     },
     "placeholder": {
       "title": "Your AI-powered plan will appear here.",
