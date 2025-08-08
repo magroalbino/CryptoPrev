@@ -74,7 +74,7 @@ export default function DepositDialog() {
         </DialogHeader>
         <Tabs defaultValue="crypto" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="pix"><PixIcon className="mr-2"/> PIX</TabsTrigger>
+            <TabsTrigger value="pix"><PixIcon className="mr-2 text-primary-foreground"/> PIX</TabsTrigger>
             <TabsTrigger value="card"><CreditCard className="mr-2"/> {t('deposit.tabs.card')}</TabsTrigger>
             <TabsTrigger value="crypto"><Wallet className="mr-2"/> {t('deposit.tabs.crypto')}</TabsTrigger>
           </TabsList>
