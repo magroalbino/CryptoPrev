@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "oracle": "DeFi Oracle",
     "planner": "AI Planner",
+    "health": "Health",
     "trade": "Swap",
     "faq": "FAQ",
     "proofOfFunds": "Proof of Funds",
@@ -310,6 +311,51 @@
     "onChain": {
       "title": "On-Chain Verification",
       "description": "Verify our reserves directly on the blockchain using the wallet addresses below."
+    }
+  },
+  "health": {
+    "title": "Health Savings",
+    "description": "Accumulate credits for private medical care, secured by the blockchain.",
+    "credits": "Credits",
+    "balance": {
+      "title": "Health Credits Balance"
+    },
+    "services": {
+      "title": "Available Services",
+      "description": "Use your credits to access medical services without bureaucracy.",
+      "general": {
+        "name": "General Consultation",
+        "description": "Online or in-person appointment with a general practitioner."
+      },
+      "psychology": {
+        "name": "Psychology Session",
+        "description": "Take care of your mental health with a specialized professional."
+      },
+      "nutrition": {
+        "name": "Nutritionist",
+        "description": "Create a personalized diet plan with a nutrition expert."
+      },
+      "useButton": "Use Credits"
+    },
+    "history": {
+      "title": "Transaction History",
+      "description": "A record of your deposits and service usage.",
+      "deposit": "Credit Deposit",
+      "table": {
+        "date": "Date",
+        "description": "Description",
+        "amount": "Amount (Credits)"
+      }
+    },
+    "toast": {
+      "success": {
+        "title": "Service Acquired!",
+        "description": "You have successfully used your credits for: {{service}}."
+      },
+      "error": {
+        "title": "Insufficient Credits",
+        "description": "You do not have enough credits to acquire this service."
+      }
     }
   }
 }

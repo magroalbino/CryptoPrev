@@ -4,6 +4,7 @@
     "dashboard": "Painel",
     "oracle": "Oráculo DeFi",
     "planner": "Planejador IA",
+    "health": "Saúde",
     "trade": "Trocar",
     "faq": "FAQ",
     "proofOfFunds": "Prova de Fundos",
@@ -310,6 +311,51 @@
     "onChain": {
       "title": "Verificação On-Chain",
       "description": "Verifique nossas reservas diretamente na blockchain usando os endereços de carteira abaixo."
+    }
+  },
+  "health": {
+    "title": "Poupança Saúde",
+    "description": "Acumule créditos para cuidados médicos particulares, com a segurança da blockchain.",
+    "credits": "Créditos",
+    "balance": {
+      "title": "Saldo de Créditos de Saúde"
+    },
+    "services": {
+      "title": "Serviços Disponíveis",
+      "description": "Use seus créditos para acessar serviços médicos sem burocracia.",
+      "general": {
+        "name": "Consulta Clínica Geral",
+        "description": "Consulta online ou presencial com um clínico geral."
+      },
+      "psychology": {
+        "name": "Sessão de Psicologia",
+        "description": "Cuide da sua saúde mental com um profissional especializado."
+      },
+      "nutrition": {
+        "name": "Nutricionista",
+        "description": "Crie um plano alimentar personalizado com um especialista."
+      },
+      "useButton": "Usar Créditos"
+    },
+    "history": {
+      "title": "Histórico de Transações",
+      "description": "Um registro de seus depósitos e uso de serviços.",
+      "deposit": "Depósito de Créditos",
+      "table": {
+        "date": "Data",
+        "description": "Descrição",
+        "amount": "Valor (Créditos)"
+      }
+    },
+    "toast": {
+      "success": {
+        "title": "Serviço Adquirido!",
+        "description": "Você utilizou seus créditos com sucesso para: {{service}}."
+      },
+      "error": {
+        "title": "Créditos Insuficientes",
+        "description": "Você não tem créditos suficientes para adquirir este serviço."
+      }
     }
   }
 }
