@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useFormStatus, useFormState } from 'react-dom';
@@ -53,6 +54,11 @@ export default function FAQPage() {
           {t('faq.description')}
         </p>
       </div>
+
+      <div className='space-y-4'>
+        <h2 className='text-2xl font-bold text-center'>{t('faq.commonQuestions')}</h2>
+        <FAQAccordion />
+      </div>
       
       <Card className="brutalist-shadow">
         <CardHeader>
@@ -87,11 +93,6 @@ export default function FAQPage() {
           )}
         </CardContent>
       </Card>
-
-      <div className='space-y-4'>
-        <h2 className='text-2xl font-bold text-center'>{t('faq.commonQuestions')}</h2>
-        <FAQAccordion />
-      </div>
     </div>
   );
 }
