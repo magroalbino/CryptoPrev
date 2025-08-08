@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import i18n from '@/lib/i18n';
+import enTranslations from '@/locales/en.json';
 
 const ExplainDeFiConceptInputSchema = z.object({
   conceptKey: z.string().describe('The translation key for the DeFi concept to be explained (e.g., "whatIsDeFi").'),
@@ -27,13 +27,16 @@ export type ExplainDeFiConceptOutput = z.infer<typeof ExplainDeFiConceptOutputSc
 export async function explainDeFiConcept(
   input: ExplainDeFiConceptInput
 ): Promise<ExplainDeFiConceptOutput> {
-  // Ensure i18next is initialized before using it on the server
-  if (!i18n.isInitialized) {
-    await i18n.init();
-  }
-  // Get the English concept text from the key
-  const englishConcept = i18n.t(`faq.topics.${input.conceptKey}`, { lng: 'en' });
 
+  // Get the English concept text directly from the imported JSON file
+  // This is a more reliable method for server-side execution.
+  const englishConcept = (enTranslations.faq.topics as Record<string, string>)[input.conceptKey];
+
+  if (!englishConcept) {
+    // Handle case where the key doesn't exist
+    throw new Error(`Translation key "${input.conceptKey}" not found in en.json`);
+  }
+  
   return explainDeFiConceptFlow({ concept: englishConcept });
 }
 
