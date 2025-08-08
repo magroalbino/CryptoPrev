@@ -12,9 +12,9 @@ const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwy
 
 // Pool of public RPC endpoints to increase reliability
 const SOLANA_RPC_ENDPOINTS = [
-    'https://api.mainnet-beta.solana.com',
     'https://rpc.ankr.com/solana',
-    'https://solana-mainnet.g.alchemy.com/v2/demo',
+    'https://mainnet.helius-rpc.com/?api-key=01a7471c-13a5-4871-a472-a4421b593633', // Helius is generally reliable
+    'https://api.mainnet-beta.solana.com',
 ];
 
 type WalletType = 'solana' | 'ethereum';
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUsdcBalance = useCallback(async (address: string) => {
     const connection = await getWorkingSolanaConnection();
     if (!connection) {
-        console.error("Could not establish a working Solana connection.");
+        console.error("Could not establish a working Solana connection. Falling back to 0 balance.");
         setUsdcBalance(0); // Set a fallback value
         return;
     }
