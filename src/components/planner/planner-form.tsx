@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import { useAppTranslation } from '@/hooks/use-app-translation';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/firebase-auth';
 
 const formSchema = z.object({
   currentAge: z.coerce.number().min(18, 'Must be at least 18.'),
@@ -54,6 +56,7 @@ const chartConfig = {
 export default function PlannerForm() {
   const { toast } = useToast();
   const { t } = useAppTranslation();
+  const { usdcBalance } = useAuth();
   const initialState: PlannerState = { data: null, error: null };
   const [state, formAction] = useActionState(getPlannerSuggestion, initialState);
 
@@ -62,12 +65,19 @@ export default function PlannerForm() {
     defaultValues: {
       currentAge: 30,
       retirementAge: 65,
-      initialInvestment: 10000,
+      initialInvestment: usdcBalance || 10000,
       monthlyContribution: 500,
       desiredMonthlyIncome: 5000,
       riskTolerance: 'medium',
     },
   });
+
+  useEffect(() => {
+    if (usdcBalance !== null) {
+      form.setValue('initialInvestment', usdcBalance);
+    }
+  }, [usdcBalance, form]);
+
 
   useEffect(() => {
     if (state.error) {
