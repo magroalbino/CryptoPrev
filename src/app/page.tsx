@@ -102,6 +102,17 @@ export default function Dashboard() {
       description: t('dashboard.rewards.claimToast.description', { amount: dashboardData.userData.monthlyYield.toFixed(2) }),
     });
   };
+
+  const handleUpdateLockupPeriod = (newPeriod: number) => {
+    if (!dashboardData) return;
+    setDashboardData({
+        ...dashboardData,
+        userData: {
+            ...dashboardData.userData,
+            lockupPeriod: newPeriod,
+        }
+    });
+  };
   
   if (loading) {
     return (
@@ -179,7 +190,7 @@ export default function Dashboard() {
           value={t('dashboard.cards.lockup.value_other', { count: dashboardData.userData.lockupPeriod })}
           description={t('dashboard.cards.lockup.description')}
           icon={<Hourglass className="text-accent" />}
-          action={<LockupDialog currentPeriod={dashboardData.userData.lockupPeriod} />}
+          action={<LockupDialog currentPeriod={dashboardData.userData.lockupPeriod} onUpdate={handleUpdateLockupPeriod} />}
         />
         <StatCard
           title={t('dashboard.cards.protocol.title')}

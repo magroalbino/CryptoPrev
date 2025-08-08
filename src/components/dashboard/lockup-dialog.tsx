@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +19,7 @@ import { useAppTranslation } from '@/hooks/use-app-translation';
 import { cn } from '@/lib/utils';
 
 
-export default function LockupDialog({ currentPeriod }: { currentPeriod: number }) {
+export default function LockupDialog({ currentPeriod, onUpdate }: { currentPeriod: number, onUpdate: (period: number) => void }) {
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState(String(currentPeriod));
   const { toast } = useToast();
@@ -31,11 +32,11 @@ export default function LockupDialog({ currentPeriod }: { currentPeriod: number 
   ];
 
   const handleUpdate = () => {
-    // In a real app, this would update the user's settings in Firestore
-    console.log("Updating lock-up period to:", selectedPeriod);
+    const newPeriod = Number(selectedPeriod);
+    onUpdate(newPeriod);
     toast({
       title: t('lockup.toast.success.title'),
-      description: t('lockup.toast.success.description', { count: Number(selectedPeriod) }),
+      description: t('lockup.toast.success.description', { count: newPeriod }),
     });
     setOpen(false);
   };
