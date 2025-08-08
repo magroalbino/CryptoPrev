@@ -48,10 +48,10 @@ const getWorkingSolanaConnection = async (): Promise<Connection | null> => {
             console.log(`Successfully connected to Solana RPC endpoint: ${endpoint}`);
             return connection;
         } catch (e) {
-            console.warn(`Failed to connect or get version from ${endpoint}, trying next...`, e);
+            console.warn(`Failed to connect or get version from ${endpoint}, trying next...`);
         }
     }
-    console.error("Failed to connect to any available Solana RPC endpoint.");
+    // This console.error was causing the unhandled error message. We handle this return null case below.
     return null;
 }
 
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUsdcBalance = useCallback(async (address: string) => {
     const connection = await getWorkingSolanaConnection();
     if (!connection) {
-        console.error("Could not establish a working Solana connection. Falling back to 0 balance.");
+        console.error("Could not establish a working Solana connection after trying all endpoints. Falling back to 0 balance.");
         setUsdcBalance(0); // Set a fallback value
         return;
     }
