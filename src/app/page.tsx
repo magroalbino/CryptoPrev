@@ -73,7 +73,12 @@ export default function Dashboard() {
       
 
       const transactions: any[] = [];
-      const achievements: any[] = [];
+      const achievements: any[] = [
+        { id: 'ach1', name: 'Ant', icon: '🐜', achieved: false },
+        { id: 'ach2', name: 'Turtle', icon: '🐢', achieved: false },
+        { id: 'ach3', name: 'Elephant', icon: '🐘', achieved: false },
+        { id: 'ach4', name: 'Eagle', icon: '🦅', achieved: false },
+      ];
 
       return {
           userData: {
