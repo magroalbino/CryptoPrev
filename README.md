@@ -1,35 +1,107 @@
-# CryptoPrev by Firebase Studio
+# 💰 CryptoPrev
 
-This is a Next.js web application built with Firebase Studio.
+**CryptoPrev** é uma plataforma de previdência privada descentralizada baseada em criptomoedas. O objetivo é transformar aportes de longo prazo em rendimentos mensais previsíveis, utilizando protocolos DeFi seguros e stablecoins como DAI ou USDC. A aplicação é desenvolvida com foco em **acessibilidade, transparência e descentralização**, para usuários que desejam estabilidade financeira no mundo cripto.
 
-## Running the Application
+---
 
-This is a web application built with Next.js. You don't "compile" it like a desktop app; instead, you run it on a local server for development or build it for production hosting.
+## 🚀 Tecnologias Utilizadas
 
-### Development Mode
+- [Next.js](https://nextjs.org/) — Framework React para frontend moderno
+- [TypeScript](https://www.typescriptlang.org/) — Tipagem estática para maior segurança
+- [Tailwind CSS](https://tailwindcss.com/) — Estilização rápida e responsiva
+- [Firebase](https://firebase.google.com/) — Autenticação e Firestore
+- [Ethers.js](https://docs.ethers.io/) — Integração com contratos inteligentes
+- [WalletConnect](https://walletconnect.com/) — Conexão com carteiras Web3
+- [Polygon / Arbitrum Testnet] — Blockchain para testes e execução de smart contracts
+- [Superfluid (futuro)](https://www.superfluid.finance/) — Streaming de rendimentos mensais
 
-To run the app in development mode, which enables features like hot-reloading (the site updates automatically when you change the code), run the following command in your terminal:
+---
+
+## 📁 Estrutura do Projeto
+├── .env # Variáveis de ambiente (Firebase, RPC, etc)
+├── .next # Arquivos gerados na build
+├── src/ # Código-fonte da aplicação
+│ └── ... # Páginas, componentes e serviços
+├── docs/ # Documentações ou imagens
+├── components.json # Configurações de componentes (provavelmente Firebase Hosting)
+├── apphosting.yaml # Configuração de deploy (Firebase Hosting)
+├── tailwind.config.ts # Estilo do projeto
+├── tsconfig.json # Configuração do TypeScript
+├── next.config.ts # Configuração do Next.js
+└── README.md # Este arquivo
+
+---
+
+## 📦 Instalação Local
 
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/cryptoprev.git
+cd cryptoprev
+
+# 2. Instale as dependências
+npm install
+
+# 3. Crie um arquivo .env com as variáveis necessárias
+cp .env.example .env
+
+# 4. Inicie o servidor local
 npm run dev
-```
 
-This will start the development server, usually available at `http://localhost:9002`.
+🔐 Variáveis de Ambiente (.env)
+Crie um arquivo .env com as seguintes chaves:
 
-### Production Mode
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+NEXT_PUBLIC_FIREBASE_APP_ID=...
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=...
+NEXT_PUBLIC_RPC_URL=...
+NEXT_PUBLIC_CONTRACT_ADDRESS=...
 
-To simulate a production environment or to build the app for deployment, follow these two steps:
+📲 Funcionalidades
 
-1.  **Build the application:** This command creates an optimized, production-ready version of your site.
+🔐 Login com carteira Web3 e autenticação via Firebase
 
-    ```bash
-    npm run build
-    ```
+💸 Depósitos em stablecoins (DAI/USDC)
 
-2.  **Start the production server:** This command runs the optimized version you just built.
+⏳ Carência configurável (ex: 12 meses)
 
-    ```bash
-    npm run start
-    ```
+📈 Projeção de rendimentos futuros
 
-This will start a server with the production build, which you can also access locally.
+💰 Streaming mensal (futuramente via Superfluid)
+
+🧾 Histórico de transações e aportes
+
+🌐 Interface amigável, acessível e bilíngue (PT/EN)
+
+📤 Deploy
+Este projeto pode ser hospedado via Firebase Hosting:
+
+# Build do projeto
+npm run build
+
+# Deploy no Firebase
+firebase deploy
+
+🛠️ Em desenvolvimento
+🔄 Integração com contratos inteligentes
+
+📊 Gráficos de rendimento e histórico de performance
+
+🔔 Notificações push sobre rendimentos
+
+👥 Modo colaborativo (planos familiares ou grupos)
+
+🤝 Contribuindo
+Pull requests são bem-vindos! Sinta-se à vontade para abrir issues e sugerir melhorias.
+
+📄 Licença
+MIT © [Seu Nome ou Organização]
+
+📫 Contato
+Tem dúvidas ou sugestões?
+📧 contato@cryptoprev.app
+🐦 @CryptoPrevApp
