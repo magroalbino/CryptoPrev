@@ -4,6 +4,7 @@
     "dashboard": "Painel",
     "oracle": "Oráculo DeFi",
     "planner": "Planejador IA",
+    "loans": "Empréstimos",
     "health": "Saúde",
     "trade": "Trocar",
     "faq": "FAQ",
@@ -271,7 +272,7 @@
         "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
       },
       "ageAbbr": "Idade {{age}}",
-      "tooltipLabel": "{{value}} aos {{age}} anos"
+      "tooltipLabel": "${{value}} aos {{age}} anos"
     },
     "placeholder": {
       "title": "Seu plano com IA aparecerá aqui.",
@@ -349,6 +350,58 @@
       "error": {
         "title": "Créditos Insuficientes",
         "description": "Você não tem créditos suficientes para adquirir este serviço."
+      }
+    }
+  },
+  "loans": {
+    "title": "Empréstimos com Garantia Cripto",
+    "description": "Alavanque seus ativos. Pegue empréstimos usando seus investimentos como garantia, sem precisar vendê-los.",
+    "cards": {
+      "collateral": {
+        "title": "Valor em Garantia",
+        "description": "Total de ativos disponíveis para usar como garantia."
+      },
+      "available": {
+        "title": "Disponível para Empréstimo",
+        "description": "Baseado em um LTV (Loan-to-Value) de 50%."
+      },
+      "interest": {
+        "title": "Taxa de Juros",
+        "description": "Taxa anual fixa para todos os empréstimos."
+      }
+    },
+    "request": {
+      "title": "Solicitar Empréstimo",
+      "description": "Insira o valor que deseja pegar emprestado.",
+      "amountLabel": "Valor do Empréstimo ($)",
+      "button": "Solicitar Empréstimo"
+    },
+    "history": {
+      "title": "Empréstimos Ativos",
+      "description": "Um resumo dos seus empréstimos pendentes.",
+      "table": {
+        "date": "Data",
+        "amount": "Valor",
+        "interest": "Taxa de Juros",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "active": "Ativo",
+        "paid": "Pago"
+      },
+      "empty": {
+        "title": "Nenhum Empréstimo Ativo",
+        "description": "Solicite um empréstimo para ver seu histórico aqui."
+      }
+    },
+    "toast": {
+      "success": {
+        "title": "Empréstimo Solicitado com Sucesso",
+        "description": "Seu empréstimo de ${{amount}} foi aprovado e financiado."
+      },
+      "error": {
+        "title": "Falha na Solicitação de Empréstimo",
+        "insufficientCollateral": "Sua garantia disponível não é suficiente para este valor de empréstimo."
       }
     }
   }

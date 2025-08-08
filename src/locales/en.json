@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "oracle": "DeFi Oracle",
     "planner": "AI Planner",
+    "loans": "Loans",
     "health": "Health",
     "trade": "Swap",
     "faq": "FAQ",
@@ -312,7 +313,7 @@
         "description": "This chart illustrates your potential investment growth over time."
       },
       "ageAbbr": "Age {{age}}",
-      "tooltipLabel": "{{value}} at age {{age}}"
+      "tooltipLabel": "${{value}} at age {{age}}"
     },
     "placeholder": {
       "title": "Your AI-powered plan will appear here.",
@@ -390,6 +391,58 @@
       "error": {
         "title": "Insufficient Credits",
         "description": "You do not have enough credits to acquire this service."
+      }
+    }
+  },
+  "loans": {
+    "title": "Crypto-Backed Loans",
+    "description": "Leverage your assets. Borrow against your investments without selling them.",
+    "cards": {
+      "collateral": {
+        "title": "Collateral Value",
+        "description": "Total assets available to use as collateral."
+      },
+      "available": {
+        "title": "Available to Borrow",
+        "description": "Based on a 50% LTV (Loan-to-Value)."
+      },
+      "interest": {
+        "title": "Interest Rate",
+        "description": "Annual fixed rate for all loans."
+      }
+    },
+    "request": {
+      "title": "Request a Loan",
+      "description": "Enter the amount you wish to borrow.",
+      "amountLabel": "Loan Amount ($)",
+      "button": "Request Loan"
+    },
+    "history": {
+      "title": "Active Loans",
+      "description": "A summary of your outstanding loans.",
+      "table": {
+        "date": "Date",
+        "amount": "Amount",
+        "interest": "Interest Rate",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "active": "Active",
+        "paid": "Paid"
+      },
+      "empty": {
+        "title": "No Active Loans",
+        "description": "Request a loan to see your history here."
+      }
+    },
+    "toast": {
+      "success": {
+        "title": "Loan Request Successful",
+        "description": "Your loan of ${{amount}} has been approved and funded."
+      },
+      "error": {
+        "title": "Loan Request Failed",
+        "insufficientCollateral": "Your available collateral is not enough for this loan amount."
       }
     }
   }
