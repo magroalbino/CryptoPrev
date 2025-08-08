@@ -6,6 +6,8 @@ import {
   Hourglass,
   CircleDollarSign,
   Trophy,
+  History,
+  Sparkles,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -58,7 +60,7 @@ export default function Dashboard() {
       // Use the real balance if available, otherwise, generate mock data as a fallback.
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
         ? usdcBalanceValue 
-        : (1000 + random(1) * 20000);
+        : 0;
 
       const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
       const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
@@ -67,27 +69,8 @@ export default function Dashboard() {
       const activeProtocol = protocols[Math.floor(random(5) * 3)];
       const activeProtocolApy = 4.5 + random(6) * 3;
 
-      const transactions = Array.from({ length: 6 }).map((_, i) => {
-          const date = new Date();
-          date.setMonth(date.getMonth() - i);
-          const isYield = i % 2 === 0;
-          
-          return {
-              id: `${i}-${seed}`,
-              date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'}),
-              amount: isYield ? monthlyYield * (0.8 + random(7+i) * 0.4) : 500 + random(8+i) * 1500,
-              status: isYield ? 'Paid' : 'Completed',
-              protocol: isYield ? protocols[Math.floor(random(9+i) * 3)] : 'N/A',
-              type: isYield ? 'Yield' : 'Deposit'
-          };
-      });
-
-      const achievements = [
-        { id: '1', name: 'Ant', achieved: random(10) > 0.1, icon: '🐜' },
-        { id: '2', name: 'Turtle', achieved: random(11) > 0.3, icon: '🐢' },
-        { id: '3', name: 'Elephant', achieved: random(12) > 0.7, icon: '🐘' },
-        { id: '4', name: 'Eagle', achieved: random(13) > 0.9, icon: '🦅' },
-      ];
+      const transactions: any[] = [];
+      const achievements: any[] = [];
 
       return {
           userData: {
@@ -164,6 +147,10 @@ export default function Dashboard() {
       </div>
     );
   }
+  
+  const yieldTransactions = dashboardData.transactions.filter((tx: any) => tx.type === 'Yield');
+  const depositTransactions = dashboardData.transactions.filter((tx: any) => tx.type === 'Deposit');
+
 
   return (
     <div className="flex-1 space-y-6">
@@ -222,23 +209,31 @@ export default function Dashboard() {
               <CardDescription>{t('dashboard.achievements.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <TooltipProvider>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {dashboardData.achievements.map((ach: any) => (
-                    <Tooltip key={ach.id}>
-                      <TooltipTrigger asChild>
-                        <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
-                          <span className={cn('text-2xl', ach.achieved ? '' : 'grayscale')}>{ach.icon}</span>
+                {dashboardData.achievements.length > 0 ? (
+                    <TooltipProvider>
+                        <div className="flex flex-wrap justify-center gap-4">
+                        {dashboardData.achievements.map((ach: any) => (
+                            <Tooltip key={ach.id}>
+                            <TooltipTrigger asChild>
+                                <div className={cn('relative rounded-md border-2 p-3 transition-all duration-300', ach.achieved ? 'border-accent bg-accent/20' : 'border-muted bg-muted/50 opacity-50')}>
+                                <span className={cn('text-2xl', ach.achieved ? '' : 'grayscale')}>{ach.icon}</span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.name`)}</p>
+                                <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.description`)}</p>
+                            </TooltipContent>
+                            </Tooltip>
+                        ))}
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="font-bold">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.name`)}</p>
-                        <p className="text-sm text-muted-foreground">{t(`dashboard.achievements.items.${ach.name.toLowerCase()}.description`)}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-                </div>
-              </TooltipProvider>
+                    </TooltipProvider>
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                        <Trophy className="h-10 w-10 mb-4" />
+                        <p className="font-bold">{t('dashboard.achievements.empty.title')}</p>
+                        <p className="text-sm">{t('dashboard.achievements.empty.description')}</p>
+                    </div>
+                )}
             </CardContent>
           </Card>
         </div>
@@ -281,58 +276,74 @@ export default function Dashboard() {
               <TabsTrigger value="deposits">{t('dashboard.history.depositsTab')}</TabsTrigger>
             </TabsList>
             <TabsContent value="yield">
-              <Table>
-                <TableHeader>
-                  <TableRow className='hover:bg-card'>
-                    <TableHead>{t('dashboard.history.table.date')}</TableHead>
-                    <TableHead>{t('dashboard.history.table.protocol')}</TableHead>
-                    <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
-                    <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {dashboardData.transactions.filter((t: any) => t.type === 'Yield').map((dist: any) => (
-                    <TableRow key={dist.id} className='hover:bg-muted/50'>
-                      <TableCell>
-                        <div className="font-bold">{dist.date}</div>
-                      </TableCell>
-                      <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
-                      <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground">
-                          {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                {yieldTransactions.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                        <TableRow className='hover:bg-card'>
+                            <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                            <TableHead>{t('dashboard.history.table.protocol')}</TableHead>
+                            <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                            <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
+                        </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                        {yieldTransactions.map((dist: any) => (
+                            <TableRow key={dist.id} className='hover:bg-muted/50'>
+                            <TableCell>
+                                <div className="font-bold">{dist.date}</div>
+                            </TableCell>
+                            <TableCell className='text-muted-foreground'>{dist.protocol}</TableCell>
+                            <TableCell className="text-right font-mono font-bold">${dist.amount.toFixed(2)}</TableCell>
+                            <TableCell className="text-center">
+                                <Badge variant="outline" className="border-accent bg-accent/20 text-accent-foreground">
+                                {t(`dashboard.history.statusLabels.${dist.status.toLowerCase()}` as any)}
+                                </Badge>
+                            </TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-12">
+                        <Sparkles className="h-10 w-10 mb-4" />
+                        <p className="font-bold">{t('dashboard.history.empty.yieldTitle')}</p>
+                        <p className="text-sm">{t('dashboard.history.empty.yieldDescription')}</p>
+                    </div>
+                )}
             </TabsContent>
             <TabsContent value="deposits">
-              <Table>
-                <TableHeader>
-                  <TableRow className='hover:bg-card'>
-                    <TableHead>{t('dashboard.history.table.date')}</TableHead>
-                    <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
-                    <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {dashboardData.transactions.filter((t: any) => t.type === 'Deposit').map((deposit: any) => (
-                    <TableRow key={deposit.id} className='hover:bg-muted/50'>
-                      <TableCell>
-                        <div className="font-bold">{deposit.date}</div>
-                      </TableCell>
-                      <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground">
-                          {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                {depositTransactions.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                        <TableRow className='hover:bg-card'>
+                            <TableHead>{t('dashboard.history.table.date')}</TableHead>
+                            <TableHead className="text-right">{t('dashboard.history.table.amount')}</TableHead>
+                            <TableHead className="text-center">{t('dashboard.history.table.status')}</TableHead>
+                        </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                        {depositTransactions.map((deposit: any) => (
+                            <TableRow key={deposit.id} className='hover:bg-muted/50'>
+                            <TableCell>
+                                <div className="font-bold">{deposit.date}</div>
+                            </TableCell>
+                            <TableCell className="text-right font-mono font-bold">${deposit.amount.toFixed(2)}</TableCell>
+                            <TableCell className="text-center">
+                                <Badge variant="outline" className="border-green-500 bg-green-500/20 text-foreground">
+                                {t(`dashboard.history.statusLabels.${deposit.status.toLowerCase()}` as any)}
+                                </Badge>
+                            </TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-12">
+                        <History className="h-10 w-10 mb-4" />
+                        <p className="font-bold">{t('dashboard.history.empty.depositTitle')}</p>
+                        <p className="text-sm">{t('dashboard.history.empty.depositDescription')}</p>
+                    </div>
+                )}
             </TabsContent>
           </Tabs>
         </CardContent>

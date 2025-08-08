@@ -26,7 +26,7 @@
     "cards": {
       "balance": {
         "title": "Saldo Atual",
-        "description": "+1.2% desde o último mês",
+        "description": "Comece a depositar para ver seu saldo crescer.",
         "notApplicable": "N/A",
         "notApplicableDescription": "Conecte uma carteira Solana"
       },
@@ -75,6 +75,10 @@
           "name": "Águia",
           "description": "Contribua por 365 dias seguidos."
         }
+      },
+      "empty": {
+        "title": "Sua Aventura te Espera!",
+        "description": "Comece a investir para desbloquear conquistas."
       }
     },
     "charts": {
@@ -101,6 +105,12 @@
       "statusLabels": {
         "paid": "Pago",
         "completed": "Concluído"
+      },
+      "empty": {
+        "yieldTitle": "Nenhum Histórico de Rendimentos",
+        "yieldDescription": "Seus ganhos mensais aparecerão aqui assim que forem gerados.",
+        "depositTitle": "Nenhum Depósito Ainda",
+        "depositDescription": "Faça seu primeiro depósito para ver seu histórico de transações."
       }
     }
   },

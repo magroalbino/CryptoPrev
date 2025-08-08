@@ -26,7 +26,7 @@
     "cards": {
       "balance": {
         "title": "Current Balance",
-        "description": "+1.2% from last month",
+        "description": "Start depositing to see your balance grow.",
         "notApplicable": "N/A",
         "notApplicableDescription": "Connect a Solana wallet"
       },
@@ -75,6 +75,10 @@
           "name": "Eagle",
           "description": "Contribute for 365 days in a row."
         }
+      },
+      "empty": {
+        "title": "Your Adventure Awaits!",
+        "description": "Start investing to unlock achievements."
       }
     },
     "charts": {
@@ -101,6 +105,12 @@
       "statusLabels": {
         "paid": "Paid",
         "completed": "Completed"
+      },
+      "empty": {
+        "yieldTitle": "No Yield History Yet",
+        "yieldDescription": "Your monthly earnings will appear here once they are generated.",
+        "depositTitle": "No Deposits Yet",
+        "depositDescription": "Make your first deposit to see your transaction history."
       }
     }
   },
