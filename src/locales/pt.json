@@ -152,11 +152,22 @@
     "addressLabel": "Endereço da Carteira",
     "notConnected": "Não conectado",
     "addressDescription": "Os fundos serão enviados para a sua carteira conectada.",
+    "availableBalance": "Saldo disponível",
     "confirmButton": "Confirmar Saque",
+    "locked": {
+      "title": "Saques Bloqueados",
+      "description": "Seus fundos estão bloqueados em um plano de investimento por {{count}} meses. Saques estarão disponíveis após o fim do período."
+    },
     "toast": {
       "success": {
         "title": "Saque Iniciado",
-        "description": "Seus fundos estão sendo processados e serão enviados para sua carteira."
+        "description": "Seus fundos (${{amount}}) estão sendo processados e serão enviados para sua carteira."
+      },
+      "error": {
+        "title": "Falha no Saque",
+        "invalidAmount": "Por favor, insira um valor válido para sacar.",
+        "insufficientBalance": "Você não pode sacar mais do que seu saldo disponível.",
+        "fundsLocked": "Seus fundos estão atualmente bloqueados em um plano de investimento."
       }
     }
   },

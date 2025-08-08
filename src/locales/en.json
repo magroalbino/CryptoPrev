@@ -152,11 +152,22 @@
     "addressLabel": "Wallet Address",
     "notConnected": "Not connected",
     "addressDescription": "Funds will be sent to your connected wallet.",
+    "availableBalance": "Available balance",
     "confirmButton": "Confirm Withdrawal",
+    "locked": {
+      "title": "Withdrawals Locked",
+      "description": "Your funds are locked in an investment plan for {{count}} months. Withdrawals will be available after the period ends."
+    },
     "toast": {
       "success": {
         "title": "Withdrawal Initiated",
-        "description": "Your funds are being processed and will be sent to your wallet."
+        "description": "Your funds (${{amount}}) are being processed and will be sent to your wallet."
+      },
+      "error": {
+        "title": "Withdrawal Failed",
+        "invalidAmount": "Please enter a valid amount to withdraw.",
+        "insufficientBalance": "You cannot withdraw more than your available balance.",
+        "fundsLocked": "Your funds are currently locked in an investment plan."
       }
     }
   },

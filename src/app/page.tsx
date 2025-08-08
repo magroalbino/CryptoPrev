@@ -182,7 +182,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
         <div className="flex items-center space-x-2">
-          <WithdrawDialog />
+          <WithdrawDialog currentBalance={dashboardData.userData.currentBalance} lockupPeriod={dashboardData.userData.lockupPeriod} />
           <DepositDialog />
         </div>
       </div>
