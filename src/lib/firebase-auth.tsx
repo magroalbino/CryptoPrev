@@ -45,7 +45,6 @@ const getWorkingSolanaConnection = async (): Promise<Connection | null> => {
             const connection = new Connection(endpoint, 'confirmed');
             // Actively test the connection by fetching the version
             await connection.getVersion();
-            console.log(`Successfully connected to Solana RPC endpoint: ${endpoint}`);
             return connection;
         } catch (e) {
             console.warn(`Failed to connect or get version from ${endpoint}, trying next...`);
@@ -147,11 +146,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem('walletType', 'ethereum');
             localStorage.setItem('walletAddress', address);
         }
-    } catch (error) {
-      console.error(`Failed to connect to ${type} wallet:`, error);
+    } catch (error: any) {
+      // Gracefully handle user rejection
+      if (error.code === 4001) {
+        console.log('User rejected connection request.');
+      } else {
+        console.error(`Failed to connect to ${type} wallet:`, error);
+      }
+      // Clear any partial state on any error
       setWeb3UserAddress(null);
       setWalletType(null);
       setUsdcBalance(null);
+      localStorage.removeItem('walletType');
+      localStorage.removeItem('walletAddress');
     } finally {
         setLoading(false);
     }
