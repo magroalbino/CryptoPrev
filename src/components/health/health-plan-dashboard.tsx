@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/firebase-auth';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { HeartPulse, Stethoscope, Brain, Apple, DollarSign, Receipt } from 'lucide-react';
+import { HeartPulse, Stethoscope, Brain, Apple, DollarSign, Receipt, History } from 'lucide-react';
 import DepositDialog from '@/components/dashboard/deposit-dialog';
 import { Skeleton } from '../ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -26,24 +27,9 @@ export default function HealthPlanDashboard() {
   const { toast } = useToast();
 
   const generateHealthData = (address: string) => {
-    const seed = parseInt(address.substring(2, 12), 16);
-    const random = (multiplier: number) => (seed * multiplier) % 1;
-    
-    const balance = 150 + random(1) * 500;
-    
-    const transactions = Array.from({ length: 4 }).map((_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (i * 15 + random(i+2)*5));
-      const isDeposit = random(i+3) > 0.6;
-      const service = MOCK_SERVICES[Math.floor(random(i+4) * MOCK_SERVICES.length)];
-      return {
-        id: `${i}-${seed}`,
-        date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric'}),
-        description: isDeposit ? t('health.history.deposit') : t(service.name),
-        amount: isDeposit ? 100 + random(i+5) * 100 : -service.cost,
-        type: isDeposit ? 'Deposit' : 'Service',
-      };
-    });
+    // Start with a clean slate for new users
+    const balance = 0;
+    const transactions: any[] = [];
 
     return {
       balance,
@@ -141,26 +127,34 @@ export default function HealthPlanDashboard() {
                     <CardDescription>{t('health.history.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('health.history.table.date')}</TableHead>
-                                <TableHead>{t('health.history.table.description')}</TableHead>
-                                <TableHead className="text-right">{t('health.history.table.amount')}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {healthData.transactions.map((tx: any) => (
-                            <TableRow key={tx.id}>
-                                <TableCell>{tx.date}</TableCell>
-                                <TableCell className="font-medium">{tx.description}</TableCell>
-                                <TableCell className={`text-right font-mono font-bold ${tx.amount > 0 ? 'text-accent' : 'text-primary'}`}>
-                                    {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
-                                </TableCell>
-                            </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    {healthData.transactions.length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{t('health.history.table.date')}</TableHead>
+                                    <TableHead>{t('health.history.table.description')}</TableHead>
+                                    <TableHead className="text-right">{t('health.history.table.amount')}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {healthData.transactions.map((tx: any) => (
+                                <TableRow key={tx.id}>
+                                    <TableCell>{tx.date}</TableCell>
+                                    <TableCell className="font-medium">{tx.description}</TableCell>
+                                    <TableCell className={`text-right font-mono font-bold ${tx.amount > 0 ? 'text-accent' : 'text-primary'}`}>
+                                        {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
+                                    </TableCell>
+                                </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-12">
+                            <History className="h-10 w-10 mb-4" />
+                            <p className="font-bold">{t('health.history.empty.title')}</p>
+                            <p className="text-sm">{t('health.history.empty.description')}</p>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

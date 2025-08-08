@@ -340,6 +340,10 @@
         "date": "Data",
         "description": "Descrição",
         "amount": "Valor (Créditos)"
+      },
+      "empty": {
+        "title": "Nenhum Histórico de Transações",
+        "description": "Seus depósitos e uso de serviços aparecerão aqui."
       }
     },
     "toast": {

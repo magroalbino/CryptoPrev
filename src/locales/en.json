@@ -381,6 +381,10 @@
         "date": "Date",
         "description": "Description",
         "amount": "Amount (Credits)"
+      },
+      "empty": {
+        "title": "No Transaction History Yet",
+        "description": "Your deposits and service usage will appear here."
       }
     },
     "toast": {
