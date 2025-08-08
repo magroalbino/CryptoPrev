@@ -53,20 +53,24 @@ const prompt = ai.definePrompt({
   name: 'analyzeDefiProtocolsPrompt',
   input: {schema: AnalyzeDefiProtocolsInputSchema},
   output: {schema: AnalyzeDefiProtocolsOutputSchema},
-  prompt: `You are a DeFi (Decentralized Finance) expert. You are tasked with analyzing DeFi protocols to find the best options for maximizing stablecoin yield for the user, based on their risk tolerance and investment amount.  Provide the top 3 best options for the user.
+  prompt: `You are a DeFi (Decentralized Finance) expert. Your knowledge is based on your training data, you cannot access live internet data. You are tasked with suggesting realistic and plausible DeFi strategies for maximizing stablecoin yield for a user, based on their risk tolerance and investment amount. Provide the top 3 best options.
 
-Analyze DeFi protocols for the following stablecoin: {{{stablecoin}}}
+Analyze strategies for the following stablecoin: {{{stablecoin}}}
 Risk Tolerance: {{{riskTolerance}}}
 Investment Amount: {{{investmentAmount}}}
 
-Consider the following factors when recommending each protocol:
+Your recommendations should be based on well-known, real-world DeFi strategies. For each suggestion, consider the following:
 
-*   **APY (Annual Percentage Yield):** Prioritize protocols with higher APYs.
-*   **Lock-up Period:**  Consider protocols with shorter lock-up periods, but also present options with longer lock-up periods if the APY is significantly higher.
-*   **Risks:**  Thoroughly evaluate the risks associated with each protocol, including smart contract risk, impermanent loss, and liquidation risk.  Present these risks to the user in simple terms.
-*   **Strategy Description:** Provide a detailed description of the DeFi strategy for the specified protocol.
+*   **Strategy Type:** Base your suggestions on common, proven strategies like:
+    *   **Lending/Borrowing:** Suggesting supplying assets to protocols like Aave or Compound.
+    *   **Liquidity Providing:** Suggesting providing liquidity to stablecoin-only pools (e.g., Curve 3pool).
+    *   **Liquid Staking:** Suggesting staking tokens where applicable for stablecoins.
+*   **APY (Annual Percentage Yield):** Provide a realistic, conservative APY estimate based on the strategy and risk level. For example, for a 'low' risk tolerance, suggest APYs in the 3-5% range. For 'medium', suggest 5-8%. For 'high', you can suggest 8-12%. These are just examples; use your knowledge to provide plausible figures.
+*   **Lock-up Period:** Mention if the strategy involves a lock-up period.
+*   **Risks:** Clearly explain the primary risks in simple terms (e.g., smart contract risk, de-pegging risk for stablecoins, impermanent loss for liquidity pools).
+*   **Strategy Description:** Briefly explain how the strategy generates yield.
 
-Based on the above criteria, recommend the top 3 best DeFi protocols for the user.
+Based on these criteria, recommend the top 3 DeFi strategies for the user. Ensure the output matches the requested schema.
 `,
 });
 

@@ -7,12 +7,13 @@
 export const MOCK_TVL = 12543210.54;
 
 // Base APY rates for different lock-up periods (in months)
+// Rebalanced to be more aligned with sustainable DeFi yields for stablecoins.
 const BASE_APY_RATES: { [key: number]: number } = {
-  3: 0.04,  // 4.0%
-  6: 0.05,  // 5.0%
-  12: 0.065, // 6.5%
-  36: 0.08, // 8.0%
-  60: 0.095  // 9.5%
+  3: 0.035,  // 3.5% (was 4.0%)
+  6: 0.045,  // 4.5% (was 5.0%)
+  12: 0.060, // 6.0% (was 6.5%)
+  36: 0.075, // 7.5% (was 8.0%)
+  60: 0.090  // 9.0% (was 9.5%)
 };
 
 /**
