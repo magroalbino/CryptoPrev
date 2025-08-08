@@ -46,3 +46,26 @@ export const getDynamicApy = (lockupPeriod: number, tvl: number = MOCK_TVL): num
   const bonusApy = getTvlApyBonus(tvl);
   return baseApy + bonusApy;
 };
+
+
+/**
+ * Calculates a dynamic interest rate for loans based on the TVL.
+ * Higher TVL means more liquidity, which should result in lower borrowing costs.
+ * @param tvl - The Total Value Locked on the platform.
+ * @returns The interest rate as a decimal (e.g., 0.05 for 5%).
+ */
+export const getDynamicInterestRate = (tvl: number = MOCK_TVL): number => {
+    if (tvl >= 50000000) { // Over $50M - very liquid
+        return 0.035; // 3.5%
+    }
+    if (tvl >= 25000000) { // Over $25M
+        return 0.040; // 4.0%
+    }
+    if (tvl >= 10000000) { // Over $10M
+        return 0.050; // 5.0%
+    }
+    if (tvl >= 1000000) {  // Over $1M
+        return 0.065; // 6.5%
+    }
+    return 0.08; // 8% for lower liquidity
+};

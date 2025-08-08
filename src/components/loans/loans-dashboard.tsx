@@ -14,6 +14,7 @@ import { Badge } from '../ui/badge';
 import StatCard from '../dashboard/stat-card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { getDynamicInterestRate, MOCK_TVL } from '@/lib/apy';
 
 export default function LoansDashboard() {
   const { web3UserAddress, usdcBalance, loading, connectWallet } = useAuth();
@@ -26,7 +27,7 @@ export default function LoansDashboard() {
 
   const collateralValue = usdcBalance || 0;
   const availableToBorrow = collateralValue * 0.5; // 50% LTV
-  const interestRate = 0.05; // 5% fixed interest rate
+  const interestRate = getDynamicInterestRate(MOCK_TVL);
 
   const handleRequestLoan = () => {
     const amount = parseFloat(loanAmount);
