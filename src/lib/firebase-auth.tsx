@@ -14,7 +14,6 @@ const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwy
 const SOLANA_RPC_ENDPOINTS = [
     'https://rpc.ankr.com/solana',
     'https://mainnet.helius-rpc.com/?api-key=01a7471c-13a5-4871-a472-a4421b593633', // Helius is generally reliable
-    'https://api.mainnet-beta.solana.com',
 ];
 
 type WalletType = 'solana' | 'ethereum';
