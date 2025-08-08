@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAppTranslation } from '@/hooks/use-app-translation';
 import { cn } from '@/lib/utils';
+import { getDynamicApy } from '@/lib/apy';
 
 
 export default function LockupDialog({ currentPeriod, onUpdate }: { currentPeriod: number, onUpdate: (period: number) => void }) {
@@ -26,10 +27,13 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
   const { t } = useAppTranslation();
 
   const plans = [
-    { value: "3", title: t('lockup.plans.short.title'), description: t('lockup.plans.short.description'), apy: "5.5%", icon: <Zap/> },
-    { value: "6", title: t('lockup.plans.medium.title'), description: t('lockup.plans.medium.description'), apy: "7.0%", icon: <Calendar/> },
-    { value: "12", title: t('lockup.plans.long.title'), description: t('lockup.plans.long.description'), apy: "8.5%", icon: <Shield/> },
-  ];
+    { value: "3", title: t('lockup.plans.short.title'), description: t('lockup.plans.short.description'), icon: <Zap/> },
+    { value: "6", title: t('lockup.plans.medium.title'), description: t('lockup.plans.medium.description'), icon: <Calendar/> },
+    { value: "12", title: t('lockup.plans.long.title'), description: t('lockup.plans.long.description'), icon: <Shield/> },
+  ].map(plan => ({
+    ...plan,
+    apy: getDynamicApy(Number(plan.value))
+  }));
 
   const handleUpdate = () => {
     const newPeriod = Number(selectedPeriod);
@@ -79,7 +83,7 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
                     </div>
                     <div className="mt-auto text-center">
                         <p className="text-xs font-bold uppercase">{t('lockup.plans.apy')}</p>
-                        <p className="text-xl font-bold text-accent">{plan.apy}</p>
+                        <p className="text-xl font-bold text-accent">{(plan.apy * 100).toFixed(1)}%</p>
                     </div>
                   </Label>
                 </div>

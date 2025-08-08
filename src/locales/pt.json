@@ -176,6 +176,7 @@
         "title": "Longo Prazo",
         "description": "Maximize seu potencial de aposentadoria."
       },
+      "baseApy": "APY Base",
       "apy": "APY Est."
     },
     "updateButton": "Atualizar Plano",

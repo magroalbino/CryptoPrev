@@ -176,6 +176,7 @@
         "title": "Long Term",
         "description": "Maximize your retirement potential."
       },
+      "baseApy": "Base APY",
       "apy": "Est. APY"
     },
     "updateButton": "Update Plan",

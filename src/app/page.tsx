@@ -45,6 +45,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getDynamicApy } from '@/lib/apy';
 
 
 export default function Dashboard() {
@@ -61,13 +62,15 @@ export default function Dashboard() {
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
         ? usdcBalanceValue 
         : 0;
-
-      const accumulatedRewards = currentBalance * (0.05 + random(2) * 0.1);
-      const monthlyYield = accumulatedRewards / (12 + Math.floor(random(3) * 12));
+      
       const lockupPeriod = [3, 6, 12][Math.floor(random(4) * 3)];
+      const activeProtocolApy = getDynamicApy(lockupPeriod);
+
+      const accumulatedRewards = currentBalance * activeProtocolApy;
+      const monthlyYield = accumulatedRewards / 12;
       const protocols = ['Compound', 'Aave', 'Lido'];
       const activeProtocol = protocols[Math.floor(random(5) * 3)];
-      const activeProtocolApy = 4.5 + random(6) * 3;
+      
 
       const transactions: any[] = [];
       const achievements: any[] = [];
@@ -105,11 +108,20 @@ export default function Dashboard() {
 
   const handleUpdateLockupPeriod = (newPeriod: number) => {
     if (!dashboardData) return;
+    
+    // Recalculate APY and rewards based on the new lockup period
+    const newApy = getDynamicApy(newPeriod);
+    const newAccumulatedRewards = dashboardData.userData.currentBalance * newApy;
+    const newMonthlyYield = newAccumulatedRewards / 12;
+
     setDashboardData({
         ...dashboardData,
         userData: {
             ...dashboardData.userData,
             lockupPeriod: newPeriod,
+            activeProtocolApy: newApy,
+            accumulatedRewards: newAccumulatedRewards,
+            monthlyYield: newMonthlyYield,
         }
     });
   };
@@ -195,7 +207,7 @@ export default function Dashboard() {
         <StatCard
           title={t('dashboard.cards.protocol.title')}
           value={dashboardData.userData.activeProtocol}
-          description={t('dashboard.cards.protocol.description', { apy: dashboardData.userData.activeProtocolApy.toFixed(1) })}
+          description={t('dashboard.cards.protocol.description', { apy: (dashboardData.userData.activeProtocolApy * 100).toFixed(1) })}
           icon={<Activity className="text-accent" />}
         />
       </div>
