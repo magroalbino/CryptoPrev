@@ -209,6 +209,15 @@
   "faq": {
     "title": "Frequently Asked Questions",
     "description": "Your AI-powered guide to CryptoPrev and Decentralized Finance.",
+    "guide": {
+      "title": "AI Guide",
+      "description": "Have a different question? Ask our AI guide directly!",
+      "placeholder": "For example: How is APY calculated?",
+      "askButton": "Ask the Guide",
+      "thinking": "Thinking...",
+      "answerTitle": "AI Guide's Answer"
+    },
+    "commonQuestions": "Common Questions",
     "topics": {
       "whatIsCryptoPrev": "What is the purpose of CryptoPrev?",
       "howDoesItWork": "How does CryptoPrev generate yield?",

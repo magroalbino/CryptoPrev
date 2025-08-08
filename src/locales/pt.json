@@ -209,6 +209,15 @@
   "faq": {
     "title": "Perguntas Frequentes",
     "description": "Seu guia para o mundo de CryptoPrev e Finanças Descentralizadas, com o poder da IA.",
+    "guide": {
+      "title": "Guia IA",
+      "description": "Tem uma pergunta diferente? Pergunte diretamente ao nosso guia IA!",
+      "placeholder": "Por exemplo: Como o APY é calculado?",
+      "askButton": "Perguntar ao Guia",
+      "thinking": "Pensando...",
+      "answerTitle": "Resposta do Guia IA"
+    },
+    "commonQuestions": "Perguntas Comuns",
     "topics": {
       "whatIsCryptoPrev": "Qual o objetivo do CryptoPrev?",
       "howDoesItWork": "Como o CryptoPrev gera rendimentos?",
