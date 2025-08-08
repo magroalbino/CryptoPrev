@@ -6,7 +6,6 @@
     "planner": "Planejador IA",
     "loans": "Empréstimos",
     "health": "Saúde",
-    "trade": "Trocar",
     "faq": "FAQ",
     "proofOfFunds": "Prova de Fundos",
     "connectWallet": "Conectar Carteira",
@@ -277,23 +276,6 @@
     "placeholder": {
       "title": "Seu plano com IA aparecerá aqui.",
       "description": "Preencha seus objetivos financeiros para gerar seu plano de aposentadoria personalizado."
-    }
-  },
-  "trade": {
-    "title": "Trocar Tokens",
-    "description": "Troque facilmente seus criptoativos por stablecoins para usar na plataforma.",
-    "form": {
-      "title": "Trocar Tokens",
-      "description": "Selecione os ativos que deseja negociar.",
-      "from": "De",
-      "to": "Para",
-      "selectPlaceholder": "Selecione um token",
-      "rateDisclaimer": "A taxa é simulada e não inclui taxas.",
-      "submitButton": "Executar Troca"
-    },
-    "toast": {
-      "title": "Troca Executada (Simulação)",
-      "description": "Trocou com sucesso {{fromAmount}} {{fromToken}} por {{toAmount}} {{toToken}}."
     }
   },
   "proofOfFunds": {

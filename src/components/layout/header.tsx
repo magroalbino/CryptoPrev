@@ -62,7 +62,6 @@ export default function AppHeader() {
       { href: '/planner', label: t('header.planner') },
       { href: '/loans', label: t('header.loans') },
       { href: '/health', label: t('header.health') },
-      { href: '/trade', label: t('header.trade') },
       { href: '/faq', label: t('header.faq') },
       { href: '/proof-of-funds', label: t('header.proofOfFunds') },
   ]
