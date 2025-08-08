@@ -42,7 +42,8 @@
       },
       "protocol": {
         "title": "Active Strategy",
-        "description": "Current APY: {{apy}}%"
+        "description": "Current APY: {{apy}}%",
+        "defaultStrategy": "CryptoPrev Strategy"
       }
     },
     "rewards": {
@@ -249,7 +250,12 @@
       "strategy": "Strategy",
       "monthlyYield": "Est. Monthly Yield",
       "basedOnInvestment": "Based on your investment amount.",
-      "risks": "Potential Risks"
+      "risks": "Potential Risks",
+      "selectButton": "Select Strategy",
+      "toast": {
+        "title": "Strategy Selected!",
+        "description": "{{protocol}} is now your active strategy. Check your dashboard."
+      }
     },
     "placeholder": {
       "title": "Your AI-powered suggestions will appear here.",

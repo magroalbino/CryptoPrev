@@ -42,7 +42,8 @@
       },
       "protocol": {
         "title": "Estratégia Ativa",
-        "description": "APY Atual: {{apy}}%"
+        "description": "APY Atual: {{apy}}%",
+        "defaultStrategy": "Estratégia CryptoPrev"
       }
     },
     "rewards": {
@@ -249,7 +250,12 @@
       "strategy": "Estratégia",
       "monthlyYield": "Rendimento Mensal Est.",
       "basedOnInvestment": "Baseado no valor do seu investimento.",
-      "risks": "Riscos Potenciais"
+      "risks": "Riscos Potenciais",
+      "selectButton": "Selecionar Estratégia",
+      "toast": {
+        "title": "Estratégia Selecionada!",
+        "description": "{{protocol}} agora é sua estratégia ativa. Confira seu painel."
+      }
     },
     "placeholder": {
       "title": "Suas sugestões com IA aparecerão aqui.",

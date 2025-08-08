@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState } from 'react';
@@ -6,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useEffect } from 'react';
-import { Loader2, Sparkles, AlertTriangle, BadgePercent } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, BadgePercent, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getOracleSuggestion } from '@/app/oracle/actions';
 import type { OracleState } from '@/app/oracle/actions';
@@ -95,6 +96,18 @@ export default function OracleForm() {
       });
     }
   }, [state.error, toast, t]);
+  
+  const handleSelectStrategy = (suggestion: any) => {
+    const strategyToSave = {
+      name: suggestion.protocolName,
+      apy: suggestion.apy / 100, // Convert percentage to decimal
+    };
+    localStorage.setItem('selectedStrategy', JSON.stringify(strategyToSave));
+    toast({
+      title: t('oracle.results.toast.title'),
+      description: t('oracle.results.toast.description', { protocol: suggestion.protocolName }),
+    })
+  }
 
   return (
     <div className="grid gap-8">
@@ -203,7 +216,7 @@ export default function OracleForm() {
       {state.data && state.data.suggestions.length > 0 ? (
         <div className="grid gap-6 lg:grid-cols-3">
             {state.data.suggestions.map((suggestion, index) => (
-                <Card key={index} className="brutalist-shadow">
+                <Card key={index} className="brutalist-shadow flex flex-col">
                     <CardHeader>
                         <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
                           <div>
@@ -216,7 +229,7 @@ export default function OracleForm() {
                           </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-6 flex-grow">
                         <Separator className="border-t-2 border-dashed border-foreground/50"/>
                         <div className="space-y-4">
                             <h4 className="font-bold text-lg">{t('oracle.results.strategy')}</h4>
@@ -236,6 +249,12 @@ export default function OracleForm() {
                             </div>
                           </div>
                     </CardContent>
+                    <CardFooter>
+                       <Button onClick={() => handleSelectStrategy(suggestion)} className='w-full'>
+                          <CheckCircle className="mr-2"/>
+                          {t('oracle.results.selectButton')}
+                       </Button>
+                    </CardFooter>
                 </Card>
             ))}
         </div>

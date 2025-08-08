@@ -48,27 +48,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getDynamicApy } from '@/lib/apy';
 
 
+type ActiveStrategy = {
+  name: string;
+  apy: number;
+}
+
 export default function Dashboard() {
   const { web3UserAddress, usdcBalance, loading, walletType, connectWallet } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
 
-  const generateDashboardData = (address: string, usdcBalanceValue: number | null) => {
-      // Use the real balance if available, otherwise, generate mock data as a fallback.
+  const generateDashboardData = (address: string, usdcBalanceValue: number | null, activeStrategy: ActiveStrategy | null) => {
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
         ? usdcBalanceValue 
         : 0;
       
-      const lockupPeriod = 12; // Default to 12 months (Committed Plan)
-      const activeProtocolApy = getDynamicApy(lockupPeriod);
+      const lockupPeriod = 12; // Default lockup period
+      const defaultApy = getDynamicApy(lockupPeriod);
+      const defaultStrategyName = t('dashboard.cards.protocol.defaultStrategy');
 
-      const accumulatedRewards = currentBalance * activeProtocolApy;
+      const finalStrategy = activeStrategy || { name: defaultStrategyName, apy: defaultApy };
+
+      const accumulatedRewards = currentBalance * finalStrategy.apy;
       const monthlyYield = accumulatedRewards / 12;
-      const protocols = ['Compound', 'Aave', 'Lido'];
-      const activeProtocol = 'CryptoPrev Strategy';
       
-
       const transactions: any[] = [];
       const achievements: any[] = [
         { id: 'ach1', name: 'Ant', icon: '🐜', achieved: false },
@@ -82,8 +86,8 @@ export default function Dashboard() {
               currentBalance,
               accumulatedRewards,
               monthlyYield,
-              activeProtocol,
-              activeProtocolApy,
+              activeProtocol: finalStrategy.name,
+              activeProtocolApy: finalStrategy.apy,
               lockupPeriod,
           },
           transactions,
@@ -93,12 +97,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (web3UserAddress) {
-      const data = generateDashboardData(web3UserAddress, usdcBalance);
+      // Check localStorage for a selected strategy from the Oracle
+      const storedStrategy = localStorage.getItem('selectedStrategy');
+      const activeStrategy = storedStrategy ? JSON.parse(storedStrategy) : null;
+
+      const data = generateDashboardData(web3UserAddress, usdcBalance, activeStrategy);
       setDashboardData(data);
     } else {
       setDashboardData(null);
     }
-  }, [web3UserAddress, usdcBalance]); 
+  }, [web3UserAddress, usdcBalance, t]); 
 
   const handleClaimYield = () => {
     if (!dashboardData) return;
@@ -111,7 +119,9 @@ export default function Dashboard() {
   const handleUpdateLockupPeriod = (newPeriod: number) => {
     if (!dashboardData) return;
     
-    // Recalculate APY and rewards based on the new lockup period
+    // When a user updates the lock-up, revert to the default CryptoPrev strategy
+    localStorage.removeItem('selectedStrategy');
+    
     const newApy = getDynamicApy(newPeriod);
     const newAccumulatedRewards = dashboardData.userData.currentBalance * newApy;
     const newMonthlyYield = newAccumulatedRewards / 12;
@@ -121,6 +131,7 @@ export default function Dashboard() {
         userData: {
             ...dashboardData.userData,
             lockupPeriod: newPeriod,
+            activeProtocol: t('dashboard.cards.protocol.defaultStrategy'),
             activeProtocolApy: newApy,
             accumulatedRewards: newAccumulatedRewards,
             monthlyYield: newMonthlyYield,
