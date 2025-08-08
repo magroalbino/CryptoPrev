@@ -7,9 +7,9 @@ import { Landmark, Users } from 'lucide-react';
 export default function ProofOfFundsPage() {
   const { t } = useAppTranslation();
 
-  // Mock data - in a real app, this would be fetched from a reliable source.
-  const totalReserves = 12543210.54;
-  const activeUsers = 5231;
+  // These values would be fetched from a reliable source in a real application.
+  const totalReserves = 0;
+  const activeUsers = 1;
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-8">
