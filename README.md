@@ -30,6 +30,7 @@
 ├── tsconfig.json            # Configuração do TypeScript
 ├── next.config.ts           # Configuração do Next.js
 └── README.md                # Este arquivo
+```
 
 ---
 
@@ -48,8 +49,9 @@ cp .env.example .env
 
 # 4. Inicie o servidor local
 npm run dev
+```
 
-🔐 Variáveis de Ambiente (.env)
+## 🔐 Variáveis de Ambiente (.env)
 Crie um arquivo .env com as seguintes chaves:
 
 NEXT_PUBLIC_FIREBASE_API_KEY=...
@@ -62,7 +64,7 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=...
 NEXT_PUBLIC_RPC_URL=...
 NEXT_PUBLIC_CONTRACT_ADDRESS=...
 
-📲 Funcionalidades
+## 📲 Funcionalidades
 
 🔐 Login com carteira Web3 e autenticação via Firebase
 
@@ -78,7 +80,7 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=...
 
 🌐 Interface amigável, acessível e bilíngue (PT/EN)
 
-📤 Deploy
+## 📤 Deploy
 Este projeto pode ser hospedado via Firebase Hosting:
 
 # Build do projeto
@@ -87,7 +89,7 @@ npm run build
 # Deploy no Firebase
 firebase deploy
 
-🛠️ Em desenvolvimento
+## 🛠️ Em desenvolvimento
 🔄 Integração com contratos inteligentes
 
 📊 Gráficos de rendimento e histórico de performance
@@ -96,13 +98,13 @@ firebase deploy
 
 👥 Modo colaborativo (planos familiares ou grupos)
 
-🤝 Contribuindo
+## 🤝 Contribuindo
 Pull requests são bem-vindos! Sinta-se à vontade para abrir issues e sugerir melhorias.
 
-📄 Licença
+## 📄 Licença
 MIT © magroalbino
 
-📫 Contato
+## 📫 Contato
 Tem dúvidas ou sugestões?
 📧 contato@cryptoprev.app
 🐦 @CryptoPrevApp
