@@ -4,15 +4,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Landmark, Users } from 'lucide-react';
 import BitcoinIcon from '@/components/icons/bitcoin';
-import type { TFunction } from 'i18next';
 import type { PlatformStats } from '@/lib/platform-stats';
+import { useAppTranslation } from '@/hooks/use-app-translation';
 
 interface ProofOfFundsContentProps {
   stats: PlatformStats;
-  t: TFunction;
 }
 
-export default function ProofOfFundsContent({ stats, t }: ProofOfFundsContentProps) {
+export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps) {
+  const { t } = useAppTranslation();
   const MOCK_BTC_PRICE = 65000;
   const btcReserveValue = stats.totalBtcReserves * MOCK_BTC_PRICE;
 
