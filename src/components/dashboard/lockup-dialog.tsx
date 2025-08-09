@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
 import { Edit2, Zap, Calendar, Shield, Telescope, Goal } from 'lucide-react';
 import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -23,7 +22,6 @@ import { getDynamicApy } from '@/lib/apy';
 export default function LockupDialog({ currentPeriod, onUpdate }: { currentPeriod: number, onUpdate: (period: number) => void }) {
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState(String(currentPeriod));
-  const { toast } = useToast();
   const { t } = useAppTranslation();
 
   const plans = [
@@ -40,10 +38,6 @@ export default function LockupDialog({ currentPeriod, onUpdate }: { currentPerio
   const handleUpdate = () => {
     const newPeriod = Number(selectedPeriod);
     onUpdate(newPeriod);
-    toast({
-      title: t('lockup.toast.success.title'),
-      description: t('lockup.toast.success.description', { count: newPeriod }),
-    });
     setOpen(false);
   };
 

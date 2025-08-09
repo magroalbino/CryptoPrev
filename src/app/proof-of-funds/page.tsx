@@ -1,20 +1,16 @@
-
-'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslation } from '@/hooks/use-app-translation';
 import { Landmark, Users } from 'lucide-react';
 import BitcoinIcon from '@/components/icons/bitcoin';
+import { getPlatformStats } from '@/lib/platform-stats';
 
 
-export default function ProofOfFundsPage() {
+export default async function ProofOfFundsPage() {
   const { t } = useAppTranslation();
+  const stats = await getPlatformStats();
 
-  // These values would be fetched from a reliable source in a real application.
-  const totalReserves = 0;
-  const activeUsers = 1;
-  const btcReserves = 0; // Example BTC reserves for the whole platform
   const MOCK_BTC_PRICE = 65000;
-  const btcReserveValue = btcReserves * MOCK_BTC_PRICE;
+  const btcReserveValue = stats.totalBtcReserves * MOCK_BTC_PRICE;
 
 
   return (
@@ -36,7 +32,7 @@ export default function ProofOfFundsPage() {
                 </div>
             </CardHeader>
             <CardContent>
-                <p className='text-5xl font-bold text-primary'>${totalReserves.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                <p className='text-5xl font-bold text-primary'>${stats.tvl.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 <p className='text-sm text-muted-foreground'>{t('proofOfFunds.reservesDescription')}</p>
             </CardContent>
         </Card>
@@ -51,7 +47,7 @@ export default function ProofOfFundsPage() {
             </CardHeader>
             <CardContent>
                 <p className='text-5xl font-bold text-primary'>${btcReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                <p className='text-sm text-muted-foreground'>{btcReserves.toFixed(4)} BTC</p>
+                <p className='text-sm text-muted-foreground'>{stats.totalBtcReserves.toFixed(4)} BTC</p>
             </CardContent>
         </Card>
          <Card className="brutalist-shadow">
@@ -64,7 +60,7 @@ export default function ProofOfFundsPage() {
                 </div>
             </CardHeader>
             <CardContent>
-                <p className='text-5xl font-bold text-primary'>{activeUsers.toLocaleString('en-US')}</p>
+                <p className='text-5xl font-bold text-primary'>{stats.activeUsers.toLocaleString('en-US')}</p>
                 <p className='text-sm text-muted-foreground'>{t('proofOfFunds.usersDescription')}</p>
             </CardContent>
         </Card>

@@ -40,9 +40,7 @@ export default function DepositDialog({ onDeposit }: { onDeposit: (amount: numbe
   const { usdcBalance } = useAuth();
 
 
-  const handleDeposit = () => {
-    // In a real app, this would trigger a blockchain transaction.
-    // For now, it just shows a success message and calls the parent handler.
+  const handleConfirmDeposit = () => {
     const amount = parseFloat(depositAmount);
     if (!isNaN(amount) && amount > 0) {
         onDeposit(amount);
@@ -150,7 +148,7 @@ export default function DepositDialog({ onDeposit }: { onDeposit: (amount: numbe
           </TabsContent>
         </Tabs>
         <DialogFooter>
-          <Button type="submit" onClick={handleDeposit} className="w-full">
+          <Button type="submit" onClick={handleConfirmDeposit} className="w-full">
             {t('deposit.confirmButton')}
           </Button>
         </DialogFooter>

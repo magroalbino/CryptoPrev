@@ -1,0 +1,58 @@
+// src/lib/platform-stats.ts
+'use server';
+
+import { db, isFirebaseEnabled } from './firebase-server';
+import { getAuth } from 'firebase-admin/auth';
+
+interface PlatformStats {
+  tvl: number;
+  totalBtcReserves: number;
+  activeUsers: number;
+}
+
+export async function getPlatformStats(): Promise<PlatformStats> {
+  if (!isFirebaseEnabled) {
+    // Return mock data if Firebase is not enabled
+    return {
+      tvl: 0,
+      totalBtcReserves: 0,
+      activeUsers: 1,
+    };
+  }
+
+  try {
+    // 1. Get total active users
+    const listUsersResult = await getAuth().listUsers();
+    const activeUsers = listUsersResult.users.length;
+
+    // 2. Get TVL and BTC reserves from Firestore
+    const usersCollection = db.collection('users');
+    const snapshot = await usersCollection.get();
+
+    let tvl = 0;
+    let totalBtcReserves = 0;
+
+    if (!snapshot.empty) {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        tvl += data.currentBalance || 0;
+        totalBtcReserves += data.bitcoinReserve || 0;
+      });
+    }
+
+    return {
+      tvl,
+      totalBtcReserves,
+      activeUsers,
+    };
+
+  } catch (error) {
+    console.error("Error fetching platform stats:", error);
+    // Return safe defaults in case of an error
+    return {
+      tvl: 0,
+      totalBtcReserves: 0,
+      activeUsers: 0,
+    };
+  }
+}
