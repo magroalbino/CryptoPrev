@@ -18,17 +18,18 @@
 ---
 
 ## 📁 Estrutura do Projeto
-├── .env # Variáveis de ambiente (Firebase, RPC, etc)
-├── .next # Arquivos gerados na build
-├── src/ # Código-fonte da aplicação
-│ └── ... # Páginas, componentes e serviços
-├── docs/ # Documentações ou imagens
-├── components.json # Configurações de componentes (provavelmente Firebase Hosting)
-├── apphosting.yaml # Configuração de deploy (Firebase Hosting)
-├── tailwind.config.ts # Estilo do projeto
-├── tsconfig.json # Configuração do TypeScript
-├── next.config.ts # Configuração do Next.js
-└── README.md # Este arquivo
+```text
+├── .env                     # Variáveis de ambiente (Firebase, RPC, etc)
+├── .next                    # Arquivos gerados na build
+├── src/                     # Código-fonte da aplicação
+│   └── ...                  # Páginas, componentes e serviços
+├── docs/                    # Documentações ou imagens
+├── components.json          # Configurações de componentes
+├── apphosting.yaml          # Configuração de deploy (Firebase Hosting)
+├── tailwind.config.ts       # Estilo do projeto
+├── tsconfig.json            # Configuração do TypeScript
+├── next.config.ts           # Configuração do Next.js
+└── README.md                # Este arquivo
 
 ---
 
@@ -99,7 +100,7 @@ firebase deploy
 Pull requests são bem-vindos! Sinta-se à vontade para abrir issues e sugerir melhorias.
 
 📄 Licença
-MIT © [Seu Nome ou Organização]
+MIT © magroalbino
 
 📫 Contato
 Tem dúvidas ou sugestões?
