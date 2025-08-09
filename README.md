@@ -89,8 +89,6 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=...
 ## 📤 Deploy
 Este projeto pode ser hospedado via Firebase Hosting:
 
----
-
 # Build do projeto
 npm run build
 
