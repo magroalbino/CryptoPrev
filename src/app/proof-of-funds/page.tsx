@@ -81,7 +81,7 @@ export default function ProofOfFundsPage() {
             </div>
             <div className='p-4 border rounded-md font-mono text-sm bg-secondary/30'>
                 <p className='font-bold text-primary'>Yield Farming Vault (Solana):</p>
-                <a href="#" className='text-accent hover:underline break-all'>So11111111111111111111111111111111111111112</a>
+                <a href="#" className="text-accent hover:underline break-all">So11111111111111111111111111111111111111112</a>
             </div>
              <div className='p-4 border rounded-md font-mono text-sm bg-secondary/30'>
                 <p className='font-bold text-primary'>Bitcoin Reserve Wallet (BTC):</p>
