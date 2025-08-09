@@ -51,6 +51,8 @@ cp .env.example .env
 npm run dev
 ```
 
+---
+
 ## 🔐 Variáveis de Ambiente (.env)
 Crie um arquivo .env com as seguintes chaves:
 
@@ -63,6 +65,8 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=...
 NEXT_PUBLIC_RPC_URL=...
 NEXT_PUBLIC_CONTRACT_ADDRESS=...
+
+---
 
 ## 📲 Funcionalidades
 
@@ -80,14 +84,20 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=...
 
 🌐 Interface amigável, acessível e bilíngue (PT/EN)
 
+---
+
 ## 📤 Deploy
 Este projeto pode ser hospedado via Firebase Hosting:
+
+---
 
 # Build do projeto
 npm run build
 
 # Deploy no Firebase
 firebase deploy
+
+---
 
 ## 🛠️ Em desenvolvimento
 🔄 Integração com contratos inteligentes
@@ -98,11 +108,17 @@ firebase deploy
 
 👥 Modo colaborativo (planos familiares ou grupos)
 
+---
+
 ## 🤝 Contribuindo
 Pull requests são bem-vindos! Sinta-se à vontade para abrir issues e sugerir melhorias.
 
+---
+
 ## 📄 Licença
 MIT © magroalbino
+
+---
 
 ## 📫 Contato
 Tem dúvidas ou sugestões?
