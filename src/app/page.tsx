@@ -46,6 +46,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getDynamicApy } from '@/lib/apy';
+import BitcoinIcon from '@/components/icons/bitcoin';
 
 
 type ActiveStrategy = {
@@ -53,11 +54,48 @@ type ActiveStrategy = {
   apy: number;
 }
 
+const MOCK_BTC_PRICE = 65000; // Mock BTC price for simulation
+
 export default function Dashboard() {
   const { web3UserAddress, usdcBalance, loading, walletType, connectWallet } = useAuth();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
+
+  const handleDeposit = (amount: number) => {
+    // In a real app, this would be handled server-side after a real transaction.
+    // This is a simulation.
+    if (!dashboardData) return;
+
+    const btcAllocation = amount * 0.15; // 15% to BTC reserve
+    const stablecoinAllocation = amount * 0.85; // 85% to yield strategies
+
+    const btcAmount = btcAllocation / MOCK_BTC_PRICE;
+
+    setDashboardData((prevData: any) => {
+        const newBalance = prevData.userData.currentBalance + stablecoinAllocation;
+        const newBtcReserve = (prevData.userData.bitcoinReserve || 0) + btcAmount;
+        const newApy = getDynamicApy(prevData.userData.lockupPeriod);
+        const newAccumulatedRewards = newBalance * newApy;
+        const newMonthlyYield = newAccumulatedRewards / 12;
+
+        return {
+            ...prevData,
+            userData: {
+                ...prevData.userData,
+                currentBalance: newBalance,
+                bitcoinReserve: newBtcReserve,
+                accumulatedRewards: newAccumulatedRewards,
+                monthlyYield: newMonthlyYield,
+            }
+        };
+    });
+
+    toast({
+      title: t('deposit.toast.success.title'),
+      description: t('deposit.toast.success.description'),
+    });
+  }
 
   const generateDashboardData = (address: string, usdcBalanceValue: number | null, activeStrategy: ActiveStrategy | null) => {
       const currentBalance = usdcBalanceValue !== null && usdcBalanceValue >= 0 
@@ -84,6 +122,7 @@ export default function Dashboard() {
       return {
           userData: {
               currentBalance,
+              bitcoinReserve: 0,
               accumulatedRewards,
               monthlyYield,
               activeProtocol: finalStrategy.name,
@@ -187,6 +226,7 @@ export default function Dashboard() {
   const yieldTransactions = dashboardData.transactions.filter((tx: any) => tx.type === 'Yield');
   const depositTransactions = dashboardData.transactions.filter((tx: any) => tx.type === 'Deposit');
 
+  const btcReserveValue = (dashboardData.userData.bitcoinReserve || 0) * MOCK_BTC_PRICE;
 
   return (
     <div className="flex-1 space-y-6">
@@ -194,7 +234,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
         <div className="flex items-center space-x-2">
           <WithdrawDialog currentBalance={dashboardData.userData.currentBalance} lockupPeriod={dashboardData.userData.lockupPeriod} />
-          <DepositDialog />
+          <DepositDialog onDeposit={handleDeposit} />
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -211,17 +251,18 @@ export default function Dashboard() {
           icon={<CircleDollarSign className="text-accent" />}
         />
         <StatCard
+          title={t('dashboard.cards.btcReserve.title')}
+          value={`${(dashboardData.userData.bitcoinReserve || 0).toFixed(6)} BTC`}
+          subtitle={`≈ $${btcReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          description={t('dashboard.cards.btcReserve.description')}
+          icon={<BitcoinIcon className="text-accent" />}
+        />
+        <StatCard
           title={t('dashboard.cards.lockup.title')}
           value={t('dashboard.cards.lockup.value_other', { count: dashboardData.userData.lockupPeriod })}
           description={t('dashboard.cards.lockup.description')}
           icon={<Hourglass className="text-accent" />}
           action={<LockupDialog currentPeriod={dashboardData.userData.lockupPeriod} onUpdate={handleUpdateLockupPeriod} />}
-        />
-        <StatCard
-          title={t('dashboard.cards.protocol.title')}
-          value={dashboardData.userData.activeProtocol}
-          description={t('dashboard.cards.protocol.description', { apy: (dashboardData.userData.activeProtocolApy * 100).toFixed(1) })}
-          icon={<Activity className="text-accent" />}
         />
       </div>
       <div className="grid gap-6 md:grid-cols-3">

@@ -25,14 +25,18 @@
     },
     "cards": {
       "balance": {
-        "title": "Saldo Atual",
-        "description": "Comece a depositar para ver seu saldo crescer.",
+        "title": "Saldo para Rendimento (Stablecoin)",
+        "description": "85% dos depósitos para geração de rendimento.",
         "notApplicable": "N/A",
         "notApplicableDescription": "Conecte uma carteira Solana"
       },
       "rewards": {
         "title": "Recompensas Acumuladas",
         "description": "Total desde o início"
+      },
+      "btcReserve": {
+        "title": "Reserva em Bitcoin",
+        "description": "15% dos depósitos para valorização a longo prazo."
       },
       "lockup": {
         "title": "Plano de Investimento",
@@ -290,8 +294,9 @@
     "title": "Prova de Fundos e Transparência",
     "description": "Acreditamos em transparência total. Aqui está uma visão geral ao vivo das principais métricas da nossa plataforma.",
     "totalReserves": "Valor Total Bloqueado (TVL)",
+    "btcReserves": "Reserva Total em Bitcoin",
     "activeUsers": "Usuários Ativos",
-    "reservesDescription": "Total de ativos atualmente gerenciados e investidos em todos os protocolos DeFi.",
+    "reservesDescription": "Total de stablecoins atualmente investido em todos os protocolos DeFi.",
     "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
     "onChain": {
       "title": "Verificação On-Chain",

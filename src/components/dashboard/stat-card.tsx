@@ -8,6 +8,7 @@ import {
 interface StatCardProps {
   title: string;
   value: string;
+  subtitle?: string;
   description:string;
   icon: React.ReactNode;
   action?: React.ReactNode;
@@ -16,6 +17,7 @@ interface StatCardProps {
 export default function StatCard({
   title,
   value,
+  subtitle,
   description,
   icon,
   action,
@@ -26,6 +28,7 @@ export default function StatCard({
         <div className="space-y-1">
           <CardTitle className="text-sm font-bold uppercase tracking-wider">{title}</CardTitle>
           <div className="text-2xl font-bold">{value}</div>
+          {subtitle && <div className="text-sm text-muted-foreground font-bold">{subtitle}</div>}
         </div>
         <div className='p-2 bg-secondary/50 border-2 border-foreground'>
           {icon}

@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
 import { Landmark, Wallet, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -34,21 +33,20 @@ const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 )
 
-export default function DepositDialog() {
+export default function DepositDialog({ onDeposit }: { onDeposit: (amount: number) => void }) {
   const [open, setOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState('1000');
-  const { toast } = useToast();
   const { t } = useAppTranslation();
   const { usdcBalance } = useAuth();
 
 
   const handleDeposit = () => {
     // In a real app, this would trigger a blockchain transaction.
-    // For now, it just shows a success message.
-    toast({
-      title: t('deposit.toast.success.title'),
-      description: t('deposit.toast.success.description'),
-    });
+    // For now, it just shows a success message and calls the parent handler.
+    const amount = parseFloat(depositAmount);
+    if (!isNaN(amount) && amount > 0) {
+        onDeposit(amount);
+    }
     setOpen(false);
   };
   
