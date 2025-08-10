@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeft, Wallet, Languages } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Sheet,
@@ -47,6 +47,9 @@ export default function AppHeader() {
   const pathname = usePathname();
   const { web3UserAddress, connectWallet, signOut } = useAuth();
   const { t, i18n } = useAppTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -65,6 +68,20 @@ export default function AppHeader() {
       { href: '/faq', label: t('header.faq') },
       { href: '/proof-of-funds', label: t('header.proofOfFunds') },
   ]
+
+  if (!mounted) {
+    return (
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/90 px-4 backdrop-blur-sm md:px-6">
+             <Link
+                href="/"
+                className="flex items-center gap-2 text-lg font-semibold"
+                >
+                <Logo className="h-8 w-8" />
+                <span className="font-bold text-lg">CryptoPrev</span>
+            </Link>
+        </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/90 px-4 backdrop-blur-sm md:px-6">

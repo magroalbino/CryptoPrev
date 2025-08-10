@@ -217,7 +217,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   // Try to auto-connect to the wallet after Firebase auth is resolved
   useEffect(() => {
-    // Only run this if initial loading is done and we don't have a user
+    // Only run this if initial loading is done
     if (loading) {
       return;
     }
@@ -230,6 +230,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (savedWalletType === 'solana') {
             const provider = getPhantomProvider();
             if (provider) {
+                // Check for trust before connecting
                 const resp = await provider.connect({ onlyIfTrusted: true });
                 address = resp.publicKey.toString();
                 setWeb3UserAddress(address);
@@ -254,6 +255,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       } catch (error) {
          console.log("Could not auto-connect wallet:", error);
+         // Clear storage if trusted connection fails
+         localStorage.removeItem('walletType');
+         localStorage.removeItem('walletAddress');
       }
     };
     
