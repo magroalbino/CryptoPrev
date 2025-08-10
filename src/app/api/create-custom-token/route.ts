@@ -1,10 +1,10 @@
-
 // src/app/api/create-custom-token/route.ts
 import { NextResponse } from 'next/server';
 import { getFirebaseAdmin } from '@/lib/firebase-server';
 
 export async function POST(request: Request) {
   try {
+    // This will throw an error if Firebase isn't configured, which we'll catch below
     const { auth } = getFirebaseAdmin();
     
     const { address } = await request.json();
@@ -24,17 +24,19 @@ export async function POST(request: Request) {
     const customToken = await auth.createCustomToken(uid);
 
     return NextResponse.json({ token: customToken });
+
   } catch (error: any) {
-    console.error('Error creating custom token:', error.message);
+    console.error('Error in create-custom-token endpoint:', error.message);
     
-    // Distinguish between configuration errors and other errors
-    if (error.message.includes('Firebase')) {
+    // Provide a clear error message if the SDK failed to initialize
+    if (error.message.includes('Firebase Admin SDK')) {
         return NextResponse.json(
           { error: 'Firebase is not configured on the server.' },
           { status: 500 }
         );
     }
     
+    // Generic internal server error for other issues
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

@@ -1,8 +1,11 @@
 // src/lib/firebase-server.ts
 import admin from 'firebase-admin';
-import { initializeApp, getApp, getApps, App, cert } from 'firebase-admin/app';
-import { getFirestore, Firestore } from 'firebase-admin/firestore';
-import { getAuth as getAdminAuth, Auth } from 'firebase-admin/auth';
+import type { App } from 'firebase-admin/app';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import type { Firestore } from 'firebase-admin/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
+import type { Auth } from 'firebase-admin/auth';
+import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 
 interface FirebaseAdmin {
   app: App;
@@ -11,50 +14,60 @@ interface FirebaseAdmin {
   isFirebaseEnabled: boolean;
 }
 
+// Function to safely parse the service account key
+function parseServiceAccount(): object | null {
+  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (!serviceAccountKey) {
+    console.error("Firebase Admin: FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.");
+    return null;
+  }
+  try {
+    // The key is Base64 encoded, so we need to decode it first
+    const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+    return JSON.parse(decodedKey);
+  } catch (e) {
+    console.error("Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Make sure it's a valid JSON string and correctly Base64 encoded.", e);
+    return null;
+  }
+}
+
+// Singleton instance to avoid re-initialization
 let adminInstance: FirebaseAdmin | null = null;
 
 export function getFirebaseAdmin(): FirebaseAdmin {
+  // Return the cached instance if it exists
   if (adminInstance) {
     return adminInstance;
   }
 
-  const isFirebaseEnabled = !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  const serviceAccount = parseServiceAccount();
+
+  // Check if Firebase should be enabled
+  const isFirebaseEnabled = !!serviceAccount;
 
   if (!isFirebaseEnabled) {
-    // This will be caught by the API route and a proper error will be sent.
-    throw new Error('Firebase is not configured on the server.');
+    // Provide a more specific error if config is missing/invalid
+    throw new Error('Firebase Admin SDK is not configured. Check server environment variables.');
   }
   
-  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY!;
-
   try {
-    const serviceAccount = JSON.parse(
-      Buffer.from(serviceAccountKey, 'base64').toString('utf-8')
-    );
-    
-    const app = getApps().length > 0
-        ? getApp()
-        : initializeApp({
-            credential: cert(serviceAccount),
-          });
+    // Initialize the app if it hasn't been already
+    const app = getApps().length
+      ? getApps()[0]
+      : initializeApp({
+          credential: cert(serviceAccount),
+        });
 
     const db = getFirestore(app);
     const auth = getAdminAuth(app);
 
-    adminInstance = { app, db, auth, isFirebaseEnabled: true };
+    // Cache the instance
+    adminInstance = { app, db, auth, isFirebaseEnabled };
     return adminInstance;
 
   } catch (error) {
     console.error('Firebase Admin SDK initialization error:', error);
-    // Throw an error that can be caught by the caller (API route).
+    // Throw a specific error that can be caught by the caller (API route)
     throw new Error('Firebase Admin SDK failed to initialize.');
   }
-}
-
-export const formatTimestamp = (timestamp: admin.firestore.Timestamp) => {
-    return timestamp.toDate().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
 }
