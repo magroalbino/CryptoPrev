@@ -1,37 +1,33 @@
+
 // src/lib/firebase-server.ts
 import admin from 'firebase-admin';
-import { getApps as getAdminApps, initializeApp as initializeAdminApp, cert } from 'firebase-admin/app';
+import { initializeApp, getApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-
-let db: admin.firestore.Firestore;
 let isFirebaseEnabled = false;
 
+// A robust way to initialize Firebase Admin SDK in Next.js server environments
 if (serviceAccountKey) {
-  try {
-    const serviceAccount = JSON.parse(
-      Buffer.from(serviceAccountKey, 'base64').toString('utf-8')
-    );
-    
-    if (!getAdminApps().length) {
-      initializeAdminApp({
+  if (!getApps().length) {
+    try {
+      const serviceAccount = JSON.parse(Buffer.from(serviceAccountKey, 'base64').toString('utf-8'));
+      initializeApp({
         credential: cert(serviceAccount),
       });
+      isFirebaseEnabled = true;
+      console.log('Firebase Admin SDK initialized successfully.');
+    } catch (e) {
+      console.error('Firebase Admin SDK initialization error', e);
     }
-    
-    db = getFirestore();
-    isFirebaseEnabled = true;
-  } catch (error) {
-    console.error("Firebase Admin initialization failed:", error);
-    // @ts-ignore
-    db = {}; // Assign a dummy object to satisfy TypeScript
+  } else {
+    isFirebaseEnabled = true; // Already initialized
   }
 } else {
-  console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin SDK is not initialized.");
-  // @ts-ignore
-  db = {}; // Assign a dummy object to satisfy TypeScript
+  console.warn('FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin features will be disabled.');
 }
+
+const db = isFirebaseEnabled ? getFirestore() : ({} as admin.firestore.Firestore);
 
 export const formatTimestamp = (timestamp: admin.firestore.Timestamp) => {
     return timestamp.toDate().toLocaleDateString('en-US', {
