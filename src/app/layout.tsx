@@ -1,24 +1,25 @@
 
-import type {Metadata} from 'next';
+'use client';
+
 import './globals.css';
 import AppHeader from '@/components/layout/header';
 import {Toaster} from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/lib/firebase-auth';
-
-export const metadata: Metadata = {
-  title: 'CryptoPrev - Smart Yields',
-  description: 'Maximize your stablecoin yield with our AI-powered DeFi strategies.',
-};
+import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   return (
     <html lang="en" className="dark" style={{colorScheme: 'dark'}} suppressHydrationWarning>
       <head>
+        <title>CryptoPrev - Smart Yields</title>
+        <meta name="description" content="Maximize your stablecoin yield with our AI-powered DeFi strategies." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -30,8 +31,18 @@ export default function RootLayout({
         <AuthProvider>
           <div className="flex min-h-screen w-full flex-col">
             <AppHeader />
-            <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-              {children}
+            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={pathname}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {children}
+                </motion.div>
+              </AnimatePresence>
             </main>
           </div>
           <Toaster />
