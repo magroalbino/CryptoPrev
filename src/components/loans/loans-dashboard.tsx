@@ -53,15 +53,6 @@ export default function LoansDashboard() {
   }, [loanAmount, loanTerm, interestRate]);
 
   const handleRequestLoan = () => {
-    if (!web3UserAddress) {
-         toast({
-            variant: 'destructive',
-            title: t('dashboard.connectWalletPrompt.title'),
-            description: t('dashboard.connectWalletPrompt.description'),
-        });
-        return;
-    }
-
     const amount = parseFloat(loanAmount);
     if (isNaN(amount) || amount <= 0) {
       return;
