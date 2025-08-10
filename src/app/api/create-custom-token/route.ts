@@ -1,8 +1,11 @@
+
 // src/app/api/create-custom-token/route.ts
 import { NextResponse } from 'next/server';
-import { admin, isFirebaseEnabled } from '@/lib/firebase-server';
+import { getFirebaseAdmin } from '@/lib/firebase-server';
 
 export async function POST(request: Request) {
+  const { admin, isFirebaseEnabled } = getFirebaseAdmin();
+  
   if (!isFirebaseEnabled) {
     return NextResponse.json(
       { error: 'Firebase is not configured on the server.' },
