@@ -1,8 +1,7 @@
 // src/lib/platform-stats.ts
 'use server';
 
-import { db, isFirebaseEnabled } from './firebase-server';
-import { getAuth } from 'firebase-admin/auth';
+import { getFirebaseAdmin } from './firebase-server';
 
 interface PlatformStats {
   tvl: number;
@@ -11,18 +10,20 @@ interface PlatformStats {
 }
 
 export async function getPlatformStats(): Promise<PlatformStats> {
-  if (!isFirebaseEnabled) {
-    // Return mock data if Firebase is not enabled
-    return {
-      tvl: 0,
-      totalBtcReserves: 0,
-      activeUsers: 1,
-    };
-  }
-
   try {
+    const { db, auth, isFirebaseEnabled } = getFirebaseAdmin();
+
+    if (!isFirebaseEnabled) {
+      // Return mock data if Firebase is not enabled
+      return {
+        tvl: 0,
+        totalBtcReserves: 0,
+        activeUsers: 1,
+      };
+    }
+
     // 1. Get total active users
-    const listUsersResult = await getAuth().listUsers();
+    const listUsersResult = await auth.listUsers();
     const activeUsers = listUsersResult.users.length;
 
     // 2. Get TVL and BTC reserves from Firestore

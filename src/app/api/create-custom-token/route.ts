@@ -4,16 +4,9 @@ import { NextResponse } from 'next/server';
 import { getFirebaseAdmin } from '@/lib/firebase-server';
 
 export async function POST(request: Request) {
-  const { admin, isFirebaseEnabled } = getFirebaseAdmin();
-  
-  if (!isFirebaseEnabled) {
-    return NextResponse.json(
-      { error: 'Firebase is not configured on the server.' },
-      { status: 500 }
-    );
-  }
-
   try {
+    const { auth } = getFirebaseAdmin();
+    
     const { address } = await request.json();
 
     if (!address) {
@@ -28,11 +21,20 @@ export async function POST(request: Request) {
 
     // Create a custom token for the user.
     // This doesn't create a user record until they sign in with the token.
-    const customToken = await admin.auth().createCustomToken(uid);
+    const customToken = await auth.createCustomToken(uid);
 
     return NextResponse.json({ token: customToken });
-  } catch (error) {
-    console.error('Error creating custom token:', error);
+  } catch (error: any) {
+    console.error('Error creating custom token:', error.message);
+    
+    // Distinguish between configuration errors and other errors
+    if (error.message.includes('Firebase')) {
+        return NextResponse.json(
+          { error: 'Firebase is not configured on the server.' },
+          { status: 500 }
+        );
+    }
+    
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

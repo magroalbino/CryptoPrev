@@ -2,8 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { db, isFirebaseEnabled } from '@/lib/firebase-server';
-import { getAuth } from 'firebase-admin/auth';
+import { getFirebaseAdmin } from '@/lib/firebase-server';
 import { FieldValue } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 import { getDynamicApy } from '@/lib/apy';
@@ -16,6 +15,7 @@ const depositSchema = z.object({
 const MOCK_BTC_PRICE = 65000;
 
 export async function handleDeposit(userId: string, amount: number) {
+  const { db, isFirebaseEnabled } = getFirebaseAdmin();
   const validated = depositSchema.safeParse({ amount, userId });
 
   if (!validated.success || !isFirebaseEnabled) {
@@ -55,6 +55,7 @@ export async function handleDeposit(userId: string, amount: number) {
 }
 
 export async function handleUpdateLockupPeriod(userId: string, newPeriod: number) {
+     const { db, isFirebaseEnabled } = getFirebaseAdmin();
      if (!isFirebaseEnabled) {
         return { success: false, error: 'Server misconfiguration.' };
     }
@@ -77,6 +78,7 @@ export async function handleUpdateLockupPeriod(userId: string, newPeriod: number
 }
 
 export async function getUserData(userId: string) {
+    const { db, isFirebaseEnabled } = getFirebaseAdmin();
     if (!isFirebaseEnabled) return null;
     
     try {
