@@ -18,11 +18,12 @@ interface FirebaseAdmin {
 function parseServiceAccount(): object | null {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (!serviceAccountKey) {
+    // This console.error is helpful for debugging on the server
     console.error("Firebase Admin: FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.");
     return null;
   }
   try {
-    // The key is Base64 encoded, so we need to decode it first
+    // The key might be Base64 encoded, let's decode it.
     const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
     return JSON.parse(decodedKey);
   } catch (e) {
@@ -46,7 +47,7 @@ export function getFirebaseAdmin(): FirebaseAdmin {
   const isFirebaseEnabled = !!serviceAccount;
 
   if (!isFirebaseEnabled) {
-    // Provide a more specific error if config is missing/invalid
+    // This error will be caught by the API route and returned as a 500
     throw new Error('Firebase Admin SDK is not configured. Check server environment variables.');
   }
   
@@ -65,7 +66,7 @@ export function getFirebaseAdmin(): FirebaseAdmin {
     adminInstance = { app, db, auth, isFirebaseEnabled };
     return adminInstance;
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Firebase Admin SDK initialization error:', error);
     // Throw a specific error that can be caught by the caller (API route)
     throw new Error('Firebase Admin SDK failed to initialize.');

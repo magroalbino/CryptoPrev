@@ -4,7 +4,6 @@ import { getFirebaseAdmin } from '@/lib/firebase-server';
 
 export async function POST(request: Request) {
   try {
-    // This will throw an error if Firebase isn't configured, which we'll catch below
     const { auth } = getFirebaseAdmin();
     
     const { address } = await request.json();
@@ -26,9 +25,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ token: customToken });
 
   } catch (error: any) {
+    // Log the detailed error on the server for debugging
     console.error('Error in create-custom-token endpoint:', error.message);
     
     // Provide a clear error message if the SDK failed to initialize
+    // This is the error thrown from getFirebaseAdmin()
     if (error.message.includes('Firebase Admin SDK')) {
         return NextResponse.json(
           { error: 'Firebase is not configured on the server.' },
