@@ -152,7 +152,7 @@ export default function Dashboard() {
 
   if (!user || !web3UserAddress || !dashboardData) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex justify-center pt-20">
         <div className="text-center max-w-md mx-auto">
           <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
           <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
