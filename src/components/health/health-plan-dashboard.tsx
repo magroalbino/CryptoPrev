@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/firebase-auth';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { HeartPulse, Stethoscope, Brain, Apple, DollarSign, Receipt, History } from 'lucide-react';
+import { HeartPulse, Stethoscope, Brain, Apple, DollarSign, Receipt, History, Wallet } from 'lucide-react';
 import DepositDialog from '@/components/dashboard/deposit-dialog';
 import { Skeleton } from '../ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
@@ -21,13 +21,13 @@ const MOCK_SERVICES = [
 ];
 
 export default function HealthPlanDashboard() {
-  const { web3UserAddress, loading } = useAuth();
+  const { web3UserAddress, loading, connectWallet } = useAuth();
   const [healthData, setHealthData] = useState<any>(null);
   const { t } = useAppTranslation();
   const { toast } = useToast();
 
-  const generateHealthData = (address: string) => {
-    // Start with a clean slate for new users
+  const generateHealthData = (address?: string) => {
+    // Start with a clean slate for new users or logged-out users
     const balance = 0;
     const transactions: any[] = [];
 
@@ -41,7 +41,8 @@ export default function HealthPlanDashboard() {
     if (web3UserAddress) {
       setHealthData(generateHealthData(web3UserAddress));
     } else {
-      setHealthData(null);
+      // Show empty state if not connected
+      setHealthData(generateHealthData());
     }
   }, [web3UserAddress, t]);
 
@@ -78,20 +79,10 @@ export default function HealthPlanDashboard() {
     }));
   };
 
-  if (loading) {
+  if (loading || !healthData) {
     return <Skeleton className="h-96 w-full" />;
   }
 
-  if (!web3UserAddress || !healthData) {
-    return (
-      <div className="flex-1 flex items-center justify-center text-center">
-        <div>
-          <h2 className="text-2xl font-bold">{t('dashboard.connectWalletPrompt.title')}</h2>
-          <p className="text-muted-foreground mt-2">{t('dashboard.connectWalletPrompt.description')}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -115,7 +106,9 @@ export default function HealthPlanDashboard() {
                             </CardContent>
                             <CardContent className="text-center">
                                 <p className="text-2xl font-bold text-accent">{service.cost} {t('health.credits')}</p>
-                                <Button onClick={() => handleUseService(service)} className="mt-4 w-full">{t('health.services.useButton')}</Button>
+                                <Button onClick={() => handleUseService(service)} className="mt-4 w-full" disabled={!web3UserAddress}>
+                                    {web3UserAddress ? t('health.services.useButton') : t('header.connectWallet')}
+                                </Button>
                             </CardContent>
                         </Card>
                     ))}
@@ -171,7 +164,13 @@ export default function HealthPlanDashboard() {
                     <p className="text-muted-foreground">{t('health.credits')}</p>
                 </CardContent>
                 <CardContent>
-                    <DepositDialog />
+                    {web3UserAddress ? (
+                         <DepositDialog onDeposit={() => {}} />
+                    ) : (
+                        <Button onClick={() => connectWallet('solana')} className="w-full">
+                            <Wallet className="mr-2"/> {t('header.connectWallet')}
+                        </Button>
+                    )}
                 </CardContent>
             </Card>
         </div>

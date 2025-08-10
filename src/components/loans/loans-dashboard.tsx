@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -30,6 +30,15 @@ export default function LoansDashboard() {
   const interestRate = getDynamicInterestRate(MOCK_TVL);
 
   const handleRequestLoan = () => {
+    if (!web3UserAddress) {
+         toast({
+            variant: 'destructive',
+            title: t('dashboard.connectWalletPrompt.title'),
+            description: t('dashboard.connectWalletPrompt.description'),
+        });
+        return;
+    }
+
     const amount = parseFloat(loanAmount);
     if (isNaN(amount) || amount <= 0) {
       return;
@@ -68,20 +77,6 @@ export default function LoansDashboard() {
     return <Skeleton className="h-96 w-full" />;
   }
 
-  if (!web3UserAddress) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto">
-          <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.connectWalletPrompt.title')}</h2>
-          <p className="text-muted-foreground mt-2 mb-6">{t('dashboard.connectWalletPrompt.description')}</p>
-          <Button onClick={() => connectWallet('solana')} size="lg">
-            <Wallet className="mr-2" />
-            {t('header.connectWallet')}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -164,8 +159,8 @@ export default function LoansDashboard() {
                             onChange={(e) => setLoanAmount(e.target.value)} 
                         />
                     </div>
-                    <Button onClick={handleRequestLoan} className="w-full" size="lg" disabled={!usdcBalance || usdcBalance <= 0}>
-                        {t('loans.request.button')}
+                    <Button onClick={handleRequestLoan} className="w-full" size="lg" disabled={!web3UserAddress}>
+                        {web3UserAddress ? t('loans.request.button') : t('header.connectWallet')}
                     </Button>
                 </CardContent>
             </Card>

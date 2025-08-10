@@ -33,7 +33,7 @@ const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 )
 
-export default function DepositDialog({ onDeposit }: { onDeposit: (amount: number) => void }) {
+export default function DepositDialog({ onDeposit, ...triggerProps }: { onDeposit: (amount: number) => void } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState('1000');
   const { t } = useAppTranslation();
@@ -57,7 +57,7 @@ export default function DepositDialog({ onDeposit }: { onDeposit: (amount: numbe
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button {...triggerProps}>
           <Landmark className="mr-2" /> {t('deposit.button')}
         </Button>
       </DialogTrigger>
