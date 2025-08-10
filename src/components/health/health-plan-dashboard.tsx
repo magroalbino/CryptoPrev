@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { History } from 'lucide-react';
 
 const MOCK_SERVICES = [
-  { id: '1', name: 'health.services.general.name', description: 'health.services.general.description', cost: 50, icon: <Stethoscope className="text-accent" /> },
+  { id: '1', name: 'health.services.general.name', description: 'health.services.general.description', cost: 100, icon: <Stethoscope className="text-accent" /> },
   { id: '2', name: 'health.services.psychology.name', description: 'health.services.psychology.description', cost: 75, icon: <Brain className="text-accent" /> },
   { id: '3', name: 'health.services.nutrition.name', description: 'health.services.nutrition.description', cost: 60, icon: <Apple className="text-accent" /> },
   { id: '4', name: 'health.services.lab.name', description: 'health.services.lab.description', cost: 80, icon: <FlaskConical className="text-accent" /> },
