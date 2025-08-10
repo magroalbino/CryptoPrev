@@ -107,7 +107,7 @@ export default function HealthPlanDashboard() {
                             <CardContent className="text-center">
                                 <p className="text-2xl font-bold text-accent">{service.cost} {t('health.credits')}</p>
                                 <Button onClick={() => handleUseService(service)} className="mt-4 w-full" disabled={!web3UserAddress}>
-                                    {web3UserAddress ? t('health.services.useButton') : t('header.connectWallet')}
+                                    {t('health.services.useButton')}
                                 </Button>
                             </CardContent>
                         </Card>
