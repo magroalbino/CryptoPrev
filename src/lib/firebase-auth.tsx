@@ -6,6 +6,8 @@ import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut, signInWi
 import { app, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
 
 // USDC Contract Address on Solana Mainnet
 const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
@@ -125,25 +127,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return undefined;
   }
   
-  // Signs in with Firebase using the wallet address
+  // Signs in with Firebase using the wallet address by calling a Firebase Function
   const signInWithWallet = async (address: string) => {
     if (!isFirebaseEnabled || !app) return;
     try {
-      const response = await fetch('/api/create-custom-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to get custom token');
+      const functions = getFunctions(app);
+      const createCustomToken = httpsCallable(functions, 'createCustomToken');
+      const result = await createCustomToken({ address });
+      
+      const { token } = result.data as { token: string };
+      if (!token) {
+        throw new Error('Failed to get custom token from Firebase Function.');
       }
       
       const auth = getAuth(app);
-      await signInWithCustomToken(auth, data.token);
+      await signInWithCustomToken(auth, token);
 
     } catch (error) {
       console.error('Firebase custom sign-in failed:', error);
+      // Re-throw to be caught by the calling function
+      throw error;
     }
   };
 
