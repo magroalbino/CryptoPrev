@@ -30,7 +30,7 @@ export async function getPlannerSuggestion(
   const i18nextCookie = cookieHeader
     ?.split(';')
     .find(c => c.trim().startsWith('i18next='));
-  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'en';
+  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'pt';
 
 
   const validatedFields = formSchema.safeParse({

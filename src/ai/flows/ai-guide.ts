@@ -14,7 +14,7 @@ import { headers } from "next/headers";
 
 const AiGuideInputSchema = z.object({
   question: z.string().describe('The user\'s question.'),
-  language: z.enum(['en', 'pt']).optional().default('en').describe('The language for the response.'),
+  language: z.enum(['en', 'pt']).optional().default('pt').describe('The language for the response.'),
 });
 
 const AiGuideOutputSchema = z.object({
@@ -68,7 +68,7 @@ export async function askAiGuide(
   const i18nextCookie = cookieHeader
     ?.split(';')
     .find(c => c.trim().startsWith('i18next='));
-  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'en';
+  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'pt';
 
   try {
     const result = await aiGuideFlow({ question, language: language as 'en' | 'pt' });

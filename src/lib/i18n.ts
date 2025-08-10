@@ -16,8 +16,8 @@ i18n
         translation: pt,
       },
     },
-    lng: 'en', // Idioma padrão
-    fallbackLng: 'en',
+    lng: 'pt', // Idioma padrão
+    fallbackLng: 'pt',
     interpolation: {
       escapeValue: false, // React já faz o escape
     },

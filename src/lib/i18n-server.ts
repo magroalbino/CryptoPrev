@@ -14,7 +14,7 @@ export async function createTranslation() {
   const i18nextCookie = cookieHeader
     ?.split(';')
     .find(c => c.trim().startsWith('i18next='));
-  const lng = i18nextCookie ? i18nextCookie.split('=')[1] : 'en';
+  const lng = i18nextCookie ? i18nextCookie.split('=')[1] : 'pt';
 
   await i18n
     .use(initReactI18next)
@@ -24,7 +24,7 @@ export async function createTranslation() {
         pt: { translation: pt },
       },
       lng: lng,
-      fallbackLng: 'en',
+      fallbackLng: 'pt',
     });
 
   return {

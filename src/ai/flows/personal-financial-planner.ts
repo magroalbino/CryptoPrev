@@ -18,7 +18,7 @@ const FinancialPlannerInputSchema = z.object({
   monthlyContribution: z.number().describe('The current monthly contribution in dollars.'),
   desiredMonthlyIncome: z.number().describe('The desired monthly retirement income in dollars.'),
   riskTolerance: z.enum(['low', 'medium', 'high']).describe('The user\'s risk tolerance.'),
-  language: z.enum(['en', 'pt']).optional().default('en').describe('The language for the response.'),
+  language: z.enum(['en', 'pt']).optional().default('pt').describe('The language for the response.'),
 });
 
 export type FinancialPlannerInput = z.infer<typeof FinancialPlannerInputSchema>;
