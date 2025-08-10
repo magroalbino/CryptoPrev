@@ -1,4 +1,3 @@
-
 // src/lib/firebase-server.ts
 import admin from 'firebase-admin';
 import type { App } from 'firebase-admin/app';
