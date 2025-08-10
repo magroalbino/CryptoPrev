@@ -34,10 +34,10 @@ const ProtocolSuggestionSchema = z.object({
   estimatedMonthlyYield: z
     .number()
     .describe('The estimated monthly yield in dollars based on the investment amount.'),
-  risks: z.string().describe('The risks associated with the protocol.'),
+  risks: z.string().describe('The risks associated with the protocol, written in Portuguese.'),
   strategyDescription: z
     .string()
-    .describe('A detailed description of the DeFi strategy for the specified protocol.'),
+    .describe('A detailed description of the DeFi strategy for the specified protocol, written in Portuguese.'),
 });
 
 const AnalyzeDefiProtocolsOutputSchema = z.object({
@@ -78,6 +78,8 @@ const prompt = ai.definePrompt({
 
 **Crucially, you MUST use the getProtocolData tool to fetch the latest APYs and data for DeFi protocols.** Base your recommendations on the data returned by the tool to provide the most accurate and up-to-date suggestions.
 
+**All text output (strategyDescription, risks) MUST be in Portuguese.**
+
 Analyze strategies for the following stablecoin: {{{stablecoin}}}
 Risk Tolerance: {{{riskTolerance}}}
 Investment Amount: {{{investmentAmount}}}
@@ -88,9 +90,9 @@ Your recommendations should be based on well-known, real-world DeFi strategies. 
     *   **Lending/Borrowing:** Suggesting supplying assets to protocols like Aave or Compound.
     *   **Liquidity Providing:** Suggesting providing liquidity to stablecoin-only pools (e.g., Curve 3pool).
 *   **APY (Annual Percentage Yield):** Use the APY from the tool.
-*   **Lock-up Period:** Mention if the strategy involves a lock-up period (most lending protocols don't have one).
-*   **Risks:** Clearly explain the primary risks in simple terms (e.g., smart contract risk, de-pegging risk for stablecoins, impermanent loss for liquidity pools).
-*   **Strategy Description:** Briefly explain how the strategy generates yield.
+*   **Lock-up Period:** Mention if the strategy involves a lock-up period (e.g., "Sem carência", "30 dias").
+*   **Risks (in Portuguese):** Clearly explain the primary risks in simple terms. For example: "Risco de contrato inteligente, risco de desancoragem da stablecoin." or "Risco de contrato inteligente, risco de desancoragem da stablecoin, perda impermanente (embora mínima em pools apenas de stablecoins)."
+*   **Strategy Description (in Portuguese):** Briefly explain how the strategy generates yield. For example: "Fornecer liquidez ao par de stablecoins para ganhar taxas de transação e recompensas."
 
 Based on these criteria, recommend the top 3 DeFi strategies for the user. Ensure the output matches the requested schema.
 `,
