@@ -94,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [web3UserAddress, walletType, fetchUsdcBalance]);
 
+  // Handle Firebase auth state changes
   useEffect(() => {
     if (!isFirebaseEnabled || !app) {
       setLoading(false);
@@ -102,6 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false); // Stop loading once we have auth state
     });
     return () => unsubscribe();
   }, []);
@@ -123,21 +125,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return undefined;
   }
   
-  // New function to sign in with Firebase using the wallet address
+  // Signs in with Firebase using the wallet address
   const signInWithWallet = async (address: string) => {
     if (!isFirebaseEnabled || !app) return;
     try {
-      // 1. Call a serverless function to create a custom token
       const response = await fetch('/api/create-custom-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address }),
       });
-      const { token } = await response.json();
-
-      // 2. Sign in with the custom token
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get custom token');
+      }
+      
       const auth = getAuth(app);
-      await signInWithCustomToken(auth, token);
+      await signInWithCustomToken(auth, data.token);
+
     } catch (error) {
       console.error('Firebase custom sign-in failed:', error);
     }
@@ -145,9 +149,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const connectWallet = async (type: WalletType) => {
-    setLoading(true);
     let address: string | null = null;
     try {
+        setLoading(true);
         if (type === 'solana') {
             const provider = getPhantomProvider();
             if (!provider) throw new Error('Phantom wallet is not installed.');
@@ -169,7 +173,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         
         if (address) {
-          // After successfully connecting the wallet, sign in to Firebase
           await signInWithWallet(address);
         }
 
@@ -212,10 +215,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("User signed out.");
   };
   
+  // Try to auto-connect to the wallet after Firebase auth is resolved
   useEffect(() => {
+    // Only run this if initial loading is done and we don't have a user
+    if (loading) {
+      return;
+    }
+
     const autoConnect = async () => {
       let address: string | null = null;
-      let type: WalletType | null = null;
       try {
         const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
 
@@ -224,7 +232,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (provider) {
                 const resp = await provider.connect({ onlyIfTrusted: true });
                 address = resp.publicKey.toString();
-                type = 'solana';
                 setWeb3UserAddress(address);
                 setWalletType('solana');
             }
@@ -234,27 +241,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const accounts = await provider.request({ method: 'eth_accounts' });
                 if (accounts.length > 0) {
                     address = accounts[0];
-                    type = 'ethereum';
                     setWeb3UserAddress(address);
                     setWalletType('ethereum');
                 }
             }
         }
         
-        // Also sign in to firebase on auto-connect
-        if (address) {
+        // If we got an address from the wallet and we still don't have a firebase user, sign in
+        if (address && !user) {
           await signInWithWallet(address);
         }
 
       } catch (error) {
          console.log("Could not auto-connect wallet:", error);
-      } finally {
-        setLoading(false);
       }
     };
     
     autoConnect();
-  }, []);
+  // We run this effect when Firebase loading is complete
+  }, [loading, user]);
 
   return (
     <AuthContext.Provider value={{ user, web3UserAddress, walletType, usdcBalance, loading, connectWallet, signOut }}>
