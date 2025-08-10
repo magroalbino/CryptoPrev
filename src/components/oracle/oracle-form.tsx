@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useEffect } from 'react';
-import { Loader2, Sparkles, AlertTriangle, BadgePercent, CheckCircle } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, BadgePercent, CheckCircle, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getOracleSuggestion } from '@/app/oracle/actions';
 import type { OracleState } from '@/app/oracle/actions';
@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import { useAuth } from '@/lib/firebase-auth';
 
 const formSchema = z.object({
   stablecoin: z.string().min(1, 'Please select a stablecoin.'),
@@ -55,6 +56,17 @@ const formSchema = z.object({
 function SubmitButton() {
   const { pending } = useFormStatus();
   const { t } = useAppTranslation();
+  const { web3UserAddress, connectWallet } = useAuth();
+
+  if (!web3UserAddress) {
+    return (
+       <Button onClick={() => connectWallet('solana')} size="lg" className="w-full md:w-auto" variant="secondary">
+          <Wallet className="mr-2 h-4 w-4" />
+          {t('header.connectWallet')}
+       </Button>
+    )
+  }
+
   return (
     <Button type="submit" disabled={pending} size="lg" className="w-full md:w-auto" variant="secondary">
       {pending ? (
@@ -75,6 +87,7 @@ function SubmitButton() {
 export default function OracleForm() {
   const { toast } = useToast();
   const { t } = useAppTranslation();
+  const { web3UserAddress } = useAuth();
   const initialState: OracleState = { data: null, error: null };
   const [state, formAction] = useActionState(getOracleSuggestion, initialState);
 
@@ -250,7 +263,7 @@ export default function OracleForm() {
                           </div>
                     </CardContent>
                     <CardFooter>
-                       <Button onClick={() => handleSelectStrategy(suggestion)} className='w-full'>
+                       <Button onClick={() => handleSelectStrategy(suggestion)} className='w-full' disabled={!web3UserAddress}>
                           <CheckCircle className="mr-2"/>
                           {t('oracle.results.selectButton')}
                        </Button>
