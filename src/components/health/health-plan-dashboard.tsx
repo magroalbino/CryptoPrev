@@ -85,95 +85,93 @@ export default function HealthPlanDashboard() {
 
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-8">
-             <Card className="brutalist-shadow">
-                <CardHeader>
-                    <CardTitle>{t('health.services.title')}</CardTitle>
-                    <CardDescription>{t('health.services.description')}</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {MOCK_SERVICES.map((service) => (
-                        <Card key={service.id} className="flex flex-col">
-                            <CardHeader className="items-center text-center">
-                                <div className="p-3 bg-secondary/50 border-2 border-foreground rounded-full mb-2">
-                                    {service.icon}
-                                </div>
-                                <CardTitle className="text-lg">{t(service.name as any)}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex-grow text-center">
-                                <p className="text-sm text-muted-foreground">{t(service.description as any)}</p>
-                            </CardContent>
-                            <CardContent className="text-center">
-                                <p className="text-2xl font-bold text-accent">{service.cost} {t('health.credits')}</p>
-                                <Button onClick={() => handleUseService(service)} className="mt-4 w-full" disabled={!web3UserAddress}>
-                                    {t('health.services.useButton')}
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </CardContent>
-            </Card>
-            <Card className="brutalist-shadow">
-                <CardHeader>
-                    <CardTitle>{t('health.history.title')}</CardTitle>
-                    <CardDescription>{t('health.history.description')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {healthData.transactions.length > 0 ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('health.history.table.date')}</TableHead>
-                                    <TableHead>{t('health.history.table.description')}</TableHead>
-                                    <TableHead className="text-right">{t('health.history.table.amount')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {healthData.transactions.map((tx: any) => (
-                                <TableRow key={tx.id}>
-                                    <TableCell>{tx.date}</TableCell>
-                                    <TableCell className="font-medium">{tx.description}</TableCell>
-                                    <TableCell className={`text-right font-mono font-bold ${tx.amount > 0 ? 'text-accent' : 'text-primary'}`}>
-                                        {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
-                                    </TableCell>
-                                </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-12">
-                            <History className="h-10 w-10 mb-4" />
-                            <p className="font-bold">{t('health.history.empty.title')}</p>
-                            <p className="text-sm">{t('health.history.empty.description')}</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        </div>
-        <div className="lg:col-span-1 space-y-8">
-            <Card className="brutalist-shadow">
-                 <CardHeader className="items-center text-center">
-                    <CardTitle>{t('health.balance.title')}</CardTitle>
-                    <div className="p-4 bg-secondary/50 border-2 border-foreground rounded-full my-2">
-                        <HeartPulse className="h-10 w-10 text-accent" />
+    <div className="space-y-8">
+        <Card className="brutalist-shadow">
+             <CardHeader className="items-center text-center">
+                <CardTitle>{t('health.balance.title')}</CardTitle>
+                <div className="p-4 bg-secondary/50 border-2 border-foreground rounded-full my-2">
+                    <HeartPulse className="h-10 w-10 text-accent" />
+                </div>
+            </CardHeader>
+            <CardContent className="text-center">
+                <p className="text-5xl font-bold text-primary">{healthData.balance.toFixed(2)}</p>
+                <p className="text-muted-foreground">{t('health.credits')}</p>
+            </CardContent>
+            <CardContent>
+                {web3UserAddress ? (
+                     <DepositDialog onDeposit={() => {}} />
+                ) : (
+                    <Button onClick={() => connectWallet('solana')} className="w-full">
+                        <Wallet className="mr-2"/> {t('header.connectWallet')}
+                    </Button>
+                )}
+            </CardContent>
+        </Card>
+
+        <Card className="brutalist-shadow">
+            <CardHeader>
+                <CardTitle>{t('health.services.title')}</CardTitle>
+                <CardDescription>{t('health.services.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {MOCK_SERVICES.map((service) => (
+                    <Card key={service.id} className="flex flex-col">
+                        <CardHeader className="items-center text-center">
+                            <div className="p-3 bg-secondary/50 border-2 border-foreground rounded-full mb-2">
+                                {service.icon}
+                            </div>
+                            <CardTitle className="text-lg">{t(service.name as any)}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow text-center">
+                            <p className="text-sm text-muted-foreground">{t(service.description as any)}</p>
+                        </CardContent>
+                        <CardContent className="text-center">
+                            <p className="text-2xl font-bold text-accent">{service.cost} {t('health.credits')}</p>
+                            <Button onClick={() => handleUseService(service)} className="mt-4 w-full" disabled={!web3UserAddress}>
+                                {t('health.services.useButton')}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ))}
+            </CardContent>
+        </Card>
+        
+        <Card className="brutalist-shadow">
+            <CardHeader>
+                <CardTitle>{t('health.history.title')}</CardTitle>
+                <CardDescription>{t('health.history.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {healthData.transactions.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>{t('health.history.table.date')}</TableHead>
+                                <TableHead>{t('health.history.table.description')}</TableHead>
+                                <TableHead className="text-right">{t('health.history.table.amount')}</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {healthData.transactions.map((tx: any) => (
+                            <TableRow key={tx.id}>
+                                <TableCell>{tx.date}</TableCell>
+                                <TableCell className="font-medium">{tx.description}</TableCell>
+                                <TableCell className={`text-right font-mono font-bold ${tx.amount > 0 ? 'text-accent' : 'text-primary'}`}>
+                                    {tx.amount > 0 ? '+' : ''}{tx.amount.toFixed(2)}
+                                </TableCell>
+                            </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-12">
+                        <History className="h-10 w-10 mb-4" />
+                        <p className="font-bold">{t('health.history.empty.title')}</p>
+                        <p className="text-sm">{t('health.history.empty.description')}</p>
                     </div>
-                </CardHeader>
-                <CardContent className="text-center">
-                    <p className="text-5xl font-bold text-primary">{healthData.balance.toFixed(2)}</p>
-                    <p className="text-muted-foreground">{t('health.credits')}</p>
-                </CardContent>
-                <CardContent>
-                    {web3UserAddress ? (
-                         <DepositDialog onDeposit={() => {}} />
-                    ) : (
-                        <Button onClick={() => connectWallet('solana')} className="w-full">
-                            <Wallet className="mr-2"/> {t('header.connectWallet')}
-                        </Button>
-                    )}
-                </CardContent>
-            </Card>
-        </div>
+                )}
+            </CardContent>
+        </Card>
     </div>
   );
 }
