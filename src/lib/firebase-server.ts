@@ -1,5 +1,4 @@
 // src/lib/firebase-server.ts
-import 'dotenv/config'; // Make sure env variables are loaded
 import admin from 'firebase-admin';
 import { getApps as getAdminApps, initializeApp as initializeAdminApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -29,7 +28,7 @@ if (serviceAccountKey) {
     db = {}; // Assign a dummy object to satisfy TypeScript
   }
 } else {
-  console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set. Using mock data for server-side operations.");
+  console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin SDK is not initialized.");
   // @ts-ignore
   db = {}; // Assign a dummy object to satisfy TypeScript
 }
