@@ -17,6 +17,17 @@ import { Label } from '../ui/label';
 import { getDynamicInterestRate, MOCK_TVL } from '@/lib/apy';
 import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function LoansDashboard() {
   const { web3UserAddress, usdcBalance, loading, connectWallet } = useAuth();
@@ -85,6 +96,36 @@ export default function LoansDashboard() {
     });
 
     setLoanAmount('');
+  };
+
+  const RequestLoanButton = () => {
+    if (!web3UserAddress) {
+      return (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button className="w-full" size="lg">{t('loans.request.button')}</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('dashboard.connectWalletPrompt.title')}</AlertDialogTitle>
+              <AlertDialogDescription>{t('loans.connectWalletPrompt.description')}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('loans.connectWalletPrompt.cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={() => connectWallet('solana')}>
+                <Wallet className="mr-2"/>{t('header.connectWallet')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      );
+    }
+
+    return (
+      <Button onClick={handleRequestLoan} className="w-full" size="lg">
+        {t('loans.request.button')}
+      </Button>
+    );
   };
 
   if (loading) {
@@ -174,7 +215,7 @@ export default function LoansDashboard() {
                         />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="loan-term">{t('loans.simulator.term')}: {loanTerm} {t('dashboard.cards.lockup.value_other', { count: loanTerm })}</Label>
+                        <Label htmlFor="loan-term">{t('loans.simulator.termLabel', { term: loanTerm })}</Label>
                         <Slider
                             id="loan-term"
                             min={6}
@@ -198,9 +239,7 @@ export default function LoansDashboard() {
                             <span className="font-bold text-primary">${simulation.totalInterest.toFixed(2)}</span>
                         </div>
                     </div>
-                    <Button onClick={() => web3UserAddress ? handleRequestLoan() : connectWallet('solana')} className="w-full" size="lg">
-                        {web3UserAddress ? t('loans.request.button') : <><Wallet className="mr-2"/>{t('header.connectWallet')}</>}
-                    </Button>
+                    <RequestLoanButton />
                 </CardContent>
             </Card>
         </div>

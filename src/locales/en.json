@@ -396,6 +396,10 @@
   "loans": {
     "title": "Crypto-Backed Loans",
     "description": "Leverage your assets. Borrow against your investments without selling them.",
+    "connectWalletPrompt": {
+      "description": "To request a loan, you need to connect your wallet first. This allows us to verify your available collateral.",
+      "cancel": "Cancel"
+    },
     "cards": {
       "collateral": {
         "title": "Collateral Value",
@@ -436,7 +440,7 @@
     },
     "simulator": {
       "title": "Loan Simulator",
-      "term": "Loan Term",
+      "termLabel": "Loan Term: {{term}} months",
       "monthlyPayment": "Est. Monthly Payment",
       "totalInterest": "Total Interest Paid"
     },

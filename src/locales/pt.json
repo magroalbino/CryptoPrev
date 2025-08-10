@@ -355,6 +355,10 @@
   "loans": {
     "title": "Empréstimos com Garantia Cripto",
     "description": "Alavanque seus ativos. Pegue empréstimos usando seus investimentos como garantia, sem precisar vendê-los.",
+    "connectWalletPrompt": {
+      "description": "Para solicitar um empréstimo, você precisa conectar sua carteira primeiro. Isso nos permite verificar sua garantia disponível.",
+      "cancel": "Cancelar"
+    },
     "cards": {
       "collateral": {
         "title": "Valor em Garantia",
@@ -395,7 +399,7 @@
     },
     "simulator": {
       "title": "Simulador de Empréstimo",
-      "term": "Prazo do Empréstimo",
+      "termLabel": "Prazo do Empréstimo: {{term}} meses",
       "monthlyPayment": "Pagamento Mensal Est.",
       "totalInterest": "Total de Juros Pagos"
     },
