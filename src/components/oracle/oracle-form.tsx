@@ -77,7 +77,7 @@ function SubmitButton() {
 export default function OracleForm() {
   const { toast } = useToast();
   const { t } = useAppTranslation();
-  const { web3UserAddress } = useAuth();
+  const { web3UserAddress, connectWallet } = useAuth();
   const initialState: OracleState = { data: null, error: null };
   const [state, formAction] = useActionState(getOracleSuggestion, initialState);
 
@@ -253,8 +253,17 @@ export default function OracleForm() {
                           </div>
                     </CardContent>
                     <CardFooter>
-                       <Button onClick={() => handleSelectStrategy(suggestion)} className='w-full' disabled={!web3UserAddress}>
-                          <CheckCircle className="mr-2"/>
+                       <Button
+                          onClick={() => {
+                            if (web3UserAddress) {
+                              handleSelectStrategy(suggestion);
+                            } else {
+                              connectWallet('solana');
+                            }
+                          }}
+                          className='w-full'
+                        >
+                          {web3UserAddress ? <CheckCircle className="mr-2"/> : <Wallet className="mr-2"/>}
                           {web3UserAddress ? t('oracle.results.selectButton') : t('header.connectWallet')}
                        </Button>
                     </CardFooter>
