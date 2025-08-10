@@ -63,7 +63,7 @@ export function getFirebaseAdmin(): FirebaseAdmin {
     const auth = getAdminAuth(app);
 
     // Cache the instance
-    adminInstance = { app, db, auth, isFirebaseEnabled };
+    adminInstance = { app, db, auth, isFirebaseEnabled: true };
     return adminInstance;
 
   } catch (error: unknown) {
