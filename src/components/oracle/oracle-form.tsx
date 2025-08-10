@@ -56,16 +56,6 @@ const formSchema = z.object({
 function SubmitButton() {
   const { pending } = useFormStatus();
   const { t } = useAppTranslation();
-  const { web3UserAddress, connectWallet } = useAuth();
-
-  if (!web3UserAddress) {
-    return (
-       <Button onClick={() => connectWallet('solana')} size="lg" className="w-full md:w-auto" variant="secondary">
-          <Wallet className="mr-2 h-4 w-4" />
-          {t('header.connectWallet')}
-       </Button>
-    )
-  }
 
   return (
     <Button type="submit" disabled={pending} size="lg" className="w-full md:w-auto" variant="secondary">
@@ -265,7 +255,7 @@ export default function OracleForm() {
                     <CardFooter>
                        <Button onClick={() => handleSelectStrategy(suggestion)} className='w-full' disabled={!web3UserAddress}>
                           <CheckCircle className="mr-2"/>
-                          {t('oracle.results.selectButton')}
+                          {web3UserAddress ? t('oracle.results.selectButton') : t('header.connectWallet')}
                        </Button>
                     </CardFooter>
                 </Card>
