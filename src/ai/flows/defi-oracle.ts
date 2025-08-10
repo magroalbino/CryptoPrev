@@ -60,6 +60,7 @@ const getProtocolDataTool = ai.defineTool(
             name: z.string(),
             tvl: z.number(),
             apy: z.number(),
+            riskFactor: z.enum(['low', 'medium', 'high']),
         })),
     },
     async () => {

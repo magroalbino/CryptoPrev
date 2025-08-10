@@ -1,12 +1,11 @@
 
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
 import { Loader2, Sparkles, AlertTriangle, BadgePercent, CheckCircle, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getOracleSuggestion } from '@/app/oracle/actions';
@@ -58,7 +57,7 @@ function SubmitButton() {
   const { t } = useAppTranslation();
 
   return (
-    <Button type="submit" disabled={pending} size="lg" className="w-full md:w-auto" variant="secondary">
+    <Button type="submit" disabled={pending} size="lg" className="w-full">
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -115,21 +114,20 @@ export default function OracleForm() {
   return (
     <div className="grid gap-8">
       <Card className="brutalist-shadow">
-        <form action={formAction}>
-          <CardHeader>
-            <CardTitle>{t('oracle.form.title')}</CardTitle>
-            <CardDescription>
-              {t('oracle.form.description')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
+        <Form {...form}>
+          <form action={formAction}>
+            <CardHeader>
+              <CardTitle>{t('oracle.form.title')}</CardTitle>
+              <CardDescription>
+                {t('oracle.form.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
                 <FormField
                   control={form.control}
                   name="stablecoin"
                   render={({ field }) => (
-                    <FormItem className='flex-1'>
+                    <FormItem>
                       <FormLabel className="font-bold">{t('oracle.form.stablecoin.label')}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -156,7 +154,7 @@ export default function OracleForm() {
                   control={form.control}
                   name="investmentAmount"
                   render={({ field }) => (
-                    <FormItem className='flex-1'>
+                    <FormItem>
                       <FormLabel className="font-bold">{t('oracle.form.amount.label')}</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="e.g. 1000" {...field} className="brutalist-border"/>
@@ -170,7 +168,7 @@ export default function OracleForm() {
                   control={form.control}
                   name="riskTolerance"
                   render={({ field }) => (
-                    <FormItem className="flex-1 space-y-3">
+                    <FormItem className="space-y-3">
                       <FormLabel className="font-bold">{t('oracle.form.risk.label')}</FormLabel>
                       <FormControl>
                         <RadioGroup
@@ -209,11 +207,12 @@ export default function OracleForm() {
                     </FormItem>
                   )}
                 />
+            </CardContent>
+            <CardFooter>
                 <SubmitButton />
-              </div>
-            </Form>
-          </CardContent>
-        </form>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
       
       {state.data && state.data.suggestions.length > 0 ? (
@@ -262,9 +261,10 @@ export default function OracleForm() {
                             }
                           }}
                           className='w-full'
+                          disabled={!web3UserAddress}
                         >
-                          {web3UserAddress ? <CheckCircle className="mr-2"/> : <Wallet className="mr-2"/>}
-                          {web3UserAddress ? t('oracle.results.selectButton') : t('header.connectWallet')}
+                          <CheckCircle className="mr-2"/>
+                          {t('oracle.results.selectButton')}
                        </Button>
                     </CardFooter>
                 </Card>
