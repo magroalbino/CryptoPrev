@@ -393,6 +393,12 @@
         "description": "Solicite um empréstimo para ver seu histórico aqui."
       }
     },
+    "simulator": {
+      "title": "Simulador de Empréstimo",
+      "term": "Prazo do Empréstimo",
+      "monthlyPayment": "Pagamento Mensal Est.",
+      "totalInterest": "Total de Juros Pagos"
+    },
     "toast": {
       "success": {
         "title": "Empréstimo Solicitado com Sucesso",

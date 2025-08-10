@@ -434,6 +434,12 @@
         "description": "Request a loan to see your history here."
       }
     },
+    "simulator": {
+      "title": "Loan Simulator",
+      "term": "Loan Term",
+      "monthlyPayment": "Est. Monthly Payment",
+      "totalInterest": "Total Interest Paid"
+    },
     "toast": {
       "success": {
         "title": "Loan Request Successful",

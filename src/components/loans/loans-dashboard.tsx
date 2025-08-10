@@ -1,13 +1,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/firebase-auth';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { HandCoins, PiggyBank, Percent, Landmark, Wallet } from 'lucide-react';
+import { HandCoins, PiggyBank, Percent, Landmark, Wallet, Calculator } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Badge } from '../ui/badge';
@@ -15,19 +15,42 @@ import StatCard from '../dashboard/stat-card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { getDynamicInterestRate, MOCK_TVL } from '@/lib/apy';
+import { Slider } from '@/components/ui/slider';
+import { Separator } from '@/components/ui/separator';
 
 export default function LoansDashboard() {
   const { web3UserAddress, usdcBalance, loading, connectWallet } = useAuth();
   const [loansData, setLoansData] = useState<any>({
     activeLoans: [],
   });
-  const [loanAmount, setLoanAmount] = useState('');
+  const [loanAmount, setLoanAmount] = useState('1000');
+  const [loanTerm, setLoanTerm] = useState(12); // Default 12 months
+  const [simulation, setSimulation] = useState({ monthlyPayment: 0, totalInterest: 0 });
+
   const { t } = useAppTranslation();
   const { toast } = useToast();
 
   const collateralValue = usdcBalance || 0;
   const availableToBorrow = collateralValue * 0.5; // 50% LTV
   const interestRate = getDynamicInterestRate(MOCK_TVL);
+
+  useEffect(() => {
+    const amount = parseFloat(loanAmount);
+    if (isNaN(amount) || amount <= 0 || loanTerm <= 0) {
+      setSimulation({ monthlyPayment: 0, totalInterest: 0 });
+      return;
+    }
+
+    const monthlyInterestRate = interestRate / 12;
+    const monthlyPayment = (amount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanTerm));
+    const totalPayment = monthlyPayment * loanTerm;
+    const totalInterest = totalPayment - amount;
+
+    setSimulation({
+      monthlyPayment: monthlyPayment,
+      totalInterest: totalInterest,
+    });
+  }, [loanAmount, loanTerm, interestRate]);
 
   const handleRequestLoan = () => {
     if (!web3UserAddress) {
@@ -154,10 +177,35 @@ export default function LoansDashboard() {
                         <Input 
                             id="loan-amount" 
                             type="number" 
-                            placeholder="e.g., 500" 
+                            placeholder="e.g., 1000" 
                             value={loanAmount} 
                             onChange={(e) => setLoanAmount(e.target.value)} 
                         />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="loan-term">{t('loans.simulator.term')}: {loanTerm} {t('dashboard.cards.lockup.value_other', { count: loanTerm })}</Label>
+                        <Slider
+                            id="loan-term"
+                            min={6}
+                            max={36}
+                            step={6}
+                            value={[loanTerm]}
+                            onValueChange={(value) => setLoanTerm(value[0])}
+                        />
+                    </div>
+                    <Separator />
+                    <div className="space-y-4 rounded-lg bg-secondary/30 p-4">
+                        <h4 className="font-bold text-md flex items-center gap-2">
+                            <Calculator className="text-accent" /> {t('loans.simulator.title')}
+                        </h4>
+                        <div className="flex justify-between">
+                            <span className="text-muted-foreground">{t('loans.simulator.monthlyPayment')}</span>
+                            <span className="font-bold text-primary">${simulation.monthlyPayment.toFixed(2)}</span>
+                        </div>
+                         <div className="flex justify-between">
+                            <span className="text-muted-foreground">{t('loans.simulator.totalInterest')}</span>
+                            <span className="font-bold text-primary">${simulation.totalInterest.toFixed(2)}</span>
+                        </div>
                     </div>
                     <Button onClick={handleRequestLoan} className="w-full" size="lg" disabled={!web3UserAddress}>
                         {web3UserAddress ? t('loans.request.button') : t('header.connectWallet')}
