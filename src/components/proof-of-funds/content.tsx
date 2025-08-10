@@ -48,7 +48,8 @@ export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps)
           </CardHeader>
           <CardContent>
             <p className="text-5xl font-bold text-primary">${btcReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-            <p className="text-sm text-muted-foreground">{stats.totalBtcReserves.toFixed(4)} BTC</p>
+            <p className="text-sm font-bold text-muted-foreground">{stats.totalBtcReserves.toFixed(4)} BTC</p>
+            <p className="text-sm text-muted-foreground mt-2">{t('proofOfFunds.btcReservesDescription')}</p>
           </CardContent>
         </Card>
         <Card className="brutalist-shadow">
