@@ -6,6 +6,8 @@ import { Landmark, Users } from 'lucide-react';
 import BitcoinIcon from '@/components/icons/bitcoin';
 import type { PlatformStats } from '@/lib/platform-stats';
 import { useAppTranslation } from '@/hooks/use-app-translation';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProofOfFundsContentProps {
   stats: PlatformStats;
@@ -13,8 +15,32 @@ interface ProofOfFundsContentProps {
 
 export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps) {
   const { t } = useAppTranslation();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const MOCK_BTC_PRICE = 65000;
   const btcReserveValue = stats.totalBtcReserves * MOCK_BTC_PRICE;
+  
+  if (!mounted) {
+    return (
+       <div className="mx-auto grid w-full max-w-4xl gap-8">
+          <div className="text-center">
+            <Skeleton className="h-10 w-3/4 mx-auto" />
+            <Skeleton className="h-6 w-full mt-2 mx-auto" />
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+          <Skeleton className="h-64 w-full" />
+        </div>
+    )
+  }
+
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-8">
