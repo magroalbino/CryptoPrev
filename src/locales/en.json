@@ -338,7 +338,7 @@
     "btcReserves": "Total Bitcoin Reserves",
     "activeUsers": "Active Users",
     "reservesDescription": "Total stablecoins currently invested across all DeFi protocols.",
-    "btcReservesDescription": "15% of deposits are allocated for long-term growth.",
+    "btcReservesDescription": "A percentage of deposits is allocated for long-term growth.",
     "usersDescription": "Number of active users earning yield on the platform.",
     "onChain": {
       "title": "On-Chain Verification",

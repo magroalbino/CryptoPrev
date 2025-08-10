@@ -297,7 +297,7 @@
     "btcReserves": "Reserva Total em Bitcoin",
     "activeUsers": "Usuários Ativos",
     "reservesDescription": "Total de stablecoins atualmente investido em todos os protocolos DeFi.",
-    "btcReservesDescription": "15% dos depósitos são alocados para valorização a longo prazo.",
+    "btcReservesDescription": "Uma porcentagem dos depósitos é alocada para valorização a longo prazo.",
     "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
     "onChain": {
       "title": "Verificação On-Chain",
