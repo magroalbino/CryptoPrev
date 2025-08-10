@@ -309,7 +309,7 @@ export default function PlannerForm() {
                                     content={<ChartTooltipContent 
                                         formatter={(value, name, props) => {
                                             const age = props.payload.year;
-                                            const formattedValue = `$${Number(value).toLocaleString()}`;
+                                            const formattedValue = Number(value).toLocaleString();
                                             return t('planner.results.tooltipLabel', { value: formattedValue, age: age });
                                         }} 
                                         labelClassName="hidden"
