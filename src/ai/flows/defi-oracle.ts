@@ -11,6 +11,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getProtocolData } from '@/lib/defi-protocols';
+import type { Protocol } from '@/lib/defi-protocols';
 
 const AnalyzeDefiProtocolsInputSchema = z.object({
   stablecoin: z.string().describe('The stablecoin to analyze protocols for (e.g., USDC).'),
@@ -49,11 +51,31 @@ export async function analyzeDefiProtocols(
   return analyzeDefiProtocolsFlow(input);
 }
 
+const getProtocolDataTool = ai.defineTool(
+    {
+        name: 'getProtocolData',
+        description: 'Get real-time data for top DeFi protocols like Aave, Compound, and Curve.',
+        inputSchema: z.object({}),
+        outputSchema: z.array(z.object({
+            name: z.string(),
+            tvl: z.number(),
+            apy: z.number(),
+        })),
+    },
+    async () => {
+        return getProtocolData();
+    }
+);
+
+
 const prompt = ai.definePrompt({
   name: 'analyzeDefiProtocolsPrompt',
   input: {schema: AnalyzeDefiProtocolsInputSchema},
   output: {schema: AnalyzeDefiProtocolsOutputSchema},
-  prompt: `You are a DeFi (Decentralized Finance) expert. Your knowledge is based on your training data, you cannot access live internet data. You are tasked with suggesting realistic and plausible DeFi strategies for maximizing stablecoin yield for a user, based on their risk tolerance and investment amount. Provide the top 3 best options.
+  tools: [getProtocolDataTool],
+  prompt: `You are a DeFi (Decentralized Finance) expert. You are tasked with suggesting the best DeFi strategies for maximizing stablecoin yield for a user, based on their risk tolerance and investment amount.
+
+**Crucially, you MUST use the getProtocolData tool to fetch the latest APYs and data for DeFi protocols.** Base your recommendations on the data returned by the tool to provide the most accurate and up-to-date suggestions.
 
 Analyze strategies for the following stablecoin: {{{stablecoin}}}
 Risk Tolerance: {{{riskTolerance}}}
@@ -64,9 +86,8 @@ Your recommendations should be based on well-known, real-world DeFi strategies. 
 *   **Strategy Type:** Base your suggestions on common, proven strategies like:
     *   **Lending/Borrowing:** Suggesting supplying assets to protocols like Aave or Compound.
     *   **Liquidity Providing:** Suggesting providing liquidity to stablecoin-only pools (e.g., Curve 3pool).
-    *   **Liquid Staking:** Suggesting staking tokens where applicable for stablecoins.
-*   **APY (Annual Percentage Yield):** Provide a realistic, conservative APY estimate based on the strategy and risk level. For example, for a 'low' risk tolerance, suggest APYs in the 3-5% range. For 'medium', suggest 5-8%. For 'high', you can suggest 8-12%. These are just examples; use your knowledge to provide plausible figures.
-*   **Lock-up Period:** Mention if the strategy involves a lock-up period.
+*   **APY (Annual Percentage Yield):** Use the APY from the tool.
+*   **Lock-up Period:** Mention if the strategy involves a lock-up period (most lending protocols don't have one).
 *   **Risks:** Clearly explain the primary risks in simple terms (e.g., smart contract risk, de-pegging risk for stablecoins, impermanent loss for liquidity pools).
 *   **Strategy Description:** Briefly explain how the strategy generates yield.
 
