@@ -207,8 +207,8 @@ export default function LoansDashboard() {
                             <span className="font-bold text-primary">${simulation.totalInterest.toFixed(2)}</span>
                         </div>
                     </div>
-                    <Button onClick={handleRequestLoan} className="w-full" size="lg" disabled={!web3UserAddress}>
-                        {web3UserAddress ? t('loans.request.button') : t('header.connectWallet')}
+                    <Button onClick={() => web3UserAddress ? handleRequestLoan() : connectWallet('solana')} className="w-full" size="lg">
+                        {web3UserAddress ? t('loans.request.button') : <><Wallet className="mr-2"/>{t('header.connectWallet')}</>}
                     </Button>
                 </CardContent>
             </Card>
