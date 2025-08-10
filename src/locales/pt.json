@@ -314,7 +314,7 @@
       "title": "Serviços Disponíveis",
       "description": "Use seus créditos para acessar serviços médicos sem burocracia.",
       "general": {
-        "name": "Consulta Clínica Geral",
+        "name": "Consulta Médica Geral",
         "description": "Consulta online ou presencial com um clínico geral."
       },
       "psychology": {
@@ -324,6 +324,10 @@
       "nutrition": {
         "name": "Nutricionista",
         "description": "Crie um plano alimentar personalizado com um especialista."
+      },
+      "lab": {
+        "name": "Exames Laboratoriais",
+        "description": "Realize uma ampla gama de exames e check-ups laboratoriais."
       },
       "useButton": "Usar Créditos"
     },

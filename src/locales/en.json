@@ -355,7 +355,7 @@
       "title": "Available Services",
       "description": "Use your credits to access medical services without bureaucracy.",
       "general": {
-        "name": "General Consultation",
+        "name": "General Medical Consultation",
         "description": "Online or in-person appointment with a general practitioner."
       },
       "psychology": {
@@ -365,6 +365,10 @@
       "nutrition": {
         "name": "Nutritionist",
         "description": "Create a personalized diet plan with a nutrition expert."
+      },
+      "lab": {
+        "name": "Laboratory Exams",
+        "description": "Perform a wide range of laboratory tests and check-ups."
       },
       "useButton": "Use Credits"
     },

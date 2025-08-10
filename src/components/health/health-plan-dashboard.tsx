@@ -7,17 +7,17 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/firebase-auth';
 import { useAppTranslation } from '@/hooks/use-app-translation';
-import { HeartPulse, Stethoscope, Brain, Apple, DollarSign, Receipt, History, Wallet } from 'lucide-react';
+import { HeartPulse, Stethoscope, Brain, Apple, FlaskConical, Wallet } from 'lucide-react';
 import DepositDialog from '@/components/dashboard/deposit-dialog';
 import { Skeleton } from '../ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Badge } from '../ui/badge';
-import StatCard from '../dashboard/stat-card';
+import { History } from 'lucide-react';
 
 const MOCK_SERVICES = [
   { id: '1', name: 'health.services.general.name', description: 'health.services.general.description', cost: 50, icon: <Stethoscope className="text-accent" /> },
   { id: '2', name: 'health.services.psychology.name', description: 'health.services.psychology.description', cost: 75, icon: <Brain className="text-accent" /> },
   { id: '3', name: 'health.services.nutrition.name', description: 'health.services.nutrition.description', cost: 60, icon: <Apple className="text-accent" /> },
+  { id: '4', name: 'health.services.lab.name', description: 'health.services.lab.description', cost: 80, icon: <FlaskConical className="text-accent" /> },
 ];
 
 export default function HealthPlanDashboard() {
@@ -113,7 +113,7 @@ export default function HealthPlanDashboard() {
                 <CardTitle>{t('health.services.title')}</CardTitle>
                 <CardDescription>{t('health.services.description')}</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {MOCK_SERVICES.map((service) => (
                     <Card key={service.id} className="flex flex-col">
                         <CardHeader className="items-center text-center">
