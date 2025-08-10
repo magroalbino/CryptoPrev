@@ -30,7 +30,6 @@ function initializeFirebaseAdmin() {
     } catch (e) {
       console.error('Firebase Admin SDK initialization error', e);
       isFirebaseEnabled = false;
-      throw new Error('Failed to initialize Firebase Admin SDK.');
     }
   } else {
     console.warn('FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin features will be disabled.');
