@@ -6,7 +6,7 @@ import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut, signInWi
 import { app, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFunctions, httpsCallable, HttpsCallableResult } from 'firebase/functions';
 
 const USDC_MINT_ADDRESS_SOLANA = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586";
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const functions = getFunctions(app);
       const createCustomToken = httpsCallable(functions, 'createCustomToken');
-      const result = await createCustomToken({ address });
+      const result: HttpsCallableResult = await createCustomToken({ address });
       
       const { token } = result.data as { token: string };
       if (!token) {
@@ -107,10 +107,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const auth = getAuth(app);
       const userCredential = await signInWithCustomToken(auth, token);
       setUser(userCredential.user);
-    } catch (error) {
-      console.error('Firebase custom sign-in failed:', error);
-      await cleanUpState();
-      throw error;
+    } catch (error: any) {
+        console.error('Firebase custom sign-in failed:', error);
+        await cleanUpState();
+        // Re-throw with a more descriptive message to be caught by the calling function
+        throw new Error(error.message || 'An unknown error occurred during Firebase sign-in.');
     }
   };
   
@@ -223,7 +224,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     });
     return () => unsubscribe();
-  }, [app, isFirebaseEnabled, web3UserAddress, signOut]);
+  }, [web3UserAddress, signOut]);
 
   useEffect(() => {
       const ethProvider = getMetamaskProvider();

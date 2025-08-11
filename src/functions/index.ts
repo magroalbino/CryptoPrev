@@ -10,11 +10,13 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { initializeApp } from "firebase-admin/app";
+import { initializeApp, getApps, App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
 // Initialize Firebase Admin SDK
-initializeApp();
+if (!getApps().length) {
+    initializeApp();
+}
 
 /**
  * Creates a custom Firebase auth token for the given wallet address.
@@ -38,11 +40,12 @@ exports.createCustomToken = onCall(async (request) => {
     const customToken = await getAuth().createCustomToken(uid);
     logger.info(`Successfully created custom token for address: ${address}`);
     return { token: customToken };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Error creating custom token for ${address}:`, error);
+    // Throw a specific error that can be caught by the caller
     throw new HttpsError(
       "internal",
-      "An unexpected error occurred while creating the custom token."
+      error.message || "An unexpected error occurred while creating the custom token."
     );
   }
 });
