@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
-import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut, signInWithCustomToken } from 'firebase/auth';
+import { User, signInWithCustomToken } from 'firebase/auth';
 import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
@@ -60,9 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const cleanUpState = useCallback(async () => {
-    if (firebaseAuth?.currentUser) {
-      await firebaseSignOut(firebaseAuth);
-    }
+    // No need to sign out from firebase, as state is cleaned up anyway
     setUser(null);
     setWeb3UserAddress(null);
     setWalletType(null);
@@ -73,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signInWithFirebase = useCallback(async (address: string) => {
-    if (!isFirebaseEnabled || !app) {
+    if (!isFirebaseEnabled || !app || !firebaseAuth) {
       console.warn("Firebase not enabled, skipping sign-in.");
       return null;
     }
@@ -83,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const result = await createCustomToken({ address });
       const token = (result.data as { token: string }).token;
       
-      const userCredential = await signInWithCustomToken(firebaseAuth!, token);
+      const userCredential = await signInWithCustomToken(firebaseAuth, token);
       return userCredential.user;
     } catch (error: any) {
       console.error('Firebase sign-in failed:', error.message || error);
@@ -130,12 +128,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else if (type === 'ethereum') {
         provider = getMetamaskProvider();
         if (!provider) throw new Error('MetaMask wallet is not installed.');
-        // For trusted connections, we can't pop-up MetaMask, so we check existing accounts
         const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
-        if (accounts.length === 0 && onlyIfTrusted) {
-            // It's a trusted call but no account is connected/returned, so we stop here.
-            setLoading(false);
-            return;
+        if (accounts.length === 0) {
+            if (onlyIfTrusted) {
+                setLoading(false);
+                return;
+            }
+             throw new Error('No account found. Please connect in MetaMask.');
         }
         address = accounts[0];
       }
@@ -156,7 +155,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error(`Failed to connect to ${type} wallet:`, error.message);
       await cleanUpState();
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   }, [cleanUpState, signInWithFirebase, fetchUsdcBalance]);
 
@@ -176,6 +175,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error("Error during wallet disconnect:", error);
     } finally {
         await cleanUpState();
+        if(firebaseAuth?.currentUser){
+           await firebaseAuth.signOut();
+        }
         setLoading(false);
     }
   }, [walletType, cleanUpState]);

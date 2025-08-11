@@ -10,12 +10,18 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { initializeApp, getApps, App } from "firebase-admin/app";
+import { initializeApp, getApps } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK if it hasn't been already.
 if (!getApps().length) {
+  try {
     initializeApp();
+    logger.info("Firebase Admin SDK initialized successfully.");
+  } catch (error: any) {
+    logger.error("Error initializing Firebase Admin SDK:", error);
+    // This will cause functions to fail, which is intended if admin can't init.
+  }
 }
 
 /**
