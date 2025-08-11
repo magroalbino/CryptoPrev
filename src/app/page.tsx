@@ -56,7 +56,7 @@ export default function Dashboard() {
   const [isPending, startTransition] = useTransition();
 
   const loadDashboardData = async (currentUser: User) => {
-    setIsDataLoading(true);
+    if (!isDataLoading) setIsDataLoading(true);
     const data = await getUserData(currentUser.uid);
     setDashboardData(data);
     setIsDataLoading(false);
@@ -66,8 +66,9 @@ export default function Dashboard() {
     if (user) {
       loadDashboardData(user);
     } else if (!loading) {
-      setDashboardData(null);
+      // If there's no user and we are not in a loading state, stop loading data.
       setIsDataLoading(false);
+      setDashboardData(null);
     }
   }, [user, loading]);
 
@@ -121,7 +122,7 @@ export default function Dashboard() {
     });
   };
   
-  if (loading || (isDataLoading && user)) {
+  if (loading || isDataLoading) {
     return (
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between space-y-2">
@@ -248,5 +249,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-    
