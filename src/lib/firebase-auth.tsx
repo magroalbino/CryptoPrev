@@ -87,8 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const auth = getAuth(app);
       const userCredential = await signInWithCustomToken(auth, token);
       return userCredential.user;
-    } catch (error) {
-      console.error('Firebase sign-in failed:', error);
+    } catch (error: any) {
+      console.error('Firebase sign-in failed:', error.message || error);
       await cleanUpState();
       throw new Error('Failed to sign in with Firebase.');
     }
@@ -239,5 +239,3 @@ declare global {
     };
   }
 }
-
-    
