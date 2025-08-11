@@ -6,15 +6,12 @@ import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut, signInWi
 import { app, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
-import { getFunctions, httpsCallable, HttpsCallableResult } from 'firebase/functions';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const USDC_MINT_ADDRESS_SOLANA = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586";
 
-const SOLANA_RPC_ENDPOINTS = [
-    'https://rpc.ankr.com/solana',
-    'https://mainnet.helius-rpc.com/?api-key=01a7471c-13a5-4871-a472-a4421b593633',
-];
+const SOLANA_RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=01a7471c-13a5-4871-a472-a4421b593633';
 
 type WalletType = 'solana' | 'ethereum';
 
@@ -38,27 +35,14 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-const getWorkingSolanaConnection = async (): Promise<Connection | null> => {
-    for (const endpoint of SOLANA_RPC_ENDPOINTS) {
-        try {
-            const connection = new Connection(endpoint, 'confirmed');
-            await connection.getVersion();
-            return connection;
-        } catch (e) {
-            console.warn(`Failed to connect or get version from ${endpoint}, trying next...`);
-        }
-    }
-    return null;
-}
-
 const getPhantomProvider = () => {
-    if (typeof window !== 'undefined' && 'solana' in window) {
-      const provider = window.solana;
-      if (provider && typeof provider === 'object' && 'isPhantom' in provider && provider.isPhantom) {
-        return provider as any;
-      }
+  if (typeof window !== 'undefined' && 'solana' in window) {
+    const provider = window.solana;
+    if (provider && typeof provider === 'object' && 'isPhantom' in provider && provider.isPhantom) {
+      return provider as any;
     }
-    return undefined;
+  }
+  return undefined;
 };
 
 const getMetamaskProvider = () => {
@@ -76,183 +60,157 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const cleanUpState = useCallback(async () => {
+    const auth = getAuth(app!);
+    if (auth.currentUser) {
+      await firebaseSignOut(auth);
+    }
+    setUser(null);
     setWeb3UserAddress(null);
     setWalletType(null);
     setUsdcBalance(null);
-    setUser(null);
     localStorage.removeItem('walletType');
     localStorage.removeItem('walletAddress');
-    
-    if (isFirebaseEnabled && app) {
-      const auth = getAuth(app);
-      if (auth.currentUser) {
-        await firebaseSignOut(auth);
-      }
-    }
+    console.log('State cleaned up.');
   }, []);
 
-  const signInWithFirebase = async (address: string) => {
-    if (!isFirebaseEnabled || !app) throw new Error("Firebase is not enabled.");
-    
+  const signInWithFirebase = useCallback(async (address: string) => {
+    if (!isFirebaseEnabled || !app) {
+      console.warn("Firebase not enabled, skipping sign-in.");
+      return null;
+    }
     try {
       const functions = getFunctions(app);
       const createCustomToken = httpsCallable(functions, 'createCustomToken');
-      const result: HttpsCallableResult = await createCustomToken({ address });
-      
-      const { token } = result.data as { token: string };
-      if (!token) {
-        throw new Error('Failed to get custom token from Firebase Function.');
-      }
+      const result = await createCustomToken({ address });
+      const token = (result.data as { token: string }).token;
       
       const auth = getAuth(app);
       const userCredential = await signInWithCustomToken(auth, token);
-      setUser(userCredential.user);
-    } catch (error: any) {
-        console.error('Firebase custom sign-in failed:', error);
-        await cleanUpState();
-        // Re-throw with a more descriptive message to be caught by the calling function
-        throw new Error(error.message || 'An unknown error occurred during Firebase sign-in.');
+      return userCredential.user;
+    } catch (error) {
+      console.error('Firebase sign-in failed:', error);
+      await cleanUpState();
+      throw new Error('Failed to sign in with Firebase.');
     }
-  };
+  }, [cleanUpState]);
   
   const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
     try {
       if (type === 'solana') {
-          const connection = await getWorkingSolanaConnection();
-          if (!connection) throw new Error("Could not establish a Solana connection.");
-          const publicKey = new PublicKey(address);
-          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
-              mint: USDC_MINT_ADDRESS_SOLANA,
-          });
-          const balance = tokenAccounts.value.length > 0
-              ? tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount
-              : 0;
-          setUsdcBalance(balance);
+        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+        const publicKey = new PublicKey(address);
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: USDC_MINT_ADDRESS_SOLANA });
+        const balance = tokenAccounts?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0;
+        return balance;
       } else if (type === 'ethereum') {
-          const provider = getMetamaskProvider();
-          if (!provider) throw new Error("MetaMask provider is not available.");
-          const ethersProvider = new ethers.BrowserProvider(provider);
-          const contract = new ethers.Contract(
-              USDC_CONTRACT_ADDRESS_ETHEREUM,
-              ['function balanceOf(address) view returns (uint256)'],
-              ethersProvider
-          );
-          const balance = await contract.balanceOf(address);
-          setUsdcBalance(parseFloat(ethers.formatUnits(balance, 6)));
+        const provider = getMetamaskProvider();
+        if (!provider) return 0;
+        const ethersProvider = new ethers.BrowserProvider(provider);
+        const contract = new ethers.Contract(USDC_CONTRACT_ADDRESS_ETHEREUM, ['function balanceOf(address) view returns (uint256)'], ethersProvider);
+        const balanceResult = await contract.balanceOf(address);
+        return parseFloat(ethers.formatUnits(balanceResult, 6));
       }
+      return 0;
     } catch (error) {
-       console.error(`Failed to fetch ${type} balance:`, error);
-       setUsdcBalance(0);
+        console.error(`Failed to fetch USDC balance for ${type}:`, error);
+        return 0; // Return a default value in case of error
     }
   }, []);
 
   const connectWallet = useCallback(async (type: WalletType, { onlyIfTrusted = false } = {}) => {
     setLoading(true);
     try {
-        let address: string | null = null;
-        if (type === 'solana') {
-            const provider = getPhantomProvider();
-            if (!provider) throw new Error('Phantom wallet is not installed.');
-            const resp = onlyIfTrusted ? await provider.connect({ onlyIfTrusted: true }) : await provider.connect();
-            address = resp?.publicKey?.toString() ?? null;
-        } else if (type === 'ethereum') {
-            const provider = getMetamaskProvider();
-            if (!provider) throw new Error('MetaMask wallet is not installed.');
-            const accounts = await provider.request({ method: 'eth_requestAccounts' });
-            if (accounts.length > 0) {
-              address = accounts[0];
-            }
-        }
-        
-        if (address) {
-          await signInWithFirebase(address);
-          await fetchUsdcBalance(address, type);
-          setWeb3UserAddress(address);
-          setWalletType(type);
-          localStorage.setItem('walletType', type);
-          localStorage.setItem('walletAddress', address);
-        } else if (!onlyIfTrusted) {
-            await cleanUpState();
-        }
+      let provider;
+      let address: string | null = null;
+      
+      if (type === 'solana') {
+        provider = getPhantomProvider();
+        if (!provider) throw new Error('Phantom wallet is not installed.');
+        const resp = await provider.connect({ onlyIfTrusted });
+        address = resp.publicKey.toString();
+      } else if (type === 'ethereum') {
+        provider = getMetamaskProvider();
+        if (!provider) throw new Error('MetaMask wallet is not installed.');
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        address = accounts[0];
+      }
+
+      if (address) {
+        const firebaseUser = await signInWithFirebase(address);
+        const balance = await fetchUsdcBalance(address, type);
+
+        setUser(firebaseUser);
+        setWeb3UserAddress(address);
+        setWalletType(type);
+        setUsdcBalance(balance);
+
+        localStorage.setItem('walletType', type);
+        localStorage.setItem('walletAddress', address);
+      }
     } catch (error: any) {
       console.error(`Failed to connect to ${type} wallet:`, error.message);
       await cleanUpState();
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-  }, [cleanUpState, fetchUsdcBalance]);
+  }, [cleanUpState, signInWithFirebase, fetchUsdcBalance]);
 
   const signOut = useCallback(async () => {
     setLoading(true);
-    const connectedWalletType = localStorage.getItem('walletType');
-    if (connectedWalletType === 'solana') {
-        const provider = getPhantomProvider();
-        if (provider?.isConnected) {
-            try {
-              await provider.disconnect();
-            } catch (e) {
-              console.error("Error disconnecting from Phantom:", e);
-            }
-        }
+    const type = walletType;
+    if (type === 'solana') {
+      const provider = getPhantomProvider();
+      if (provider?.isConnected) {
+        await provider.disconnect();
+      }
     }
     await cleanUpState();
     setLoading(false);
-  }, [cleanUpState]);
-  
+  }, [walletType, cleanUpState]);
+
   useEffect(() => {
     const autoConnect = async () => {
-        const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
-        if (savedWalletType) {
-            await connectWallet(savedWalletType, { onlyIfTrusted: true });
-        } else {
-            setLoading(false);
-        }
+      const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
+      if (savedWalletType) {
+        console.log(`Attempting to auto-connect with ${savedWalletType}`);
+        await connectWallet(savedWalletType, { onlyIfTrusted: true });
+      } else {
+        setLoading(false);
+      }
     };
     autoConnect();
   }, [connectWallet]);
-
+  
+  // Event listeners for wallet changes
   useEffect(() => {
-    if (!isFirebaseEnabled || !app) {
-        setLoading(false);
-        return;
-    }
-    const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        setUser(firebaseUser);
-        if (!firebaseUser && web3UserAddress) {
-            signOut();
+    const metamaskProvider = getMetamaskProvider();
+    if (walletType === 'ethereum' && metamaskProvider?.on) {
+      const handleAccountsChanged = (accounts: string[]) => {
+        if (accounts.length === 0 || accounts[0] !== web3UserAddress) {
+          console.log('MetaMask account changed or disconnected.');
+          signOut();
         }
-    });
-    return () => unsubscribe();
-  }, [web3UserAddress, signOut]);
+      };
+      metamaskProvider.on('accountsChanged', handleAccountsChanged);
+      return () => {
+        metamaskProvider.removeListener?.('accountsChanged', handleAccountsChanged);
+      };
+    }
 
-  useEffect(() => {
-      const ethProvider = getMetamaskProvider();
-      if (ethProvider?.on) {
-          const handleAccountsChanged = (accounts: string[]) => {
-              if (accounts.length === 0) {
-                  signOut();
-              } else if (web3UserAddress && accounts[0] !== web3UserAddress) {
-                  signOut().then(() => connectWallet('ethereum'));
-              }
-          };
-          
-          const handleChainChanged = () => {
+    const phantomProvider = getPhantomProvider();
+    if (walletType === 'solana' && phantomProvider?.on) {
+       const handleAccountChanged = (publicKey: PublicKey | null) => {
+          if (!publicKey || publicKey.toString() !== web3UserAddress) {
+              console.log('Phantom account changed or disconnected.');
               signOut();
-          };
-
-          ethProvider.on('accountsChanged', handleAccountsChanged);
-          ethProvider.on('chainChanged', handleChainChanged);
-
-          return () => {
-              if (ethProvider.removeListener) {
-                  ethProvider.removeListener('accountsChanged', handleAccountsChanged);
-                  ethProvider.removeListener('chainChanged', handleChainChanged);
-              }
-          };
-      }
-  }, [connectWallet, signOut, web3UserAddress]);
-
+          }
+       };
+       phantomProvider.on('accountChanged', handleAccountChanged);
+       return () => {
+          phantomProvider.removeListener?.('accountChanged', handleAccountChanged);
+       }
+    }
+  }, [walletType, web3UserAddress, signOut]);
 
   return (
     <AuthContext.Provider value={{ user, web3UserAddress, walletType, usdcBalance, loading, connectWallet, signOut }}>
@@ -270,6 +228,8 @@ declare global {
       connect: (options?: { onlyIfTrusted: boolean }) => Promise<{ publicKey: PublicKey }>;
       disconnect: () => Promise<void>;
       isConnected: boolean;
+      on?: (event: string, handler: (...args: any[]) => void) => void;
+      removeListener?: (event: string, handler: (...args: any[]) => void) => void;
     };
     ethereum?: {
       isMetaMask?: boolean;
@@ -279,3 +239,5 @@ declare global {
     };
   }
 }
+
+    
