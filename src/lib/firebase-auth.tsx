@@ -10,7 +10,9 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 
 
 // USDC Contract Address on Solana Mainnet
-const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const USDC_MINT_ADDRESS_SOLANA = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+// Using Sepolia testnet for Ethereum development
+const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586"; 
 
 // Pool of public RPC endpoints to increase reliability
 const SOLANA_RPC_ENDPOINTS = [
@@ -62,35 +64,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUsdcBalance = useCallback(async (address: string) => {
-    const connection = await getWorkingSolanaConnection();
-    if (!connection) {
-        setUsdcBalance(0);
-        return;
-    }
-
-    try {
-        const publicKey = new PublicKey(address);
-        
-        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
-            mint: USDC_MINT_ADDRESS,
-        });
-
-        if (tokenAccounts.value.length > 0) {
-            const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
-            setUsdcBalance(tokenAccountInfo.tokenAmount.uiAmount);
-        } else {
-            setUsdcBalance(0);
+  const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
+    setUsdcBalance(0); // Reset balance
+    if (type === 'solana') {
+        const connection = await getWorkingSolanaConnection();
+        if (!connection) {
+            return;
         }
-    } catch (error) {
-        console.error("Failed to fetch Solana balance even with a working connection:", error);
-        setUsdcBalance(0);
+        try {
+            const publicKey = new PublicKey(address);
+            const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
+                mint: USDC_MINT_ADDRESS_SOLANA,
+            });
+
+            if (tokenAccounts.value.length > 0) {
+                const tokenAccountInfo = tokenAccounts.value[0].account.data.parsed.info;
+                setUsdcBalance(tokenAccountInfo.tokenAmount.uiAmount);
+            }
+        } catch (error) {
+            console.error("Failed to fetch Solana balance:", error);
+        }
+    } else if (type === 'ethereum') {
+        if (!window.ethereum) return;
+        try {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const contract = new ethers.Contract(
+                USDC_CONTRACT_ADDRESS_ETHEREUM,
+                ['function balanceOf(address) view returns (uint256)'],
+                provider
+            );
+            const balance = await contract.balanceOf(address);
+            setUsdcBalance(parseFloat(ethers.formatUnits(balance, 6))); // USDC has 6 decimals
+        } catch (error) {
+            console.error("Failed to fetch Ethereum balance:", error);
+        }
     }
   }, []);
 
   useEffect(() => {
-    if (web3UserAddress && walletType === 'solana') {
-      fetchUsdcBalance(web3UserAddress);
+    if (web3UserAddress && walletType) {
+      fetchUsdcBalance(web3UserAddress, walletType);
     } else {
       setUsdcBalance(null);
     }
