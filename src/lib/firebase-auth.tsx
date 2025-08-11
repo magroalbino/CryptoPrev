@@ -80,6 +80,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const cleanUpState = useCallback(async () => {
+    setWeb3UserAddress(null);
+    setWalletType(null);
+    setUsdcBalance(null);
+    localStorage.removeItem('walletType');
+    localStorage.removeItem('walletAddress');
+    
+    if (isFirebaseEnabled && app) {
+      const auth = getAuth(app);
+      if (auth.currentUser) {
+        await firebaseSignOut(auth);
+      }
+    }
+  }, []);
+
   // Signs in with Firebase using the wallet address by calling a Firebase Function
   const signInWithFirebase = async (address: string) => {
     if (!isFirebaseEnabled || !app) return;
@@ -98,41 +113,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     } catch (error) {
       console.error('Firebase custom sign-in failed:', error);
-      // Re-throw to be caught by the calling function
       throw error;
     }
   };
   
-  const cleanUpState = useCallback(async () => {
-    console.log("Cleaning up state...");
-    setWeb3UserAddress(null);
-    setWalletType(null);
-    setUsdcBalance(null);
-    localStorage.removeItem('walletType');
-    localStorage.removeItem('walletAddress');
-    
-    if (isFirebaseEnabled && app) {
-      const auth = getAuth(app);
-      if (auth.currentUser) {
-        await firebaseSignOut(auth);
-      }
-    }
-  }, []);
-
-  const signOut = useCallback(async () => {
-      const connectedWalletType = localStorage.getItem('walletType');
-      if (connectedWalletType === 'solana') {
-          const provider = getPhantomProvider();
-          if (provider?.isConnected) {
-              await provider.disconnect();
-          }
-      }
-      await cleanUpState();
-  }, [cleanUpState]);
-
-
   const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
-    setUsdcBalance(null); // Reset balance
     try {
       if (type === 'solana') {
           const connection = await getWorkingSolanaConnection();
@@ -155,11 +140,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               ethersProvider
           );
           const balance = await contract.balanceOf(address);
-          setUsdcBalance(parseFloat(ethers.formatUnits(balance, 6))); // USDC has 6 decimals
+          setUsdcBalance(parseFloat(ethers.formatUnits(balance, 6)));
       }
     } catch (error) {
        console.error(`Failed to fetch ${type} balance:`, error);
-       setUsdcBalance(0); // Default to 0 on error
+       setUsdcBalance(0);
     }
   }, []);
 
@@ -175,7 +160,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else if (type === 'ethereum') {
             const provider = getMetamaskProvider();
             if (!provider) throw new Error('MetaMask wallet is not installed.');
-            const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
+            const accounts = await provider.request({ method: 'eth_requestAccounts' });
             if (accounts.length > 0) {
               address = accounts[0];
             }
@@ -189,30 +174,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await signInWithFirebase(address);
           await fetchUsdcBalance(address, type);
         } else if (!onlyIfTrusted) {
-            // If it was a manual connection attempt that returned no address, clean up.
             await cleanUpState();
         }
     } catch (error: any) {
       console.error(`Failed to connect to ${type} wallet:`, error);
-      await cleanUpState(); // Ensure cleanup on any failure
+      await cleanUpState();
     } finally {
         setLoading(false);
     }
-  }, [signInWithFirebase, fetchUsdcBalance, cleanUpState]);
+  }, [cleanUpState, fetchUsdcBalance]);
+
+  const signOut = useCallback(async () => {
+    const connectedWalletType = localStorage.getItem('walletType');
+    if (connectedWalletType === 'solana') {
+        const provider = getPhantomProvider();
+        if (provider?.isConnected) {
+            await provider.disconnect();
+        }
+    }
+    await cleanUpState();
+  }, [cleanUpState]);
   
   // Try to auto-connect on page load
   useEffect(() => {
     const autoConnect = async () => {
         const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
         if (savedWalletType) {
-            console.log(`Attempting to auto-connect to ${savedWalletType}...`);
             await connectWallet(savedWalletType, { onlyIfTrusted: true });
         } else {
             setLoading(false);
         }
     };
     autoConnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Firebase auth state listener
@@ -225,12 +219,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         setUser(firebaseUser);
         if (!firebaseUser) {
-           // If user signs out from firebase, ensure our state is clean
            const savedWalletType = localStorage.getItem('walletType');
-           if (!savedWalletType) { // only clean up if not in a wallet connection flow
+           if (!savedWalletType) {
              cleanUpState();
            }
         }
+        setLoading(false);
     });
     return () => unsubscribe();
   }, [cleanUpState]);
@@ -240,18 +234,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const ethProvider = getMetamaskProvider();
       if (ethProvider?.on) {
           const handleAccountsChanged = (accounts: string[]) => {
-              console.log("MetaMask account changed.");
               if (accounts.length === 0) {
                   signOut();
               } else {
-                  // Reconnect with new account
                   connectWallet('ethereum');
               }
           };
           
           const handleChainChanged = () => {
-              console.log("MetaMask chain changed, disconnecting for safety.");
-              signOut(); // Disconnect to force user to reconnect on the correct chain.
+              signOut();
           };
 
           ethProvider.on('accountsChanged', handleAccountsChanged);
