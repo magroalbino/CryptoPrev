@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const USDC_MINT_ADDRESS_SOLANA = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586"; 
+const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586";
 
 const SOLANA_RPC_ENDPOINTS = [
     'https://rpc.ankr.com/solana',
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setWeb3UserAddress(null);
     setWalletType(null);
     setUsdcBalance(null);
-    setUser(null); // Clear Firebase user
+    setUser(null);
     localStorage.removeItem('walletType');
     localStorage.removeItem('walletAddress');
     
@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(userCredential.user);
     } catch (error) {
       console.error('Firebase custom sign-in failed:', error);
-      await cleanUpState(); // Clean up on failure
+      await cleanUpState();
       throw error;
     }
   };
@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
        console.error(`Failed to fetch ${type} balance:`, error);
-       setUsdcBalance(0); // Default to 0 on error
+       setUsdcBalance(0);
     }
   }, []);
 
@@ -152,7 +152,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (type === 'solana') {
             const provider = getPhantomProvider();
             if (!provider) throw new Error('Phantom wallet is not installed.');
-            // For auto-connection, connect silently. For manual, show popup.
             const resp = onlyIfTrusted ? await provider.connect({ onlyIfTrusted: true }) : await provider.connect();
             address = resp?.publicKey?.toString() ?? null;
         } else if (type === 'ethereum') {
@@ -165,22 +164,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         
         if (address) {
+          await signInWithFirebase(address);
+          await fetchUsdcBalance(address, type);
           setWeb3UserAddress(address);
           setWalletType(type);
           localStorage.setItem('walletType', type);
           localStorage.setItem('walletAddress', address);
         } else if (!onlyIfTrusted) {
-            // If manual connection fails to produce an address, clean up.
             await cleanUpState();
         }
     } catch (error: any) {
       console.error(`Failed to connect to ${type} wallet:`, error.message);
       await cleanUpState();
     } finally {
-        // Defer setting loading to false until after Firebase auth state is resolved
-        // This is handled by the useEffect hooks below
+        setLoading(false);
     }
-  }, [cleanUpState]);
+  }, [cleanUpState, fetchUsdcBalance]);
 
   const signOut = useCallback(async () => {
     setLoading(true);
@@ -199,40 +198,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, [cleanUpState]);
   
-  // Effect for auto-connecting on page load
   useEffect(() => {
     const autoConnect = async () => {
         const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
         if (savedWalletType) {
             await connectWallet(savedWalletType, { onlyIfTrusted: true });
         } else {
-            setLoading(false); // No saved wallet, stop loading.
+            setLoading(false);
         }
     };
     autoConnect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [connectWallet]);
 
-  // Effect to handle Firebase sign-in and balance fetching *after* a wallet is connected
-  useEffect(() => {
-      if (web3UserAddress && walletType) {
-          const processLogin = async () => {
-              try {
-                  setLoading(true);
-                  await signInWithFirebase(web3UserAddress);
-                  await fetchUsdcBalance(web3UserAddress, walletType);
-              } catch (e) {
-                  console.error("Error during login process:", e);
-                  await cleanUpState();
-              } finally {
-                  setLoading(false);
-              }
-          };
-          processLogin();
-      }
-  }, [web3UserAddress, walletType, fetchUsdcBalance, cleanUpState]);
-
-  // Firebase auth state listener (for external changes, e.g., token expiry)
   useEffect(() => {
     if (!isFirebaseEnabled || !app) {
         setLoading(false);
@@ -240,18 +217,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        if (!firebaseUser && user) {
-            // User was signed in but now is not. Clean up state.
+        setUser(firebaseUser);
+        if (!firebaseUser && web3UserAddress) {
             signOut();
-        } else {
-            setUser(firebaseUser);
         }
     });
     return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [app, isFirebaseEnabled, user]);
+  }, [app, isFirebaseEnabled, web3UserAddress, signOut]);
 
-  // Wallet event listeners
   useEffect(() => {
       const ethProvider = getMetamaskProvider();
       if (ethProvider?.on) {
