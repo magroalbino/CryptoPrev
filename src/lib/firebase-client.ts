@@ -1,8 +1,6 @@
 // src/lib/firebase-client.ts
-'use client';
-
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,9 +11,23 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const isFirebaseEnabled = !!firebaseConfig.apiKey;
+// Check if all required environment variables are set.
+const isFirebaseEnabled =
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId;
 
-const app = isFirebaseEnabled && !getApps().length ? initializeApp(firebaseConfig) : (isFirebaseEnabled ? getApp() : null);
-const auth = app ? getAuth(app) : null;
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+
+if (isFirebaseEnabled) {
+  // Initialize Firebase
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+} else {
+  console.warn(
+    'Firebase is not configured. Please check your NEXT_PUBLIC_FIREBASE environment variables.'
+  );
+}
 
 export { app, auth, isFirebaseEnabled };

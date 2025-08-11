@@ -3,13 +3,13 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { getAuth, onAuthStateChanged, User, signOut as firebaseSignOut, signInWithCustomToken } from 'firebase/auth';
-import { app, isFirebaseEnabled } from './firebase-client';
+import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const USDC_MINT_ADDRESS_SOLANA = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586";
+const USDC_CONTRACT_ADDRESS_ETHEREUM = "0x94a9D9AC8a22534E3FaCa4E4343A41133453d586"; // Sepolia USDC
 
 const SOLANA_RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=01a7471c-13a5-4871-a472-a4421b593633';
 
@@ -60,9 +60,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const cleanUpState = useCallback(async () => {
-    const auth = getAuth(app!);
-    if (auth.currentUser) {
-      await firebaseSignOut(auth);
+    if (firebaseAuth?.currentUser) {
+      await firebaseSignOut(firebaseAuth);
     }
     setUser(null);
     setWeb3UserAddress(null);
@@ -84,13 +83,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const result = await createCustomToken({ address });
       const token = (result.data as { token: string }).token;
       
-      const auth = getAuth(app);
-      const userCredential = await signInWithCustomToken(auth, token);
+      const userCredential = await signInWithCustomToken(firebaseAuth!, token);
       return userCredential.user;
     } catch (error: any) {
       console.error('Firebase sign-in failed:', error.message || error);
       await cleanUpState();
-      throw new Error('Failed to sign in with Firebase.');
+      // Re-throw with a more specific message to be caught by connectWallet
+      throw new Error(`Firebase sign-in failed: ${error.message}`);
     }
   }, [cleanUpState]);
   
@@ -131,7 +130,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else if (type === 'ethereum') {
         provider = getMetamaskProvider();
         if (!provider) throw new Error('MetaMask wallet is not installed.');
-        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        // For trusted connections, we can't pop-up MetaMask, so we check existing accounts
+        const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
+        if (accounts.length === 0 && onlyIfTrusted) {
+            // It's a trusted call but no account is connected/returned, so we stop here.
+            setLoading(false);
+            return;
+        }
         address = accounts[0];
       }
 
@@ -158,14 +163,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = useCallback(async () => {
     setLoading(true);
     const type = walletType;
-    if (type === 'solana') {
-      const provider = getPhantomProvider();
-      if (provider?.isConnected) {
-        await provider.disconnect();
-      }
+    try {
+        if (type === 'solana') {
+          const provider = getPhantomProvider();
+          if (provider?.isConnected) {
+            await provider.disconnect();
+          }
+        }
+        // MetaMask doesn't have a programmatic disconnect method that severs the connection
+        // from the dApp side. The user must do it from the extension.
+    } catch (error) {
+        console.error("Error during wallet disconnect:", error);
+    } finally {
+        await cleanUpState();
+        setLoading(false);
     }
-    await cleanUpState();
-    setLoading(false);
   }, [walletType, cleanUpState]);
 
   useEffect(() => {
@@ -178,8 +190,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     };
-    autoConnect();
-  }, [connectWallet]);
+    if (isFirebaseEnabled) {
+        autoConnect();
+    } else {
+        setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   // Event listeners for wallet changes
   useEffect(() => {
