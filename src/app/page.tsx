@@ -121,7 +121,7 @@ export default function Dashboard() {
     });
   };
   
-  if (loading || isDataLoading) {
+  if (loading || (isDataLoading && user)) {
     return (
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between space-y-2">
