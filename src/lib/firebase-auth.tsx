@@ -6,7 +6,7 @@ import { User, signInWithCustomToken } from 'firebase/auth';
 import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFunctions, httpsCallable, HttpsCallable } from 'firebase/functions';
 import { initializeUser } from '@/app/dashboard/actions';
 
 
@@ -67,6 +67,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const cleanUpState = useCallback(() => {
+    setUser(null);
+    setWeb3UserAddress(null);
+    setWalletType(null);
+    setUsdcBalance(null);
+    try {
+      localStorage.removeItem('walletType');
+      localStorage.removeItem('walletAddress');
+    } catch (error) {
+      console.error('❌ Failed to clear localStorage:', error);
+    }
+  }, []);
+  
   // --- Sign Out and State Cleanup ---
   const signOut = useCallback(async () => {
     console.log('🔌 Disconnecting wallet...');
@@ -81,21 +94,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try { await firebaseAuth.signOut(); } catch (e) { console.error('Firebase sign out error:', e); }
     }
 
-    setUser(null);
-    setWeb3UserAddress(null);
-    setWalletType(null);
-    setUsdcBalance(null);
-    
-    try {
-      localStorage.removeItem('walletType');
-      localStorage.removeItem('walletAddress');
-    } catch (error) {
-      console.error('❌ Failed to clear localStorage:', error);
-    }
-
+    cleanUpState();
     setLoading(false);
     console.log('✅ Disconnect complete.');
-  }, []);
+  }, [cleanUpState]);
 
   // --- Connect Wallet (Main Logic) ---
   const connectWallet = useCallback(async (type: WalletType) => {
@@ -103,7 +105,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let address: string | null = null;
     
     try {
-      // Step 1: Connect to the wallet provider
       if (type === 'solana') {
         const provider = getPhantomProvider();
         if (!provider) throw new Error('Phantom wallet is not installed.');
@@ -119,81 +120,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!address) throw new Error('Could not get wallet address.');
       console.log(`✅ Wallet connected: ${address}`);
-
-      // Step 2: Sign in with Firebase (if enabled)
-      if (isFirebaseEnabled && app && firebaseAuth) {
-          const functions = getFunctions(app);
-          const createCustomToken = httpsCallable(functions, 'createCustomToken');
-          const result = await createCustomToken({ address }) as any;
-          
-          if (!result?.data?.token) {
-            throw new Error('Failed to retrieve custom token from server.');
-          }
-          
-          const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
-          setUser(userCredential.user);
-          console.log(`✅ Firebase signed in: ${userCredential.user.uid}`);
-
-          // Step 3: Ensure user document exists in Firestore
-          await initializeUser(userCredential.user.uid);
-          console.log(`✅ User document initialized for: ${userCredential.user.uid}`);
-      }
-
-      // Step 4: Fetch Balance (with fallback)
-      let balance = 0;
-      try {
-          if (type === 'solana') {
-            const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
-            const publicKey = new PublicKey(address);
-            const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: USDC_MINT_ADDRESS_SOLANA });
-            balance = tokenAccounts?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0;
-          } else if (type === 'ethereum') {
-            const provider = new ethers.JsonRpcProvider('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
-            const contract = new ethers.Contract(USDC_CONTRACT_ADDRESS_ETHEREUM, ['function balanceOf(address) view returns (uint256)'], provider);
-            const balanceResult = await contract.balanceOf(address);
-            balance = parseFloat(ethers.formatUnits(balanceResult, 6));
-          }
-           setUsdcBalance(balance);
-           console.log(`✅ Balance fetched: ${balance} USDC`);
-      } catch(balanceError) {
-         console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
-         setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
-      }
-
-      // Final Step: Set state and local storage
+      
       setWeb3UserAddress(address);
       setWalletType(type);
       localStorage.setItem('walletType', type);
       localStorage.setItem('walletAddress', address);
       
     } catch (error: any) {
-      console.error('❌ Connection failed:', error.message);
-      await signOut(); // Use the main signOut function for cleanup
+      console.error('❌ Wallet connection failed:', error.message);
+      await signOut();
     } finally {
       setLoading(false);
     }
   }, [signOut]);
-
-  // --- Effect for Auto-connecting on page load ---
+  
+  // --- Effect for Auto-connecting and Post-Connection Logic ---
   useEffect(() => {
-    const autoConnect = async () => {
-        try {
-            const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
-            if (savedWalletType) {
-                console.log(`🔄 Found saved wallet, attempting to auto-connect to ${savedWalletType}...`);
-                await connectWallet(savedWalletType);
-            }
-        } catch (error) {
-            console.warn('Auto-connect check failed, clearing state.');
-            await signOut();
-        } finally {
-            setLoading(false);
+    const handleConnectionLogic = async (address: string, type: WalletType) => {
+      if (isFirebaseEnabled && app && firebaseAuth && (!firebaseAuth.currentUser || firebaseAuth.currentUser.uid !== address)) {
+          try {
+              const functions = getFunctions(app);
+              const createCustomToken = httpsCallable(functions, 'createCustomToken');
+              const result = await createCustomToken({ address }) as any;
+              
+              if (!result?.data?.token) {
+                throw new Error('Failed to retrieve custom token from server.');
+              }
+              
+              const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
+              setUser(userCredential.user);
+              console.log(`✅ Firebase signed in: ${userCredential.user.uid}`);
+              await initializeUser(userCredential.user.uid);
+              console.log(`✅ User document initialized for: ${userCredential.user.uid}`);
+          } catch (error: any) {
+            console.error(`Firebase sign-in failed: ${error.message}`);
+            // Don't kill the whole session, just note the failure.
+            setUser(null);
+          }
+      }
+
+      try {
+        let balance = 0;
+        if (type === 'solana') {
+          const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+          const publicKey = new PublicKey(address);
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: USDC_MINT_ADDRESS_SOLANA });
+          balance = tokenAccounts?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0;
+        } else if (type === 'ethereum') {
+          const provider = new ethers.JsonRpcProvider('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
+          const contract = new ethers.Contract(USDC_CONTRACT_ADDRESS_ETHEREUM, ['function balanceOf(address) view returns (uint256)'], provider);
+          const balanceResult = await contract.balanceOf(address);
+          balance = parseFloat(ethers.formatUnits(balanceResult, 6));
         }
-    };
+        setUsdcBalance(balance);
+        console.log(`✅ Balance fetched: ${balance} USDC`);
+      } catch(balanceError) {
+         console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
+         setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
+      }
+    }
+
+    const autoConnect = async () => {
+        setLoading(true);
+        const savedAddress = localStorage.getItem('walletAddress');
+        const savedType = localStorage.getItem('walletType') as WalletType | null;
+
+        if(savedAddress && savedType){
+            console.log(`🔄 Found saved wallet, restoring session for ${savedAddress}`);
+            setWeb3UserAddress(savedAddress);
+            setWalletType(savedType);
+        }
+        setLoading(false);
+    }
     
-    autoConnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on mount
+    if (web3UserAddress && walletType) {
+        handleConnectionLogic(web3UserAddress, walletType);
+    } else {
+        autoConnect();
+    }
+  }, [web3UserAddress, walletType]);
 
   // --- Wallet Event Listeners ---
   useEffect(() => {
@@ -240,3 +245,5 @@ declare global {
     ethereum?: any;
   }
 }
+
+    
