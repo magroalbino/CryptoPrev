@@ -115,7 +115,7 @@ export default function HealthPlanDashboard() {
             </CardHeader>
             <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {MOCK_SERVICES.map((service) => (
-                    <Card key={service.id} className="flex flex-col">
+                    <Card key={service.id} className="flex flex-col brutalist-shadow">
                         <CardHeader className="items-center text-center">
                             <div className="p-3 bg-secondary/50 border-2 border-foreground rounded-full mb-2">
                                 {service.icon}

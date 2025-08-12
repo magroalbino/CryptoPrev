@@ -271,7 +271,7 @@ export default function PlannerForm() {
                     </div>
                 </div>
                 
-                <Card>
+                <Card className="brutalist-shadow">
                     <CardHeader>
                         <CardTitle>{t('planner.results.growthChart.title')}</CardTitle>
                         <CardDescription>{t('planner.results.growthChart.description')}</CardDescription>

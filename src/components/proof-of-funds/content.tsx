@@ -112,25 +112,25 @@ export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps)
           </CardContent>
         </Card>
       </div>
-      <Card className="bg-card">
+      <Card className="bg-card brutalist-shadow">
         <CardHeader>
           <CardTitle>{t('proofOfFunds.onChain.title')}</CardTitle>
           <CardDescription>{t('proofOfFunds.onChain.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 border rounded-md font-mono text-sm bg-secondary/30">
+          <div className="p-4 border-2 border-foreground rounded-md font-mono text-sm bg-secondary/30">
             <p className="font-bold text-primary">Main Treasury Wallet (Ethereum):</p>
             <a href="#" className="text-accent hover:underline break-all">0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B</a>
           </div>
-          <div className="p-4 border rounded-md font-mono text-sm bg-secondary/30">
+          <div className="p-4 border-2 border-foreground rounded-md font-mono text-sm bg-secondary/30">
             <p className="font-bold text-primary">Yield Farming Vault (Solana):</p>
             <a href="#" className="text-accent hover:underline break-all">So11111111111111111111111111111111111111112</a>
           </div>
-           <div className="p-4 border rounded-md font-mono text-sm bg-secondary/30">
+           <div className="p-4 border-2 border-foreground rounded-md font-mono text-sm bg-secondary/30">
             <p className="font-bold text-primary">BNB Staking Wallet (Binance):</p>
             <a href="#" className="text-accent hover:underline break-all">bnb136ns6lfw4s5gabcghpr48v2xp9v90nff9f5mp7</a>
           </div>
-          <div className="p-4 border rounded-md font-mono text-sm bg-secondary/30">
+          <div className="p-4 border-2 border-foreground rounded-md font-mono text-sm bg-secondary/30">
             <p className="font-bold text-primary">Bitcoin Reserve Wallet (BTC):</p>
             <a href="#" className="text-accent hover:underline break-all">bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq</a>
           </div>

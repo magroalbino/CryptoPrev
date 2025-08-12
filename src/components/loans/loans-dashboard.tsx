@@ -200,7 +200,7 @@ export default function LoansDashboard() {
                         </div>
                     </div>
                     <Separator />
-                    <div className="space-y-4 rounded-lg bg-secondary/30 p-4">
+                    <div className="space-y-4 rounded-lg bg-secondary/30 p-4 border-2 border-dashed border-foreground/30">
                         <h4 className="font-bold text-md flex items-center gap-2">
                             <Calculator className="text-accent" /> {t('loans.simulator.title')}
                         </h4>
@@ -224,7 +224,9 @@ export default function LoansDashboard() {
                         className="w-full"
                         size="lg"
                     >
-                        {web3UserAddress ? <Landmark /> : <Wallet />}
+                        <div className="mr-2">
+                            {web3UserAddress ? <Landmark /> : <Wallet />}
+                        </div>
                         {web3UserAddress ? t('loans.request.button') : t('header.connectWallet')}
                     </Button>
                 </CardContent>

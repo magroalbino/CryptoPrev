@@ -135,11 +135,11 @@ export default function OracleForm() {
                         name={field.name}
                       >
                         <FormControl>
-                          <SelectTrigger className="brutalist-border">
+                          <SelectTrigger className="border-2">
                             <SelectValue placeholder={t('oracle.form.stablecoin.placeholder')} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent className="brutalist-border">
+                        <SelectContent className="border-2">
                           <SelectItem value="USDC">USDC</SelectItem>
                           <SelectItem value="USDT">USDT</SelectItem>
                           <SelectItem value="DAI">DAI</SelectItem>
@@ -157,7 +157,7 @@ export default function OracleForm() {
                     <FormItem>
                       <FormLabel className="font-bold">{t('oracle.form.amount.label')}</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g. 1000" {...field} className="brutalist-border"/>
+                        <Input type="number" placeholder="e.g. 1000" {...field} className="border-2"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
