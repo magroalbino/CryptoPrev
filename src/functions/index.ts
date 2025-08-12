@@ -30,10 +30,19 @@ exports.createCustomToken = onCall(async (request) => {
       const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
       if (!serviceAccountKey) {
         logger.error("CRITICAL: FIREBASE_SERVICE_ACCOUNT_KEY is not set in the function's environment variables.");
-        throw new HttpsError('internal', 'The server is not configured correctly to handle authentication.');
+        throw new HttpsError('internal', 'The server is not configured correctly to handle authentication. Service account key is missing.');
       }
-      // The key is often Base64 encoded in CI/CD environments
-      const serviceAccount = JSON.parse(Buffer.from(serviceAccountKey, 'base64').toString('utf-8'));
+      
+      let serviceAccount;
+      try {
+        // The key is often Base64 encoded in CI/CD environments
+        const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+        serviceAccount = JSON.parse(decodedKey);
+      } catch (e) {
+        logger.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Ensure it is valid JSON and correctly Base64 encoded.", e);
+        throw new HttpsError('internal', 'The server is not configured correctly. Service account key is malformed.');
+      }
+      
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       });
