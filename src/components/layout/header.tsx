@@ -27,6 +27,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Slider } from '../ui/slider';
 
 const SolanaLogo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
@@ -83,8 +85,8 @@ export default function AppHeader() {
 
       {mounted && (
         <>
-            <nav className="hidden w-full items-center justify-center gap-6 md:flex">
-                <div className="flex items-center gap-1 rounded-sm border border-border bg-secondary/50 p-1">
+            <nav className="hidden w-full items-center md:flex">
+                <div className="flex w-full items-center justify-center gap-1 rounded-sm border border-border bg-secondary/50 p-1">
                 {navItems.map((item) => (
                     <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0'>
                         <Link
