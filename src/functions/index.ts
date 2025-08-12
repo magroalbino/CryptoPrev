@@ -30,7 +30,7 @@ exports.createCustomToken = onCall(async (request) => {
       const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
       if (!serviceAccountKey) {
         logger.error("CRITICAL: FIREBASE_SERVICE_ACCOUNT_KEY is not set in the function's environment variables.");
-        throw new HttpsError('internal', 'The server is not configured correctly to handle authentication. Service account key is missing.');
+        throw new HttpsError('internal', 'The server is not configured correctly. Service account key is missing.');
       }
       
       let serviceAccount;
