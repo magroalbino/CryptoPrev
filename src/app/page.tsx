@@ -70,16 +70,14 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // The user's UID in Firebase IS their web3 address.
-    // We can trigger data loading as soon as we have the address,
-    // without waiting for the full Firebase user object.
+    // This is the single source of truth for the dashboard's state.
+    // If we have a user address, we attempt to load data.
+    // If we don't, we explicitly clear all data and stop loading.
     if (web3UserAddress) {
       loadDashboardData(web3UserAddress);
     } else {
-      // If there's no address, we are truly disconnected.
-      // Reset all state.
-      setIsDataLoading(false);
       setDashboardData(null);
+      setIsDataLoading(false);
     }
   }, [web3UserAddress]);
 
