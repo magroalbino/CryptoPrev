@@ -8,15 +8,15 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onCall, HttpsError } from "firebase-functions/v2/onCall";
 import * as logger from "firebase-functions/logger";
 import admin from 'firebase-admin';
 
 // This function is self-contained. It initializes the admin SDK internally
-// to ensure it has the correct credentials for each invocation.
+// to ensure it has the correct credentials for each invocation and handles errors gracefully.
 exports.createCustomToken = onCall(async (request) => {
   const address = request.data.address;
-  if (!address || typeof address !== "string" || address.length === 0) {
+  if (!address || typeof address !== 'string' || address.length === 0) {
     logger.warn("Request to createCustomToken missing or has an invalid 'address' parameter.");
     throw new HttpsError(
       "invalid-argument",
@@ -25,13 +25,14 @@ exports.createCustomToken = onCall(async (request) => {
   }
 
   try {
-    // Initialize admin SDK if it hasn't been already
+    // Initialize admin SDK if it hasn't been already. This makes the function self-contained.
     if (!admin.apps.length) {
       const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
       if (!serviceAccountKey) {
         logger.error("CRITICAL: FIREBASE_SERVICE_ACCOUNT_KEY is not set in the function's environment variables.");
         throw new HttpsError('internal', 'The server is not configured correctly to handle authentication.');
       }
+      // The key is often Base64 encoded in CI/CD environments
       const serviceAccount = JSON.parse(Buffer.from(serviceAccountKey, 'base64').toString('utf-8'));
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),

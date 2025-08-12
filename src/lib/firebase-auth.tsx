@@ -72,45 +72,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('🔌 Disconnecting wallet...');
     setLoading(true);
     
-    // Disconnect wallet provider if possible
     const provider = getPhantomProvider();
     if (provider?.isConnected) {
-        try {
-            await provider.disconnect();
-        } catch (error) {
-            console.error('Error disconnecting Phantom:', error);
-        }
+        try { await provider.disconnect(); } catch (e) { console.error('Phantom disconnect error:', e); }
     }
     
-    // Sign out from Firebase
     if (isFirebaseEnabled && firebaseAuth.currentUser) {
-      try {
-        await firebaseAuth.signOut();
-      } catch (error) {
-        console.error('Error signing out from Firebase:', error);
-      }
+      try { await firebaseAuth.signOut(); } catch (e) { console.error('Firebase sign out error:', e); }
     }
 
-    // Clear state and local storage
     setUser(null);
     setWeb3UserAddress(null);
     setWalletType(null);
     setUsdcBalance(null);
+    
     try {
       localStorage.removeItem('walletType');
       localStorage.removeItem('walletAddress');
     } catch (error) {
       console.error('❌ Failed to clear localStorage:', error);
     }
+
     setLoading(false);
     console.log('✅ Disconnect complete.');
   }, []);
 
-  // --- Step 1: Connect to Wallet (Phantom or MetaMask) ---
+  // --- Connect Wallet (Main Logic) ---
   const connectWallet = useCallback(async (type: WalletType) => {
     setLoading(true);
     let address: string | null = null;
+    
     try {
+      // Step 1: Connect to the wallet provider
       if (type === 'solana') {
         const provider = getPhantomProvider();
         if (!provider) throw new Error('Phantom wallet is not installed.');
@@ -120,16 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const provider = getMetamaskProvider();
         if (!provider) throw new Error('MetaMask wallet is not installed.');
         const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        if (!accounts || accounts.length === 0) {
-          throw new Error('No accounts returned from MetaMask.');
-        }
+        if (!accounts || accounts.length === 0) throw new Error('No accounts returned from MetaMask.');
         address = accounts[0];
       }
 
-      if (!address) {
-        throw new Error('Could not get wallet address.');
-      }
-      
+      if (!address) throw new Error('Could not get wallet address.');
       console.log(`✅ Wallet connected: ${address}`);
 
       // Step 2: Sign in with Firebase (if enabled)
@@ -137,9 +125,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const functions = getFunctions(app);
           const createCustomToken = httpsCallable(functions, 'createCustomToken');
           const result = await createCustomToken({ address }) as any;
+          
           if (!result?.data?.token) {
             throw new Error('Failed to retrieve custom token from server.');
           }
+          
           const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
           setUser(userCredential.user);
           console.log(`✅ Firebase signed in: ${userCredential.user.uid}`);
@@ -149,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log(`✅ User document initialized for: ${userCredential.user.uid}`);
       }
 
-      // Step 4: Fetch Balance
+      // Step 4: Fetch Balance (with fallback)
       let balance = 0;
       try {
           if (type === 'solana') {
@@ -166,8 +156,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
            setUsdcBalance(balance);
            console.log(`✅ Balance fetched: ${balance} USDC`);
       } catch(balanceError) {
-         console.error("Failed to fetch USDC balance, returning mock balance:", balanceError);
-         setUsdcBalance(1000.00); // Mock balance on failure
+         console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
+         setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
       }
 
       // Final Step: Set state and local storage
@@ -186,19 +176,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // --- Effect for Auto-connecting on page load ---
   useEffect(() => {
-    try {
-      const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
-      if (savedWalletType) {
-        console.log(`🔄 Found saved wallet, attempting to auto-connect to ${savedWalletType}...`);
-        connectWallet(savedWalletType);
-      } else {
-        setLoading(false);
-      }
-    } catch (error) {
-      console.warn('Auto-connect check failed, clearing state.');
-      signOut();
-    }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    const autoConnect = async () => {
+        try {
+            const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
+            if (savedWalletType) {
+                console.log(`🔄 Found saved wallet, attempting to auto-connect to ${savedWalletType}...`);
+                await connectWallet(savedWalletType);
+            }
+        } catch (error) {
+            console.warn('Auto-connect check failed, clearing state.');
+            await signOut();
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    autoConnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount
 
   // --- Wallet Event Listeners ---
