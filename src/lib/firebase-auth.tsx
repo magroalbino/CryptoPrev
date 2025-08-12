@@ -6,7 +6,7 @@ import { User, signInWithCustomToken } from 'firebase/auth';
 import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
-import { getFunctions, httpsCallable, HttpsCallable } from 'firebase/functions';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { initializeUser } from '@/app/dashboard/actions';
 
 
@@ -67,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [usdcBalance, setUsdcBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // --- Utility to clean up all state ---
   const cleanUpState = useCallback(() => {
     setUser(null);
     setWeb3UserAddress(null);
@@ -80,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
   
-  // --- Sign Out and State Cleanup ---
+  // --- Main Sign Out Logic ---
   const signOut = useCallback(async () => {
     console.log('🔌 Disconnecting wallet...');
     setLoading(true);
@@ -99,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('✅ Disconnect complete.');
   }, [cleanUpState]);
 
-  // --- Connect Wallet (Main Logic) ---
+  // --- New, Decoupled Wallet Connection Logic ---
   const connectWallet = useCallback(async (type: WalletType) => {
     setLoading(true);
     let address: string | null = null;
@@ -119,8 +120,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (!address) throw new Error('Could not get wallet address.');
+      
       console.log(`✅ Wallet connected: ${address}`);
       
+      // Set client-side state immediately for a responsive UI
       setWeb3UserAddress(address);
       setWalletType(type);
       localStorage.setItem('walletType', type);
@@ -128,15 +131,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
     } catch (error: any) {
       console.error('❌ Wallet connection failed:', error.message);
-      await signOut();
+      await signOut(); // Cleanup on failure
     } finally {
       setLoading(false);
     }
   }, [signOut]);
   
-  // --- Effect for Auto-connecting and Post-Connection Logic ---
+  // --- Effect to handle post-connection logic (Firebase Auth, Balance Fetch) ---
   useEffect(() => {
-    const handleConnectionLogic = async (address: string, type: WalletType) => {
+    const handlePostConnection = async (address: string, type: WalletType) => {
+      // 1. Authenticate with Firebase in the background
       if (isFirebaseEnabled && app && firebaseAuth && (!firebaseAuth.currentUser || firebaseAuth.currentUser.uid !== address)) {
           try {
               const functions = getFunctions(app);
@@ -154,11 +158,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               console.log(`✅ User document initialized for: ${userCredential.user.uid}`);
           } catch (error: any) {
             console.error(`Firebase sign-in failed: ${error.message}`);
-            // Don't kill the whole session, just note the failure.
+            // IMPORTANT: Don't sign out. The wallet is connected, only Firebase auth failed.
+            // The app can continue in a "wallet-connected" state.
             setUser(null);
           }
       }
 
+      // 2. Fetch balance
       try {
         let balance = 0;
         if (type === 'solana') {
@@ -178,8 +184,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
          console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
          setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
       }
-    }
+    };
 
+    // This effect runs whenever the wallet address is set
+    if (web3UserAddress && walletType) {
+        handlePostConnection(web3UserAddress, walletType);
+    }
+  }, [web3UserAddress, walletType]);
+
+
+  // --- Effect for auto-connecting from localStorage on page load ---
+  useEffect(() => {
     const autoConnect = async () => {
         setLoading(true);
         const savedAddress = localStorage.getItem('walletAddress');
@@ -191,14 +206,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setWalletType(savedType);
         }
         setLoading(false);
-    }
+    };
     
-    if (web3UserAddress && walletType) {
-        handleConnectionLogic(web3UserAddress, walletType);
-    } else {
-        autoConnect();
-    }
-  }, [web3UserAddress, walletType]);
+    autoConnect();
+  }, []);
 
   // --- Wallet Event Listeners ---
   useEffect(() => {
@@ -245,5 +256,3 @@ declare global {
     ethereum?: any;
   }
 }
-
-    
