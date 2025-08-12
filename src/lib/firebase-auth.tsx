@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
         if (!accounts || accounts.length === 0) {
             if (onlyIfTrusted) {
-                // This is an expected case, don't throw an error, just return.
+                // This is an expected case for auto-connect, don't throw an error, just return.
                 setLoading(false);
                 return;
             }
@@ -172,6 +172,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await provider.disconnect();
           }
         }
+        // MetaMask doesn't have a programmatic disconnect method that severs the connection
+        // from the dApp side. The user must disconnect from the extension.
+        // Clearing our state is the main action here.
     } catch (error) {
         console.error("Error during wallet disconnect:", error);
     } finally {
@@ -180,23 +183,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [walletType, cleanUpState]);
 
+  // Effect for auto-connecting on page load
   useEffect(() => {
     const autoConnect = async () => {
       const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
-      if (savedWalletType) {
+      if (savedWalletType && isFirebaseEnabled) {
         console.log(`Attempting to auto-connect with ${savedWalletType}`);
         await connectWallet(savedWalletType, { onlyIfTrusted: true });
       } else {
         setLoading(false);
       }
     };
-    if (isFirebaseEnabled) {
-        autoConnect();
-    } else {
-        setLoading(false);
-    }
+    
+    autoConnect();
+    // This effect should only run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
+  // Effect for handling wallet-initiated events (e.g., account switching in MetaMask)
   useEffect(() => {
     const metamaskProvider = getMetamaskProvider();
     if (walletType === 'ethereum' && metamaskProvider?.on) {
