@@ -9,55 +9,49 @@ import type { Auth } from 'firebase-admin/auth';
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 
 interface FirebaseAdmin {
-  app: App | null;
-  db: Firestore | null;
-  auth: Auth | null;
-  isFirebaseEnabled: boolean;
+  app: App;
+  db: Firestore;
+  auth: Auth;
+  isFirebaseEnabled: true;
+}
+
+interface FirebaseAdminDisabled {
+  app: null;
+  db: null;
+  auth: null;
+  isFirebaseEnabled: false;
 }
 
 // Function to safely parse the service account key
-function parseServiceAccount(): object | null {
+function parseServiceAccount(): object {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (!serviceAccountKey) {
-    // Do not log an error here, as it can cause runtime errors in Next.js.
-    // The consuming function should handle the null case.
-    return null;
+    throw new Error("Firebase Admin: FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set. Server-side Firebase features will be disabled.");
   }
   try {
+    // The key is often Base64 encoded in CI/CD environments
     const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
     return JSON.parse(decodedKey);
   } catch (e) {
-    console.error("Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Make sure it's a valid JSON string and correctly Base64 encoded.", e);
-    return null;
+    throw new Error("Firebase Admin: Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Make sure it's a valid JSON string, correctly Base64 encoded if needed.", { cause: e });
   }
 }
 
 // Singleton instance to avoid re-initialization
-let adminInstance: FirebaseAdmin | null = null;
+let adminInstance: FirebaseAdmin | FirebaseAdminDisabled | null = null;
 
-export function getFirebaseAdmin(): FirebaseAdmin {
+export function getFirebaseAdmin(): FirebaseAdmin | FirebaseAdminDisabled {
   if (adminInstance) {
     return adminInstance;
   }
 
-  const serviceAccount = parseServiceAccount();
-  const isFirebaseEnabled = !!serviceAccount;
-
-  if (!isFirebaseEnabled) {
-     adminInstance = {
-        app: null,
-        db: null,
-        auth: null,
-        isFirebaseEnabled: false
-     };
-     return adminInstance;
-  }
-  
   try {
+    const serviceAccount = parseServiceAccount();
+    
     const app = getApps().length
       ? getApps()[0]
       : initializeApp({
-          credential: cert(serviceAccount!),
+          credential: cert(serviceAccount),
         });
 
     const db = getFirestore(app);
@@ -67,7 +61,10 @@ export function getFirebaseAdmin(): FirebaseAdmin {
     return adminInstance;
 
   } catch (error: unknown) {
-    console.error('Firebase Admin SDK initialization error:', error);
+    // Log the detailed error during initialization
+    console.error('CRITICAL: Firebase Admin SDK initialization failed.', error);
+    
+    // Return a disabled instance so the app can know the status
     adminInstance = {
         app: null,
         db: null,

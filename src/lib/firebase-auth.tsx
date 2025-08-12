@@ -143,7 +143,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return tokenAccounts?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0;
       }
       if (type === 'ethereum') {
-        const provider = new ethers.JsonRpcProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'); // Replace with your RPC
+        // A public RPC endpoint is used here. For production, it's recommended to use a dedicated provider like Infura or Alchemy.
+        const provider = new ethers.JsonRpcProvider('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // Public Infura endpoint
         const contract = new ethers.Contract(USDC_CONTRACT_ADDRESS_ETHEREUM, ['function balanceOf(address) view returns (uint256)'], provider);
         const balanceResult = await contract.balanceOf(address);
         return parseFloat(ethers.formatUnits(balanceResult, 6));
@@ -176,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Step 2: Sign in with Firebase
       const firebaseUser = await signInWithFirebase(address);
-      console.log(`✅ Firebase signed in: ${firebaseUser?.uid || 'N/A'}`);
+      console.log(`✅ Firebase signed in: ${firebaseUser?.uid || 'N/A (Firebase disabled)'}`);
 
       // Step 3: Ensure user document exists in Firestore
       if (firebaseUser) {
@@ -198,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('🎉 Connection successful and state updated.');
 
     } catch (error: any) {
-      console.error(`❌ Connection failed:`, error.message);
+      console.error(`❌ Connection failed:`, error.message, error);
       await cleanUpState();
     } finally {
       setLoading(false);
