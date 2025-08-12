@@ -42,7 +42,6 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import BitcoinIcon from '@/components/icons/bitcoin';
 import { handleDeposit, handleUpdateLockupPeriod, getUserData } from './dashboard/actions';
-import { User } from 'firebase/auth';
 import BnbIcon from '@/components/icons/bnb';
 
 
@@ -57,35 +56,44 @@ export default function Dashboard() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const loadDashboardData = async (currentUser: User) => {
+  const loadDashboardData = async (uid: string) => {
     setIsDataLoading(true);
-    const data = await getUserData(currentUser.uid);
-    setDashboardData(data);
-    setIsDataLoading(false);
+    try {
+      const data = await getUserData(uid);
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to load dashboard data:", error);
+      setDashboardData(null); // Ensure data is cleared on error
+    } finally {
+      setIsDataLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (user) {
-      loadDashboardData(user);
+    // The user's UID in Firebase IS their web3 address.
+    // We can trigger data loading as soon as we have the address,
+    // without waiting for the full Firebase user object.
+    if (web3UserAddress) {
+      loadDashboardData(web3UserAddress);
     } else {
-      // If there's no user, stop the data loading state.
-      // The main `loading` from `useAuth` will handle the initial page load skeleton.
+      // If there's no address, we are truly disconnected.
+      // Reset all state.
       setIsDataLoading(false);
       setDashboardData(null);
     }
-  }, [user]);
+  }, [web3UserAddress]);
 
 
   const onDeposit = (amount: number) => {
-    if (!user) return;
+    if (!web3UserAddress) return;
     startTransition(async () => {
-      const result = await handleDeposit(user.uid, amount);
+      const result = await handleDeposit(web3UserAddress, amount);
       if (result.success) {
         toast({
           title: t('deposit.toast.success.title'),
           description: t('deposit.toast.success.description'),
         });
-        await loadDashboardData(user); // Refresh data
+        await loadDashboardData(web3UserAddress); // Refresh data
       } else {
         toast({
           variant: 'destructive',
@@ -97,15 +105,15 @@ export default function Dashboard() {
   };
 
   const onUpdateLockupPeriod = (newPeriod: number) => {
-    if (!user) return;
+    if (!web3UserAddress) return;
      startTransition(async () => {
-        const result = await handleUpdateLockupPeriod(user.uid, newPeriod);
+        const result = await handleUpdateLockupPeriod(web3UserAddress, newPeriod);
         if (result.success) {
             toast({
                 title: t('lockup.toast.success.title'),
                 description: t('lockup.toast.success.description', { count: newPeriod }),
             });
-            await loadDashboardData(user); // Refresh data
+            await loadDashboardData(web3UserAddress); // Refresh data
         } else {
             toast({
                 variant: 'destructive',
@@ -125,7 +133,9 @@ export default function Dashboard() {
     });
   };
   
-  if (loading || isDataLoading) {
+  // Use the loading state from useAuth hook for the initial page load,
+  // and the local isDataLoading for subsequent data fetches.
+  if (loading || (isDataLoading && web3UserAddress)) {
     return (
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between space-y-2">
@@ -154,7 +164,8 @@ export default function Dashboard() {
     );
   }
 
-  if (!user || !web3UserAddress || !dashboardData) {
+  // The single source of truth for being "logged out" is having no web3UserAddress.
+  if (!web3UserAddress) {
     return (
       <div className="flex-1 flex justify-center pt-20">
         <div className="text-center max-w-md mx-auto">
@@ -167,6 +178,18 @@ export default function Dashboard() {
         </div>
       </div>
     );
+  }
+  
+  // If we have an address but no data, it means loading failed or the user doc doesn't exist.
+  if (!dashboardData) {
+     return (
+        <div className="flex-1 flex justify-center items-center">
+            <div className="text-center max-w-md mx-auto">
+                <h2 className="text-2xl font-bold">Could not load dashboard data.</h2>
+                <p className="text-muted-foreground mt-2">There was an error fetching your account details. Please try refreshing the page.</p>
+            </div>
+        </div>
+     )
   }
   
   const btcReserveValue = (dashboardData.bitcoinReserve || 0) * MOCK_BTC_PRICE;
