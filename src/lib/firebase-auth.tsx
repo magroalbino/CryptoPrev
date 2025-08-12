@@ -7,6 +7,8 @@ import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client'
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { initializeUser } from '@/app/dashboard/actions';
+
 
 // ============================================================================
 // Constants & Types
@@ -176,7 +178,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const firebaseUser = await signInWithFirebase(address);
       console.log(`✅ Firebase signed in: ${firebaseUser?.uid || 'N/A'}`);
 
-      // Step 3: Fetch Balance
+      // Step 3: Ensure user document exists in Firestore
+      if (firebaseUser) {
+        await initializeUser(firebaseUser.uid);
+        console.log(`✅ User document initialized for: ${firebaseUser.uid}`);
+      }
+
+      // Step 4: Fetch Balance
       const balance = await fetchUsdcBalance(address, type);
       console.log(`✅ Balance fetched: ${balance} USDC`);
 

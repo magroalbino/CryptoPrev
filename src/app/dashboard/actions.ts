@@ -15,6 +15,42 @@ const depositSchema = z.object({
 const MOCK_BTC_PRICE = 65000;
 const MOCK_BNB_PRICE = 580; // Mock BNB price
 
+/**
+ * Ensures a user document exists in Firestore. If not, it creates one with default values.
+ * This function is critical for the first-time login flow.
+ * @param userId - The UID of the user from Firebase Auth.
+ */
+export async function initializeUser(userId: string) {
+    const { db, isFirebaseEnabled } = getFirebaseAdmin();
+    if (!isFirebaseEnabled) return;
+
+    try {
+        const userRef = db.collection('users').doc(userId);
+        const doc = await userRef.get();
+
+        if (!doc.exists) {
+            console.log(`Initializing new user document for UID: ${userId}`);
+            const defaultLockup = 12;
+            const defaultApy = getDynamicApy(defaultLockup);
+
+            const newUser = {
+                currentBalance: 0,
+                bitcoinReserve: 0,
+                bnbReserve: 0,
+                lockupPeriod: defaultLockup,
+                activeProtocol: 'CryptoPrev Strategy',
+                activeProtocolApy: defaultApy,
+                transactions: [],
+                achievements: [],
+            };
+            await userRef.set(newUser);
+        }
+    } catch (error) {
+        console.error("Error initializing user:", error);
+    }
+}
+
+
 export async function handleDeposit(userId: string, amount: number) {
   const { db, isFirebaseEnabled } = getFirebaseAdmin();
   const validated = depositSchema.safeParse({ amount, userId });
@@ -95,28 +131,15 @@ export async function getUserData(userId: string) {
         const doc = await userRef.get();
 
         if (!doc.exists) {
-            // Create a default user document if it doesn't exist
-            const defaultLockup = 12;
-            const defaultApy = getDynamicApy(defaultLockup);
-
-            const newUser = {
-                currentBalance: 0,
-                bitcoinReserve: 0,
-                bnbReserve: 0,
-                lockupPeriod: defaultLockup,
-                activeProtocol: 'CryptoPrev Strategy',
-                activeProtocolApy: defaultApy,
-                transactions: [],
-                achievements: [],
-            };
-            await userRef.set(newUser);
-            return newUser;
+            // This case should ideally not be hit if initializeUser is called on login.
+            console.warn(`User document for ${userId} not found. Returning null.`);
+            return null;
         }
         
         const data = doc.data();
         if (!data) return null;
         
-        // Ensure default values for older documents
+        // Ensure default values for older documents just in case
         const lockupPeriod = data.lockupPeriod || 12;
         const apy = data.activeProtocolApy || getDynamicApy(lockupPeriod);
 
