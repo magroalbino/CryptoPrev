@@ -343,6 +343,8 @@
     "bnbReserves": "Reserva Total em BNB",
     "activeUsers": "Usuários Ativos",
     "reservesDescription": "Total de stablecoins atualmente investido em todos os protocolos DeFi.",
+    "btcReservesDescription": "Parte do valor é mantido em Bitcoin para diversificação e potencial de valorização a longo prazo.",
+    "bnbReservesDescription": "Parte do valor é mantido em BNB para staking e geração de rendimento adicional na Binance Smart Chain.",
     "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
     "onChain": {
       "title": "Verificação On-Chain",

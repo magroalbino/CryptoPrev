@@ -79,6 +79,7 @@ export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps)
           <CardContent>
             <p className="text-4xl font-bold text-primary">${btcReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             <p className="text-sm font-bold text-muted-foreground">{stats.totalBtcReserves.toFixed(4)} BTC</p>
+            <p className="text-xs text-muted-foreground mt-2">{t('proofOfFunds.btcReservesDescription')}</p>
           </CardContent>
         </Card>
         <Card className="brutalist-shadow">
@@ -93,6 +94,7 @@ export default function ProofOfFundsContent({ stats }: ProofOfFundsContentProps)
           <CardContent>
             <p className="text-4xl font-bold text-primary">${bnbReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             <p className="text-sm font-bold text-muted-foreground">{stats.totalBnbReserves.toFixed(4)} BNB</p>
+            <p className="text-xs text-muted-foreground mt-2">{t('proofOfFunds.bnbReservesDescription')}</p>
           </CardContent>
         </Card>
         <Card className="brutalist-shadow">

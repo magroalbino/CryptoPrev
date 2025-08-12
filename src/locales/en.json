@@ -343,6 +343,8 @@
     "bnbReserves": "Total BNB Reserves",
     "activeUsers": "Active Users",
     "reservesDescription": "Total stablecoins currently invested across all DeFi protocols.",
+    "btcReservesDescription": "A portion of the value is held in Bitcoin for diversification and long-term appreciation potential.",
+    "bnbReservesDescription": "A portion of the value is held in BNB for staking and generating additional yield on the Binance Smart Chain.",
     "usersDescription": "Number of active users earning yield on the platform.",
     "onChain": {
       "title": "On-Chain Verification",
