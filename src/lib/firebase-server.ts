@@ -9,9 +9,9 @@ import type { Auth } from 'firebase-admin/auth';
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 
 interface FirebaseAdmin {
-  app: App;
-  db: Firestore;
-  auth: Auth;
+  app: App | null;
+  db: Firestore | null;
+  auth: Auth | null;
   isFirebaseEnabled: boolean;
 }
 
@@ -19,12 +19,10 @@ interface FirebaseAdmin {
 function parseServiceAccount(): object | null {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (!serviceAccountKey) {
-    // This console.error is helpful for debugging on the server
     console.error("Firebase Admin: FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.");
     return null;
   }
   try {
-    // The key might be Base64 encoded, let's decode it.
     const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
     return JSON.parse(decodedKey);
   } catch (e) {
@@ -37,47 +35,44 @@ function parseServiceAccount(): object | null {
 let adminInstance: FirebaseAdmin | null = null;
 
 export function getFirebaseAdmin(): FirebaseAdmin {
-  // Return the cached instance if it exists
   if (adminInstance) {
     return adminInstance;
   }
 
   const serviceAccount = parseServiceAccount();
-
-  // Check if Firebase should be enabled
   const isFirebaseEnabled = !!serviceAccount;
 
   if (!isFirebaseEnabled) {
-     const error = new Error('Firebase Admin SDK is not configured. Check server environment variables.');
-     console.error(error.message);
-     // This allows parts of the app to check isFirebaseEnabled without crashing if it's not set up.
-     // Functions that require admin will fail gracefully.
-     return {
-        app: null as any,
-        db: null as any,
-        auth: null as any,
+     adminInstance = {
+        app: null,
+        db: null,
+        auth: null,
         isFirebaseEnabled: false
-     }
+     };
+     return adminInstance;
   }
   
   try {
-    // Initialize the app if it hasn't been already
     const app = getApps().length
       ? getApps()[0]
       : initializeApp({
-          credential: cert(serviceAccount),
+          credential: cert(serviceAccount!),
         });
 
     const db = getFirestore(app);
     const auth = getAdminAuth(app);
 
-    // Cache the instance
     adminInstance = { app, db, auth, isFirebaseEnabled: true };
     return adminInstance;
 
   } catch (error: unknown) {
     console.error('Firebase Admin SDK initialization error:', error);
-    // Throw a specific error that can be caught by the caller (API route)
-    throw new Error('Firebase Admin SDK failed to initialize.');
+    adminInstance = {
+        app: null,
+        db: null,
+        auth: null,
+        isFirebaseEnabled: false
+    };
+    return adminInstance;
   }
 }

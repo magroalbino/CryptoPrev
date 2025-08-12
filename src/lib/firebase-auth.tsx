@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (isFirebaseEnabled && firebaseAuth.currentUser) {
       await firebaseAuth.signOut();
     }
-    console.log('State cleaned up.');
   }, []);
 
   const signInWithFirebase = useCallback(async (address: string) => {
@@ -87,11 +86,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return userCredential.user;
     } catch (error: any) {
       console.error('Firebase sign-in failed:', error.message || error);
-      await cleanUpState();
       // Re-throw with a more specific message to be caught by connectWallet
       throw new Error(`Firebase sign-in failed: ${error.message}`);
     }
-  }, [cleanUpState]);
+  }, []);
   
   const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
     try {
@@ -133,7 +131,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
         if (!accounts || accounts.length === 0) {
             if (onlyIfTrusted) {
-                // This is an expected case for auto-connect, don't throw an error, just return.
                 setLoading(false);
                 return;
             }
@@ -172,9 +169,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await provider.disconnect();
           }
         }
-        // MetaMask doesn't have a programmatic disconnect method that severs the connection
-        // from the dApp side. The user must disconnect from the extension.
-        // Clearing our state is the main action here.
     } catch (error) {
         console.error("Error during wallet disconnect:", error);
     } finally {
@@ -188,7 +182,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const autoConnect = async () => {
       const savedWalletType = localStorage.getItem('walletType') as WalletType | null;
       if (savedWalletType && isFirebaseEnabled) {
-        console.log(`Attempting to auto-connect with ${savedWalletType}`);
         await connectWallet(savedWalletType, { onlyIfTrusted: true });
       } else {
         setLoading(false);
@@ -196,17 +189,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     
     autoConnect();
-    // This effect should only run once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
-  // Effect for handling wallet-initiated events (e.g., account switching in MetaMask)
+  // Effect for handling wallet-initiated events
   useEffect(() => {
     const metamaskProvider = getMetamaskProvider();
     if (walletType === 'ethereum' && metamaskProvider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length === 0 || accounts[0] !== web3UserAddress) {
-          console.log('MetaMask account changed or disconnected.');
           signOut();
         }
       };
@@ -220,7 +211,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (walletType === 'solana' && phantomProvider?.on) {
        const handleAccountChanged = (publicKey: PublicKey | null) => {
           if (!publicKey || publicKey.toString() !== web3UserAddress) {
-              console.log('Phantom account changed or disconnected.');
               signOut();
           }
        };

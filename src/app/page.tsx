@@ -56,7 +56,7 @@ export default function Dashboard() {
   const [isPending, startTransition] = useTransition();
 
   const loadDashboardData = async (currentUser: User) => {
-    if (!isDataLoading) setIsDataLoading(true);
+    setIsDataLoading(true);
     const data = await getUserData(currentUser.uid);
     setDashboardData(data);
     setIsDataLoading(false);
@@ -65,12 +65,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       loadDashboardData(user);
-    } else if (!loading) {
-      // If there's no user and we are not in a loading state, stop loading data.
+    } else {
+      // If there's no user, stop the data loading state.
+      // The main `loading` from `useAuth` will handle the initial page load skeleton.
       setIsDataLoading(false);
       setDashboardData(null);
     }
-  }, [user, loading]);
+  }, [user]);
 
 
   const onDeposit = (amount: number) => {
