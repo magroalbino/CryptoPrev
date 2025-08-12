@@ -488,6 +488,7 @@
     "participants": {
       "title": "Participantes do Grupo ROSCA",
       "description": "Status do ciclo atual.",
+      "description_cycle": "Este grupo tem 12 participantes em um ciclo de 12 meses. Cada membro contribui mensalmente e recebe o pote completo uma vez durante o ciclo, que se renova ao final.",
       "table": {
         "order": "Ordem",
         "name": "Nome",

@@ -488,6 +488,7 @@
     "participants": {
       "title": "ROSCA Group Participants",
       "description": "Status of the current cycle.",
+      "description_cycle": "This group has 12 participants in a 12-month cycle. Each member contributes monthly and receives the full pot once during the cycle, after which it renews.",
       "table": {
         "order": "Order",
         "name": "Name",

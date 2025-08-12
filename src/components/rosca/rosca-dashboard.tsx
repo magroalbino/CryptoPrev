@@ -102,7 +102,7 @@ export default function RoscaDashboard() {
              <Card className="brutalist-shadow">
                 <CardHeader>
                     <CardTitle>{t('rosca.participants.title')}</CardTitle>
-                    <CardDescription>{t('rosca.participants.description')}</CardDescription>
+                    <CardDescription>{t('rosca.participants.description_cycle')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
