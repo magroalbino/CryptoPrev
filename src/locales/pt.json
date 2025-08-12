@@ -26,7 +26,7 @@
     "cards": {
       "balance": {
         "title": "Saldo para Rendimento (Stablecoin)",
-        "description": "60% dos depósitos para geração de rendimento.",
+        "description": "75% dos depósitos para geração de rendimento.",
         "notApplicable": "N/A",
         "notApplicableDescription": "Conecte uma carteira Solana"
       },
@@ -36,11 +36,11 @@
       },
       "btcReserve": {
         "title": "Reserva em Bitcoin",
-        "description": "15% dos depósitos para valorização a longo prazo."
+        "description": "18.75% dos depósitos para valorização a longo prazo."
       },
       "bnbReserve": {
         "title": "Reserva de Staking BNB",
-        "description": "25% dos depósitos para rendimento de staking."
+        "description": "6.25% dos depósitos para rendimento de staking."
       },
       "lockup": {
         "title": "Plano de Investimento",
@@ -342,9 +342,9 @@
     "btcReserves": "Reserva Total em Bitcoin",
     "bnbReserves": "Reserva Total em BNB",
     "activeUsers": "Usuários Ativos",
-    "reservesDescription": "Total de stablecoins atualmente investido em todos os protocolos DeFi.",
-    "btcReservesDescription": "Parte do valor é mantido em Bitcoin para diversificação e potencial de valorização a longo prazo.",
-    "bnbReservesDescription": "Parte do valor é mantido em BNB para staking e geração de rendimento adicional na Binance Smart Chain.",
+    "reservesDescription": "Total de stablecoins atualmente investido. Este capital está ativamente gerando rendimentos.",
+    "btcReservesDescription": "Mantido como uma reserva de valor de longo prazo com alto potencial de crescimento, garantindo a sustentabilidade do sistema.",
+    "bnbReservesDescription": "Gera receita adicional através de staking e apoia as operações da plataforma.",
     "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
     "onChain": {
       "title": "Verificação On-Chain",

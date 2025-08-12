@@ -25,10 +25,13 @@ export async function handleDeposit(userId: string, amount: number) {
   }
 
   const { amount: depositAmount } = validated.data;
-  // New allocation: 25% BNB, 15% BTC, 60% Stablecoin
-  const bnbAllocation = depositAmount * 0.25; 
-  const btcAllocation = depositAmount * 0.15;
-  const stablecoinAllocation = depositAmount * 0.60;
+  
+  // New allocation: 75% in use (stablecoin), 25% in reserve.
+  // Reserve: 75% BTC, 25% BNB.
+  const stablecoinAllocation = depositAmount * 0.75;      // 75% of total
+  const btcAllocation = depositAmount * 0.25 * 0.75;    // 18.75% of total
+  const bnbAllocation = depositAmount * 0.25 * 0.25;     // 6.25% of total
+
 
   const bnbAmount = bnbAllocation / MOCK_BNB_PRICE;
   const btcAmount = btcAllocation / MOCK_BTC_PRICE;
