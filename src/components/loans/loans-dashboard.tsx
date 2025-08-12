@@ -33,6 +33,8 @@ export default function LoansDashboard() {
   const collateralValue = usdcBalance || 0;
   const availableToBorrow = collateralValue * 0.5; // 50% LTV
   const interestRate = getDynamicInterestRate(MOCK_TVL);
+  
+  const loanTermSteps = [6, 12, 18, 24, 30, 36];
 
   useEffect(() => {
     const amount = parseFloat(loanAmount);
@@ -106,7 +108,7 @@ export default function LoansDashboard() {
                  <StatCard
                     title={t('loans.cards.available.title')}
                     value={`$${availableToBorrow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    description={t('loans.cards.available.description')}
+                    description={t('loans.cards.available.description', { ltv: 50 })}
                     icon={<HandCoins className="text-accent" />}
                 />
                  <StatCard
@@ -174,7 +176,7 @@ export default function LoansDashboard() {
                             onChange={(e) => setLoanAmount(e.target.value)} 
                         />
                     </div>
-                     <div className="space-y-2">
+                     <div className="space-y-4">
                         <Label htmlFor="loan-term">{t('loans.simulator.termLabel', { term: loanTerm })}</Label>
                         <Slider
                             id="loan-term"
@@ -184,6 +186,18 @@ export default function LoansDashboard() {
                             value={[loanTerm]}
                             onValueChange={(value) => setLoanTerm(value[0])}
                         />
+                         <div className="flex justify-between">
+                          {loanTermSteps.map((step) => (
+                            <button
+                              key={step}
+                              onClick={() => setLoanTerm(step)}
+                              className="flex flex-col items-center space-y-1 text-xs text-muted-foreground hover:text-primary"
+                            >
+                              <span className="h-2 w-px bg-current"></span>
+                              <span>{step}m</span>
+                            </button>
+                          ))}
+                        </div>
                     </div>
                     <Separator />
                     <div className="space-y-4 rounded-lg bg-secondary/30 p-4">
