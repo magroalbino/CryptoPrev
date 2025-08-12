@@ -26,7 +26,7 @@
     "cards": {
       "balance": {
         "title": "Yield Balance (Stablecoin)",
-        "description": "85% of deposits for yield generation.",
+        "description": "60% of deposits for yield generation.",
         "notApplicable": "N/A",
         "notApplicableDescription": "Connect a Solana wallet"
       },
@@ -37,6 +37,10 @@
        "btcReserve": {
         "title": "Bitcoin Reserve",
         "description": "15% of deposits for long-term growth."
+      },
+      "bnbReserve": {
+        "title": "BNB Staking Reserve",
+        "description": "25% of deposits for staking yield."
       },
       "lockup": {
         "title": "Investment Plan",
@@ -336,9 +340,9 @@
     "description": "We believe in full transparency. Here is a live overview of our platform's key metrics.",
     "totalReserves": "Total Value Locked (TVL)",
     "btcReserves": "Total Bitcoin Reserves",
+    "bnbReserves": "Total BNB Reserves",
     "activeUsers": "Active Users",
     "reservesDescription": "Total stablecoins currently invested across all DeFi protocols.",
-    "btcReservesDescription": "A percentage of deposits is allocated for long-term growth.",
     "usersDescription": "Number of active users earning yield on the platform.",
     "onChain": {
       "title": "On-Chain Verification",

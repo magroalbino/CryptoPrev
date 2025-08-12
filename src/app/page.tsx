@@ -43,9 +43,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import BitcoinIcon from '@/components/icons/bitcoin';
 import { handleDeposit, handleUpdateLockupPeriod, getUserData } from './dashboard/actions';
 import { User } from 'firebase/auth';
+import BnbIcon from '@/components/icons/bnb';
 
 
 const MOCK_BTC_PRICE = 65000; // Mock BTC price for simulation
+const MOCK_BNB_PRICE = 580; // Mock BNB price for simulation
 
 export default function Dashboard() {
   const { user, web3UserAddress, loading, connectWallet, walletType } = useAuth();
@@ -168,6 +170,7 @@ export default function Dashboard() {
   }
   
   const btcReserveValue = (dashboardData.bitcoinReserve || 0) * MOCK_BTC_PRICE;
+  const bnbReserveValue = (dashboardData.bnbReserve || 0) * MOCK_BNB_PRICE;
 
   return (
     <div className="flex-1 space-y-6">
@@ -182,7 +185,7 @@ export default function Dashboard() {
         <StatCard
           title={t('dashboard.cards.balance.title')}
           value={walletType === 'solana' ? `$${Number(dashboardData.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : t('dashboard.cards.balance.notApplicable')}
-          description={walletType === 'solana' ? t('dashboard.cards.balance.description') : t('dashboard.cards.balance.notApplicableDescription')}
+          description={t('dashboard.cards.balance.description')}
           icon={<Wallet className="text-accent" />}
         />
         <StatCard
@@ -198,12 +201,12 @@ export default function Dashboard() {
           description={t('dashboard.cards.btcReserve.description')}
           icon={<BitcoinIcon className="text-accent" />}
         />
-        <StatCard
-          title={t('dashboard.cards.lockup.title')}
-          value={t('dashboard.cards.lockup.value_other', { count: dashboardData.lockupPeriod })}
-          description={t('dashboard.cards.lockup.description')}
-          icon={<Hourglass className="text-accent" />}
-          action={<LockupDialog currentPeriod={dashboardData.lockupPeriod} onUpdate={onUpdateLockupPeriod} />}
+         <StatCard
+          title={t('dashboard.cards.bnbReserve.title')}
+          value={`${(dashboardData.bnbReserve || 0).toFixed(4)} BNB`}
+          subtitle={`≈ $${bnbReserveValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          description={t('dashboard.cards.bnbReserve.description')}
+          icon={<BnbIcon className="text-accent" />}
         />
       </div>
       <div className="grid gap-6 md:grid-cols-3">
@@ -221,6 +224,13 @@ export default function Dashboard() {
               <Button onClick={handleClaimYield} className="w-full">{t('dashboard.rewards.claimButton')}</Button>
             </CardContent>
           </Card>
+           <StatCard
+            title={t('dashboard.cards.lockup.title')}
+            value={t('dashboard.cards.lockup.value_other', { count: dashboardData.lockupPeriod })}
+            description={t('dashboard.cards.lockup.description')}
+            icon={<Hourglass className="text-accent" />}
+            action={<LockupDialog currentPeriod={dashboardData.lockupPeriod} onUpdate={onUpdateLockupPeriod} />}
+          />
         </div>
         <div className="md:col-span-2 space-y-6">
           <Card className="brutalist-shadow">

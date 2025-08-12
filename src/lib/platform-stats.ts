@@ -6,6 +6,7 @@ import { getFirebaseAdmin } from './firebase-server';
 interface PlatformStats {
   tvl: number;
   totalBtcReserves: number;
+  totalBnbReserves: number;
   activeUsers: number;
 }
 
@@ -18,6 +19,7 @@ export async function getPlatformStats(): Promise<PlatformStats> {
       return {
         tvl: 0,
         totalBtcReserves: 0,
+        totalBnbReserves: 0,
         activeUsers: 1,
       };
     }
@@ -26,24 +28,27 @@ export async function getPlatformStats(): Promise<PlatformStats> {
     const listUsersResult = await auth.listUsers();
     const activeUsers = listUsersResult.users.length;
 
-    // 2. Get TVL and BTC reserves from Firestore
+    // 2. Get TVL and reserves from Firestore
     const usersCollection = db.collection('users');
     const snapshot = await usersCollection.get();
 
     let tvl = 0;
     let totalBtcReserves = 0;
+    let totalBnbReserves = 0;
 
     if (!snapshot.empty) {
       snapshot.forEach(doc => {
         const data = doc.data();
         tvl += data.currentBalance || 0;
         totalBtcReserves += data.bitcoinReserve || 0;
+        totalBnbReserves += data.bnbReserve || 0;
       });
     }
 
     return {
       tvl,
       totalBtcReserves,
+      totalBnbReserves,
       activeUsers,
     };
 
@@ -53,6 +58,7 @@ export async function getPlatformStats(): Promise<PlatformStats> {
     return {
       tvl: 0,
       totalBtcReserves: 0,
+      totalBnbReserves: 0,
       activeUsers: 0,
     };
   }

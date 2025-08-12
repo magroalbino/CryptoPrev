@@ -13,6 +13,7 @@ const depositSchema = z.object({
 });
 
 const MOCK_BTC_PRICE = 65000;
+const MOCK_BNB_PRICE = 580; // Mock BNB price
 
 export async function handleDeposit(userId: string, amount: number) {
   const { db, isFirebaseEnabled } = getFirebaseAdmin();
@@ -24,8 +25,12 @@ export async function handleDeposit(userId: string, amount: number) {
   }
 
   const { amount: depositAmount } = validated.data;
-  const btcAllocation = depositAmount * 0.15; // 15% to BTC reserve
-  const stablecoinAllocation = depositAmount * 0.85; // 85% to yield strategies
+  // New allocation: 25% BNB, 15% BTC, 60% Stablecoin
+  const bnbAllocation = depositAmount * 0.25; 
+  const btcAllocation = depositAmount * 0.15;
+  const stablecoinAllocation = depositAmount * 0.60;
+
+  const bnbAmount = bnbAllocation / MOCK_BNB_PRICE;
   const btcAmount = btcAllocation / MOCK_BTC_PRICE;
 
   try {
@@ -38,6 +43,7 @@ export async function handleDeposit(userId: string, amount: number) {
         {
           currentBalance: FieldValue.increment(stablecoinAllocation),
           bitcoinReserve: FieldValue.increment(btcAmount),
+          bnbReserve: FieldValue.increment(bnbAmount),
         },
         { merge: true }
       );
@@ -93,6 +99,7 @@ export async function getUserData(userId: string) {
             const newUser = {
                 currentBalance: 0,
                 bitcoinReserve: 0,
+                bnbReserve: 0,
                 lockupPeriod: defaultLockup,
                 activeProtocol: 'CryptoPrev Strategy',
                 activeProtocolApy: defaultApy,
@@ -118,6 +125,7 @@ export async function getUserData(userId: string) {
             ...data,
             currentBalance: data.currentBalance || 0,
             bitcoinReserve: data.bitcoinReserve || 0,
+            bnbReserve: data.bnbReserve || 0,
             accumulatedRewards: accumulatedRewards,
             monthlyYield: monthlyYield,
             activeProtocol: data.activeProtocol || 'CryptoPrev Strategy',
