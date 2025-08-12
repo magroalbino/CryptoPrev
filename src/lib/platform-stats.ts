@@ -11,19 +11,19 @@ interface PlatformStats {
 }
 
 export async function getPlatformStats(): Promise<PlatformStats> {
+  const { db, auth, isFirebaseEnabled } = getFirebaseAdmin();
+
+  if (!isFirebaseEnabled) {
+    // Return mock data if Firebase is not enabled
+    return {
+      tvl: 0,
+      totalBtcReserves: 0,
+      totalBnbReserves: 0,
+      activeUsers: 0,
+    };
+  }
+
   try {
-    const { db, auth, isFirebaseEnabled } = getFirebaseAdmin();
-
-    if (!isFirebaseEnabled) {
-      // Return mock data if Firebase is not enabled
-      return {
-        tvl: 0,
-        totalBtcReserves: 0,
-        totalBnbReserves: 0,
-        activeUsers: 1,
-      };
-    }
-
     // 1. Get total active users
     const listUsersResult = await auth.listUsers();
     const activeUsers = listUsersResult.users.length;

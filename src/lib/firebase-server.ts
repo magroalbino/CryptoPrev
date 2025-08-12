@@ -19,7 +19,8 @@ interface FirebaseAdmin {
 function parseServiceAccount(): object | null {
   const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (!serviceAccountKey) {
-    console.error("Firebase Admin: FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.");
+    // Do not log an error here, as it can cause runtime errors in Next.js.
+    // The consuming function should handle the null case.
     return null;
   }
   try {
