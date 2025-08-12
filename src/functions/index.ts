@@ -10,27 +10,41 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { getFirebaseAdmin } from "@/lib/firebase-server";
+import admin from 'firebase-admin';
 
-// This function relies on a properly configured server environment.
-// getFirebaseAdmin() will throw an error during initialization if the service account key is missing or invalid,
-// which is the desired behavior to prevent a broken function from being deployed.
+// Initialize the app directly in the function's global scope.
+// This is a more stable pattern for Cloud Functions.
+try {
+    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    if (serviceAccountKey) {
+        const serviceAccount = JSON.parse(Buffer.from(serviceAccountKey, 'base64').toString('utf-8'));
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+            });
+        }
+    } else {
+        logger.warn("FIREBASE_SERVICE_ACCOUNT_KEY is not set. Firebase Admin features will be disabled.");
+    }
+} catch (error) {
+    logger.error("CRITICAL: Failed to initialize Firebase Admin SDK.", error);
+}
+
 
 /**
  * Creates a custom Firebase auth token for the given wallet address.
  * The address is used as the user's UID in Firebase Auth.
  */
 exports.createCustomToken = onCall(async (request) => {
-  const { auth, isFirebaseEnabled } = getFirebaseAdmin();
-
-  if (!isFirebaseEnabled || !auth) {
-    logger.error("Firebase Admin SDK is not initialized. Cannot create custom token. Check server logs for details.");
-    throw new HttpsError('internal', 'The server is not configured correctly to handle authentication.');
+  // Check if the Admin SDK was initialized.
+  if (!admin.apps.length) {
+    logger.error("Firebase Admin SDK is not initialized. This usually means the FIREBASE_SERVICE_ACCOUNT_KEY is missing or invalid in the function's environment variables.");
+    throw new HttpsError('internal', 'The server is not configured correctly to handle authentication. Please check the server logs.');
   }
 
   const address = request.data.address;
   if (!address || typeof address !== "string" || address.length === 0) {
-    logger.warn("Request to createCustomToken missing address parameter.");
+    logger.warn("Request to createCustomToken missing or has an invalid 'address' parameter.");
     throw new HttpsError(
       "invalid-argument",
       "The function must be called with a non-empty 'address' argument."
@@ -41,11 +55,11 @@ exports.createCustomToken = onCall(async (request) => {
   const uid = address;
 
   try {
-    const customToken = await auth.createCustomToken(uid);
-    logger.info(`Successfully created custom token for address: ${address}`);
+    const customToken = await admin.auth().createCustomToken(uid);
+    logger.info(`Successfully created custom token for address: ${uid}`);
     return { token: customToken };
   } catch (error: any) {
-    logger.error(`Error creating custom token for ${address}:`, error);
+    logger.error(`Error creating custom token for ${uid}:`, error);
     // Throw a specific error that can be caught by the caller
     throw new HttpsError(
       "internal",
