@@ -418,7 +418,7 @@
       },
       "available": {
         "title": "Disponível para Empréstimo",
-        "description": "Baseado em um LTV (Loan-to-Value) de 50%."
+        "description": "Baseado em uma relação Empréstimo-Valor (LTV) de 50%."
       },
       "interest": {
         "title": "Taxa de Juros",
@@ -467,3 +467,5 @@
     }
   }
 }
+
+    
