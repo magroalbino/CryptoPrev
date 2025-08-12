@@ -52,3 +52,4 @@ exports.createCustomToken = onCall(async (request) => {
     );
   }
 });
+
