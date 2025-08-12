@@ -60,18 +60,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const cleanUpState = useCallback(async () => {
-    // No need to sign out from firebase, as state is cleaned up anyway
     setUser(null);
     setWeb3UserAddress(null);
     setWalletType(null);
     setUsdcBalance(null);
     localStorage.removeItem('walletType');
     localStorage.removeItem('walletAddress');
+    if (firebaseAuth?.currentUser) {
+      await firebaseAuth.signOut();
+    }
     console.log('State cleaned up.');
   }, []);
 
   const signInWithFirebase = useCallback(async (address: string) => {
-    if (!isFirebaseEnabled || !app || !firebaseAuth) {
+    if (!isFirebaseEnabled || !app) {
       console.warn("Firebase not enabled, skipping sign-in.");
       return null;
     }
@@ -84,12 +86,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await signInWithCustomToken(firebaseAuth, token);
       return userCredential.user;
     } catch (error: any) {
-      console.error('Firebase sign-in failed:', error.message || error);
-      await cleanUpState();
-      // Re-throw with a more specific message to be caught by connectWallet
+      console.error('Firebase sign-in failed:', error);
       throw new Error(`Firebase sign-in failed: ${error.message}`);
     }
-  }, [cleanUpState]);
+  }, []);
   
   const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
     try {
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return 0;
     } catch (error) {
         console.error(`Failed to fetch USDC balance for ${type}:`, error);
-        return 0; // Return a default value in case of error
+        return 0;
     }
   }, []);
 
@@ -129,8 +129,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         provider = getMetamaskProvider();
         if (!provider) throw new Error('MetaMask wallet is not installed.');
         const accounts = await provider.request({ method: onlyIfTrusted ? 'eth_accounts' : 'eth_requestAccounts' });
-        if (accounts.length === 0) {
+        if (!accounts || accounts.length === 0) {
             if (onlyIfTrusted) {
+                // This is an expected case, don't throw an error, just return.
                 setLoading(false);
                 return;
             }
@@ -169,15 +170,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await provider.disconnect();
           }
         }
-        // MetaMask doesn't have a programmatic disconnect method that severs the connection
-        // from the dApp side. The user must do it from the extension.
     } catch (error) {
         console.error("Error during wallet disconnect:", error);
     } finally {
         await cleanUpState();
-        if(firebaseAuth?.currentUser){
-           await firebaseAuth.signOut();
-        }
         setLoading(false);
     }
   }, [walletType, cleanUpState]);
@@ -197,10 +193,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
         setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
-  // Event listeners for wallet changes
   useEffect(() => {
     const metamaskProvider = getMetamaskProvider();
     if (walletType === 'ethereum' && metamaskProvider?.on) {
