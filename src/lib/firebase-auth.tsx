@@ -126,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
       return userCredential.user;
     } catch (error: any) {
-      console.error('Firebase sign-in failed:', error.message || error);
+      console.error('Firebase sign-in failed:', error);
       throw new Error(`Firebase sign-in failed: ${error.message}`);
     }
   }, []);
@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return 0;
     } catch (error) {
-      console.error("Failed to fetch USDC balance, returning 0:", error);
+      console.error("Failed to fetch USDC balance, returning mock balance:", error);
       return 1000.00; // Mock balance on failure to allow UI to function
     }
   }, []);
