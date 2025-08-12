@@ -67,6 +67,7 @@ export default function AppHeader() {
       { href: '/planner', label: t('header.planner') },
       { href: '/loans', label: t('header.loans') },
       { href: '/health', label: t('header.health') },
+      { href: '/rosca', label: t('header.rosca') },
       { href: '/proof-of-funds', label: t('header.proofOfFunds') },
       { href: '/faq', label: t('header.faq') },
   ]
@@ -88,7 +89,7 @@ export default function AppHeader() {
             <nav className="hidden w-full items-center md:flex">
                 <div className="flex w-full items-center justify-center gap-1 rounded-sm border border-border bg-secondary/50 p-1">
                 {navItems.map((item) => (
-                    <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0'>
+                    <Button key={item.href} asChild variant={pathname === item.href ? 'secondary' : 'ghost'} className='shadow-none border-0 text-xs h-8'>
                         <Link
                             href={item.href}
                             className={cn(

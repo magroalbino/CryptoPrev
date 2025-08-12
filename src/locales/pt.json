@@ -6,6 +6,7 @@
     "planner": "Planejador IA",
     "loans": "Empréstimos",
     "health": "Saúde",
+    "rosca": "Caixa Colaborativa",
     "faq": "FAQ",
     "proofOfFunds": "Prova de Fundos",
     "connectWallet": "Conectar Carteira",
@@ -463,6 +464,67 @@
       "error": {
         "title": "Falha na Solicitação de Empréstimo",
         "insufficientCollateral": "Sua garantia disponível não é suficiente para este valor de empréstimo."
+      }
+    }
+  },
+  "rosca": {
+    "title": "Caixa Colaborativa Inteligente (ROSCA)",
+    "description": "Participe de grupos de poupança e crédito rotativo, potencializados por DeFi.",
+    "connectWalletPrompt": "Para participar de uma ROSCA, você precisa conectar sua carteira primeiro.",
+    "cards": {
+      "pot": {
+        "title": "Pote do Mês",
+        "description": "Total arrecadado neste mês."
+      },
+      "next": {
+        "title": "Próximo a Receber",
+        "description": "Ciclo {{month}} de {{total}}."
+      },
+      "extraYield": {
+        "title": "Rendimento Extra do Grupo",
+        "description": "De investimentos de curto prazo."
+      }
+    },
+    "participants": {
+      "title": "Participantes do Grupo ROSCA",
+      "description": "Status do ciclo atual.",
+      "table": {
+        "order": "Ordem",
+        "name": "Nome",
+        "contribution": "Contribuição",
+        "received": "Recebeu"
+      },
+      "status": {
+        "paid": "Pago",
+        "waiting": "Aguardando"
+      }
+    },
+    "actions": {
+      "title": "Suas Ações",
+      "description": "Contribua para o ciclo ou otimize seus fundos.",
+      "contributeButton": "Contribuir com ${{amount}}"
+    },
+    "reallocate": {
+      "title": "Realocar Saque Futuro",
+      "description": "Ganhe rendimento extra emprestando seu saque futuro.",
+      "bonusYield": "Bônus de APY na Carteira Principal"
+    },
+    "investment": {
+      "title": "Gestor de Investimentos IA",
+      "description": "Performance dos fundos ociosos do grupo."
+    },
+    "toast": {
+      "contribution": {
+        "title": "Contribuição Realizada!",
+        "description": "Sua contribuição de ${{amount}} foi registrada."
+      },
+      "reallocateOn": {
+        "title": "Realocação Ativada!",
+        "description": "Seu saque futuro agora está rendendo extra. Veja o bônus no seu painel."
+      },
+      "reallocateOff": {
+        "title": "Realocação Desativada",
+        "description": "Seu saque futuro será recebido normalmente."
       }
     }
   }

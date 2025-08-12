@@ -6,6 +6,7 @@
     "planner": "AI Planner",
     "loans": "Loans",
     "health": "Health",
+    "rosca": "ROSCA",
     "faq": "FAQ",
     "proofOfFunds": "Proof of Funds",
     "connectWallet": "Connect Wallet",
@@ -463,6 +464,67 @@
       "error": {
         "title": "Loan Request Failed",
         "insufficientCollateral": "Your available collateral is not enough for this loan amount."
+      }
+    }
+  },
+  "rosca": {
+    "title": "Intelligent Collaborative Fund (ROSCA)",
+    "description": "Join savings and credit groups, powered by DeFi.",
+    "connectWalletPrompt": "To participate in a ROSCA, you need to connect your wallet first.",
+    "cards": {
+      "pot": {
+        "title": "Monthly Pot",
+        "description": "Total collected this month."
+      },
+      "next": {
+        "title": "Next to Receive",
+        "description": "Cycle {{month}} of {{total}}."
+      },
+      "extraYield": {
+        "title": "Group Extra Yield",
+        "description": "From short-term investments."
+      }
+    },
+    "participants": {
+      "title": "ROSCA Group Participants",
+      "description": "Status of the current cycle.",
+      "table": {
+        "order": "Order",
+        "name": "Name",
+        "contribution": "Contribution",
+        "received": "Received"
+      },
+      "status": {
+        "paid": "Paid",
+        "waiting": "Waiting"
+      }
+    },
+    "actions": {
+      "title": "Your Actions",
+      "description": "Contribute to the cycle or optimize your funds.",
+      "contributeButton": "Contribute ${{amount}}"
+    },
+    "reallocate": {
+      "title": "Reallocate Future Payout",
+      "description": "Earn extra yield by lending your future payout.",
+      "bonusYield": "Bonus APY in Main Wallet"
+    },
+    "investment": {
+      "title": "AI Investment Manager",
+      "description": "Performance of the group's idle funds."
+    },
+    "toast": {
+      "contribution": {
+        "title": "Contribution Successful!",
+        "description": "Your contribution of ${{amount}} has been registered."
+      },
+      "reallocateOn": {
+        "title": "Reallocation Activated!",
+        "description": "Your future payout is now earning extra yield. See your dashboard for the bonus."
+      },
+      "reallocateOff": {
+        "title": "Reallocation Deactivated",
+        "description": "Your future payout will be received normally."
       }
     }
   }
