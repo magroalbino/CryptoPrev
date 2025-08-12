@@ -48,8 +48,16 @@ export function getFirebaseAdmin(): FirebaseAdmin {
   const isFirebaseEnabled = !!serviceAccount;
 
   if (!isFirebaseEnabled) {
-    // This error will be caught by the API route and returned as a 500
-    throw new Error('Firebase Admin SDK is not configured. Check server environment variables.');
+     const error = new Error('Firebase Admin SDK is not configured. Check server environment variables.');
+     console.error(error.message);
+     // This allows parts of the app to check isFirebaseEnabled without crashing if it's not set up.
+     // Functions that require admin will fail gracefully.
+     return {
+        app: null as any,
+        db: null as any,
+        auth: null as any,
+        isFirebaseEnabled: false
+     }
   }
   
   try {

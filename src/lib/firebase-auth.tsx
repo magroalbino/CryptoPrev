@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUsdcBalance(null);
     localStorage.removeItem('walletType');
     localStorage.removeItem('walletAddress');
-    if (firebaseAuth?.currentUser) {
+    if (isFirebaseEnabled && firebaseAuth.currentUser) {
       await firebaseAuth.signOut();
     }
     console.log('State cleaned up.');
@@ -86,10 +86,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await signInWithCustomToken(firebaseAuth, token);
       return userCredential.user;
     } catch (error: any) {
-      console.error('Firebase sign-in failed:', error);
+      console.error('Firebase sign-in failed:', error.message || error);
+      await cleanUpState();
+      // Re-throw with a more specific message to be caught by connectWallet
       throw new Error(`Firebase sign-in failed: ${error.message}`);
     }
-  }, []);
+  }, [cleanUpState]);
   
   const fetchUsdcBalance = useCallback(async (address: string, type: WalletType) => {
     try {

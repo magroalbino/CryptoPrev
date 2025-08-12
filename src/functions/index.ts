@@ -10,19 +10,12 @@
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
-import { initializeApp, getApps } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { getFirebaseAdmin } from "@/lib/firebase-server";
 
-// Initialize Firebase Admin SDK if it hasn't been already.
-if (!getApps().length) {
-  try {
-    initializeApp();
-    logger.info("Firebase Admin SDK initialized successfully.");
-  } catch (error: any) {
-    logger.error("Error initializing Firebase Admin SDK:", error);
-    // This will cause functions to fail, which is intended if admin can't init.
-  }
-}
+// Initialize Firebase Admin SDK using the centralized function
+// This will throw an error on deployment if the server is not configured correctly,
+// which is the desired behavior to prevent a broken function from being deployed.
+const admin = getFirebaseAdmin();
 
 /**
  * Creates a custom Firebase auth token for the given wallet address.
@@ -30,6 +23,11 @@ if (!getApps().length) {
  */
 exports.createCustomToken = onCall(async (request) => {
   const address = request.data.address;
+
+  if (!admin.isFirebaseEnabled) {
+      logger.error("Firebase Admin SDK is not initialized. Cannot create custom token.");
+      throw new HttpsError('internal', 'The server is not configured correctly.');
+  }
 
   if (!address || typeof address !== "string" || address.length === 0) {
     logger.warn("Request missing address parameter.");
@@ -43,7 +41,7 @@ exports.createCustomToken = onCall(async (request) => {
   const uid = address;
 
   try {
-    const customToken = await getAuth().createCustomToken(uid);
+    const customToken = await admin.auth.createCustomToken(uid);
     logger.info(`Successfully created custom token for address: ${address}`);
     return { token: customToken };
   } catch (error: any) {
