@@ -1,41 +1,23 @@
-import {genkit, Genkit as GenkitType} from 'genkit';
+import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
-// Note: The 'ai' object is exported directly. The Google AI plugin
-// is configured lazily below to ensure that environment variables
-// are available in the Vercel serverless environment.
+// In a serverless environment like Vercel, environment variables are available
+// at runtime. This direct configuration is the most reliable approach.
 
-let isPluginConfigured = false;
-
-function ensurePluginConfigured() {
-  if (!isPluginConfigured) {
-    if (!process.env.GEMINI_API_KEY) {
-      console.warn(
-        'CRITICAL: GEMINI_API_KEY is not defined. Genkit AI features will fail.'
-      );
-      // Even if the key is not present, we mark as configured to avoid re-checking.
-      // The features will fail gracefully with an error message.
-    }
-    
-    // Configure the Google AI plugin. This happens only once.
-    // In Genkit 1.x, the 'ai' object is directly configured.
-    genkit({
-      plugins: [
-        googleAI(),
-      ],
-    });
-    
-    isPluginConfigured = true;
-    console.log("Genkit Google AI plugin configured.");
-  }
+if (!process.env.GEMINI_API_KEY) {
+  console.warn(
+    'CRITICAL: GEMINI_API_KEY is not defined. Genkit AI features will fail.'
+  );
 }
 
-// Wrap the genkit object to ensure configuration happens on first use.
-const lazyAi = new Proxy(genkit, {
-  get(target, prop, receiver) {
-    ensurePluginConfigured();
-    return Reflect.get(target, prop, receiver);
-  },
+// Configure Genkit with the Google AI plugin.
+// This single configuration will be used across the application.
+genkit({
+  plugins: [
+    googleAI(), // This plugin requires GEMINI_API_KEY to be set in the environment.
+  ],
 });
 
-export { lazyAi as ai };
+
+// Export the configured genkit instance as 'ai' for consistent use in other files.
+export {genkit as ai};
