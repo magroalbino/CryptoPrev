@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUsdcBalance(balance);
       console.log(`✅ Balance fetched: ${balance} USDC`);
     } catch(balanceError) {
-       console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
+ console.warn("Failed to fetch real USDC balance for", type, address, ", providing mock balance:", JSON.stringify(balanceError));
        setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
     }
     
@@ -167,7 +167,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await handleSuccessfulConnection(address, type);
       
     } catch (error: any) {
-      console.error('❌ Wallet connection failed:', error.message);
+      console.error('❌ Wallet connection failed:', error);
+      let userFriendlyError = 'Wallet connection failed.';
+
+      if (error.message === 'Phantom wallet is not installed.') {
+        userFriendlyError = 'Phantom wallet not found. Please install it.';
+      } else if (error.message === 'MetaMask wallet is not installed.') {
+        userFriendlyError = 'MetaMask wallet not found. Please install it.';
+      } else if (error.code === 4001) {
+        // EIP-1193 userRejectedRequest error
+        userFriendlyError = 'Wallet connection request rejected by the user.';
+      }
+      // You could add more specific error checks based on known wallet errors
+      alert(`Connection Error: ${userFriendlyError}`); // Or use a more sophisticated UI for errors
       await signOut(); // Cleanup on failure
     } finally {
       setLoading(false);
