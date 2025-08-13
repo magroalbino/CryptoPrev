@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUsdcBalance(balance);
       console.log(`✅ Balance fetched: ${balance} USDC`);
     } catch(balanceError) {
- console.warn("Failed to fetch real USDC balance for", type, address, ", providing mock balance:", JSON.stringify(balanceError));
+ console.warn(`Failed to fetch real USDC balance for ${type} ${address}, providing mock balance:`, JSON.stringify(balanceError));
        setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
     }
     
