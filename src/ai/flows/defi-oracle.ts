@@ -51,17 +51,19 @@ export async function analyzeDefiProtocols(
   return analyzeDefiProtocolsFlow(input);
 }
 
+const ProtocolSchema = z.object({
+    name: z.string(),
+    tvl: z.number(),
+    apy: z.number(),
+    riskFactor: z.enum(['low', 'medium', 'high']),
+});
+
 const getProtocolDataTool = ai.defineTool(
     {
         name: 'getProtocolData',
         description: 'Get real-time data for top DeFi protocols like Aave, Compound, and Curve.',
         inputSchema: z.object({}),
-        outputSchema: z.array(z.object({
-            name: z.string(),
-            tvl: z.number(),
-            apy: z.number(),
-            riskFactor: z.enum(['low', 'medium', 'high']),
-        })),
+        outputSchema: z.array(ProtocolSchema),
     },
     async () => {
         return getProtocolData();
@@ -109,3 +111,4 @@ const analyzeDefiProtocolsFlow = ai.defineFlow(
     return output!;
   }
 );
+
