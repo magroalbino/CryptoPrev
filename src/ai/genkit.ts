@@ -1,4 +1,4 @@
-import {genkit} from 'genkit';
+import {genkit, Genkit as GenkitType} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
 // Note: The 'ai' object is exported directly. The Google AI plugin
