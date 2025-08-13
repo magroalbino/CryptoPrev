@@ -56,11 +56,11 @@ export async function getPlannerSuggestion(
         language: language as 'en' | 'pt',
     });
     return { data: result, error: null };
-  } catch (e) {
-    console.error(e);
+  } catch (e: any) {
+    console.error("Planner AI Error:", e.message);
     return {
       data: null,
-      error: "Failed to get suggestion from AI. Please try again later.",
+      error: "AI communication failed. Ensure API key is configured correctly in production.",
     };
   }
 }
