@@ -1,3 +1,5 @@
+'use server';
+
 import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
@@ -12,12 +14,12 @@ if (!process.env.GEMINI_API_KEY) {
 
 // Configure Genkit with the Google AI plugin.
 // This single configuration will be used across the application.
-genkit({
+// The `genkit()` function initializes and configures the instance in one step.
+const ai = genkit({
   plugins: [
     googleAI(), // This plugin requires GEMINI_API_KEY to be set in the environment.
   ],
 });
 
-
-// Export the configured genkit instance as 'ai' for consistent use in other files.
-export {genkit as ai};
+// Export the configured instance for consistent use in other files.
+export { ai };
