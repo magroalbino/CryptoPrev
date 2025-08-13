@@ -111,4 +111,3 @@ const analyzeDefiProtocolsFlow = ai.defineFlow(
     return output!;
   }
 );
-
