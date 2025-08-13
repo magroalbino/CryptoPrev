@@ -70,9 +70,6 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // This is the single source of truth for the dashboard's state.
-    // If we have a user address, we attempt to load data.
-    // If we don't, we explicitly clear all data and stop loading.
     if (web3UserAddress) {
       loadDashboardData(web3UserAddress);
     } else {
@@ -133,7 +130,7 @@ export default function Dashboard() {
   
   // Use the loading state from useAuth hook for the initial page load,
   // and the local isDataLoading for subsequent data fetches.
-  if (loading || (isDataLoading && web3UserAddress)) {
+  if (loading) {
     return (
       <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between space-y-2">
@@ -162,7 +159,6 @@ export default function Dashboard() {
     );
   }
 
-  // The single source of truth for being "logged out" is having no web3UserAddress.
   if (!web3UserAddress) {
     return (
       <div className="flex-1 flex justify-center pt-20">
@@ -178,6 +174,25 @@ export default function Dashboard() {
     );
   }
   
+  if (isDataLoading) {
+     return (
+        <div className="flex-1 space-y-6">
+            <div className="flex items-center justify-between space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Skeleton className="h-32" />
+                <Skeleton className="h-32" />
+                <Skeleton className="h-32" />
+                <Skeleton className="h-32" />
+            </div>
+             <div className="text-center p-8">
+                <p>{t('dashboard.loading')}</p>
+            </div>
+        </div>
+     )
+  }
+
   // If we have an address but no data, it means loading failed or the user doc doesn't exist.
   if (!dashboardData) {
      return (
