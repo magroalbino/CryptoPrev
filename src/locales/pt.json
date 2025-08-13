@@ -469,8 +469,23 @@
   },
   "rosca": {
     "title": "Caixa Colaborativa Inteligente (ROSCA)",
-    "description": "Participe de grupos de poupança e crédito rotativo, potencializados por DeFi.",
+    "description": "Participe de grupos de poupança e crédito rotativo, potencializados por DeFi. Escolha um grupo para começar.",
+    "dashboard": {
+      "description": "Monitore o progresso do grupo e gerencie sua participação."
+    },
     "connectWalletPrompt": "Para participar de uma ROSCA, você precisa conectar sua carteira primeiro.",
+    "backToList": "Voltar para a Lista de Grupos",
+    "groupList": {
+      "cycleDescription": "Ciclo de {{count}} meses",
+      "participants": "Participantes",
+      "potValue": "Pote Mensal",
+      "joinButton": "Ver Grupo"
+    },
+    "groupStatus": {
+      "in-progress": "Em Andamento",
+      "forming": "Formando Grupo",
+      "finished": "Finalizado"
+    },
     "cards": {
       "pot": {
         "title": "Pote do Mês",

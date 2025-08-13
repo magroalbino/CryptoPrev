@@ -469,8 +469,23 @@
   },
   "rosca": {
     "title": "Intelligent Collaborative Fund (ROSCA)",
-    "description": "Join savings and credit groups, powered by DeFi.",
+    "description": "Join savings and credit groups, powered by DeFi. Choose a group to get started.",
+    "dashboard": {
+      "description": "Monitor the group's progress and manage your participation."
+    },
     "connectWalletPrompt": "To participate in a ROSCA, you need to connect your wallet first.",
+    "backToList": "Back to Group List",
+    "groupList": {
+      "cycleDescription": "{{count}}-month cycle",
+      "participants": "Participants",
+      "potValue": "Monthly Pot",
+      "joinButton": "View Group"
+    },
+    "groupStatus": {
+      "in-progress": "In Progress",
+      "forming": "Forming Group",
+      "finished": "Finished"
+    },
     "cards": {
       "pot": {
         "title": "Monthly Pot",
