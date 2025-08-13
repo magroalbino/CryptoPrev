@@ -18,7 +18,8 @@ function ensurePluginConfigured() {
     }
     
     // Configure the Google AI plugin. This happens only once.
-    genkit.config({
+    // In Genkit 1.x, the 'ai' object is directly configured.
+    genkit({
       plugins: [
         googleAI(),
       ],
