@@ -2,11 +2,10 @@
 'use client';
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
-import { User, signInWithCustomToken, signOut as firebaseSignOut } from 'firebase/auth';
-import { app, auth as firebaseAuth, isFirebaseEnabled } from './firebase-client';
+import { User, signOut as firebaseSignOut } from 'firebase/auth';
+import { isFirebaseEnabled, auth as firebaseAuth } from './firebase-client';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { ethers } from 'ethers';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import { initializeUser } from '@/app/dashboard/actions';
 
 
@@ -20,7 +19,7 @@ const USDC_CONTRACT_ADDRESS_ETHEREUM = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB
 type WalletType = 'solana' | 'ethereum';
 
 interface AuthContextType {
-  user: User | null;
+  user: User | null; // This will likely remain null, but we keep it for type consistency
   web3UserAddress: string | null;
   walletType: WalletType | null;
   usdcBalance: number | null;
@@ -91,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try { await phantomProvider.disconnect(); } catch (e) { console.error('Phantom disconnect error:', e); }
     }
     
-    if (isFirebaseEnabled && firebaseAuth.currentUser) {
+    if (isFirebaseEnabled && firebaseAuth?.currentUser) {
       try { await firebaseSignOut(firebaseAuth); } catch (e) { console.error('Firebase sign out error:', e); }
     }
 
@@ -112,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log(`✅ User document check/initialization complete for: ${address}`);
     } catch (error) {
       console.error("Critical: Failed to initialize user document on server.", error);
-      // Even if this fails, we can proceed with a degraded experience
+      // Even if this fails, we can proceed with a degraded experience, but this is less likely to fail than auth.
     }
     
     // 2. Fetch balance
@@ -135,27 +134,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
        console.warn("Failed to fetch real USDC balance, providing mock balance:", balanceError);
        setUsdcBalance(1000.00); // Mock balance on failure for demo purposes.
     }
+    
+    // Firebase sign-in is removed from this flow to prevent the "internal" error.
+    // The application will now rely on the web3UserAddress as the primary identifier.
+    setUser(null); // Explicitly set user to null as we are not using Firebase Auth sessions.
 
-    // 3. Attempt Firebase sign-in in the background (non-critical)
-    if (isFirebaseEnabled && app && firebaseAuth) {
-        try {
-            const functions = getFunctions(app);
-            const createCustomToken = httpsCallable(functions, 'createCustomToken');
-            const result = await createCustomToken({ address }) as any;
-            
-            if (!result?.data?.token) {
-              throw new Error('Failed to retrieve custom token from server.');
-            }
-            
-            const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
-            setUser(userCredential.user);
-            console.log(`✅ Firebase sign-in successful: ${userCredential.user.uid}`);
-
-        } catch (error: any) {
-          console.error(`Firebase sign-in failed: ${error.message}. App will continue without Firebase Auth session.`);
-          setUser(null);
-        }
-    }
   }, []);
 
 
