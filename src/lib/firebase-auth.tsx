@@ -140,7 +140,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // --- Effect to handle post-connection logic (Firebase Auth, Balance Fetch) ---
   useEffect(() => {
     const handlePostConnection = async (address: string, type: WalletType) => {
-      // 1. Authenticate with Firebase in the background
+      // 1. Initialize user document in Firestore first. This is more reliable.
+      await initializeUser(address);
+      console.log(`✅ User document initialized for: ${address}`);
+
+      // 2. Authenticate with Firebase in the background
       if (isFirebaseEnabled && app && firebaseAuth && (!firebaseAuth.currentUser || firebaseAuth.currentUser.uid !== address)) {
           try {
               const functions = getFunctions(app);
@@ -154,8 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               const userCredential = await signInWithCustomToken(firebaseAuth, result.data.token);
               setUser(userCredential.user);
               console.log(`✅ Firebase signed in: ${userCredential.user.uid}`);
-              await initializeUser(userCredential.user.uid);
-              console.log(`✅ User document initialized for: ${userCredential.user.uid}`);
+
           } catch (error: any) {
             console.error(`Firebase sign-in failed: ${error.message}`);
             // IMPORTANT: Don't sign out. The wallet is connected, only Firebase auth failed.
@@ -164,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
       }
 
-      // 2. Fetch balance
+      // 3. Fetch balance
       try {
         let balance = 0;
         if (type === 'solana') {
