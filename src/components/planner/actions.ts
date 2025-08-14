@@ -1,0 +1,66 @@
+"use server";
+
+import { z } from "zod";
+import { getFinancialPlan } from "@/ai/flows/personal-financial-planner";
+import type { FinancialPlannerOutput } from "@/ai/flows/personal-financial-planner";
+import { headers } from "next/headers";
+
+const formSchema = z.object({
+    currentAge: z.coerce.number().min(18),
+    retirementAge: z.coerce.number().min(19),
+    initialInvestment: z.coerce.number().min(0),
+    monthlyContribution: z.coerce.number().min(0),
+    desiredMonthlyIncome: z.coerce.number().min(1),
+    riskTolerance: z.enum(["low", "medium", "high"]),
+  });
+
+export type PlannerState = {
+  data: FinancialPlannerOutput | null;
+  error: string | null;
+};
+
+export async function getPlannerSuggestion(
+  prevState: PlannerState,
+  formData: FormData
+): Promise<PlannerState> {
+
+  // Get language from cookie to pass to the AI flow
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie");
+  const i18nextCookie = cookieHeader
+    ?.split(';')
+    .find(c => c.trim().startsWith('i18next='));
+  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'pt';
+
+
+  const validatedFields = formSchema.safeParse({
+    currentAge: formData.get("currentAge"),
+    retirementAge: formData.get("retirementAge"),
+    initialInvestment: formData.get("initialInvestment"),
+    monthlyContribution: formData.get("monthlyContribution"),
+    desiredMonthlyIncome: formData.get("desiredMonthlyIncome"),
+    riskTolerance: formData.get("riskTolerance"),
+  });
+
+  if (!validatedFields.success) {
+    console.error(validatedFields.error.flatten().fieldErrors);
+    return {
+      data: null,
+      error: "Invalid form data. Please check your inputs.",
+    };
+  }
+
+  try {
+    const result = await getFinancialPlan({
+        ...validatedFields.data,
+        language: language as 'en' | 'pt',
+    });
+    return { data: result, error: null };
+  } catch (e: any) {
+    console.error("Planner AI Error:", e.message);
+    return {
+      data: null,
+      error: "AI communication failed. Ensure API key is configured correctly in production.",
+    };
+  }
+}

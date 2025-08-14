@@ -1,0 +1,547 @@
+
+{
+  "header": {
+    "dashboard": "Painel",
+    "oracle": "Oráculo DeFi",
+    "planner": "Planejador IA",
+    "loans": "Empréstimos",
+    "health": "Saúde",
+    "rosca": "Caixa Colaborativa",
+    "faq": "FAQ",
+    "proofOfFunds": "Prova de Fundos",
+    "connectWallet": "Conectar Carteira",
+    "connectPhantom": "Conectar Phantom",
+    "connectMetamask": "Conectar MetaMask",
+    "signOut": "Desconectar",
+    "toggleLanguage": "Mudar idioma",
+    "english": "Inglês",
+    "portuguese": "Português"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "loading": "Carregando o painel...",
+    "connectWalletPrompt": {
+      "title": "Conecte Sua Carteira para Começar",
+      "description": "Conecte sua carteira para ver seu painel, gerenciar seus fundos e começar a planejar sua aposentadoria."
+    },
+    "cards": {
+      "balance": {
+        "title": "Saldo para Rendimento (Stablecoin)",
+        "description": "75% dos depósitos para geração de rendimento.",
+        "notApplicable": "N/A",
+        "notApplicableDescription": "Conecte uma carteira Solana"
+      },
+      "rewards": {
+        "title": "Recompensas Acumuladas",
+        "description": "Total desde o início"
+      },
+      "btcReserve": {
+        "title": "Reserva em Bitcoin",
+        "description": "18.75% dos depósitos para valorização a longo prazo."
+      },
+      "bnbReserve": {
+        "title": "Reserva de Staking BNB",
+        "description": "6.25% dos depósitos para rendimento de staking."
+      },
+      "lockup": {
+        "title": "Plano de Investimento",
+        "value_one": "{{count}} Mês",
+        "value_other": "{{count}} Meses",
+        "description": "Período configurável"
+      },
+      "protocol": {
+        "title": "Estratégia Ativa",
+        "description": "APY Atual: {{apy}}%",
+        "defaultStrategy": "Estratégia CryptoPrev"
+      }
+    },
+    "rewards": {
+      "title": "Rendimento Mensal",
+      "description": "Seus ganhos disponíveis para este mês.",
+      "available": "Disponível para Saque",
+      "claimButton": "Sacar Rendimento Mensal",
+      "claimToast": {
+        "title": "Rendimento Sacado!",
+        "description": "Você sacou ${{amount}} com sucesso. O valor foi adicionado ao seu saldo."
+      }
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "description": "Marcos que você alcançou em sua jornada.",
+      "items": {
+        "ant": {
+          "name": "Formiga",
+          "description": "Contribua por 7 dias seguidos."
+        },
+        "turtle": {
+          "name": "Tartaruga",
+          "description": "Contribua por 30 dias seguidos."
+        },
+        "elephant": {
+          "name": "Elefante",
+          "description": "Contribua por 100 dias seguidos."
+        },
+        "eagle": {
+          "name": "Águia",
+          "description": "Contribua por 365 dias seguidos."
+        }
+      },
+      "empty": {
+        "title": "Sua Aventura te Espera!",
+        "description": "Comece a investir para desbloquear conquistas."
+      }
+    },
+    "charts": {
+      "yield": {
+        "title": "Rendimento Histórico (APY)",
+        "description": "Desempenho nos últimos 6 meses."
+      },
+      "growth": {
+        "title": "Crescimento do Investimento",
+        "description": "Crescimento projetado do seu investimento inicial."
+      }
+    },
+    "history": {
+      "title": "Histórico de Transações",
+      "description": "Um registro dos seus depósitos e rendimentos.",
+      "yieldTab": "Histórico de Rendimentos",
+      "depositsTab": "Histórico de Depósitos",
+      "table": {
+        "date": "Data",
+        "protocol": "Estratégia",
+        "amount": "Valor",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "paid": "Pago",
+        "completed": "Concluído"
+      },
+      "empty": {
+        "yieldTitle": "Nenhum Histórico de Rendimentos",
+        "yieldDescription": "Seus ganhos mensais aparecerão aqui assim que forem gerados.",
+        "depositTitle": "Nenhum Depósito Ainda",
+        "depositDescription": "Faça seu primeiro depósito para ver seu histórico de transações."
+      }
+    }
+  },
+  "deposit": {
+    "button": "Depositar Fundos",
+    "title": "Depositar Fundos",
+    "description": "Escolha seu método preferido para adicionar fundos à sua conta CryptoPrev.",
+    "tabs": {
+      "card": "Cartão",
+      "crypto": "Cripto"
+    },
+    "pix": {
+      "scan": "Escaneie o QR code com o aplicativo do seu banco para pagar.",
+      "simulation": "Esta é uma transação simulada."
+    },
+    "card": {
+      "number": "Número do Cartão",
+      "expires": "Expira em"
+    },
+    "crypto": {
+      "coin": "Moeda",
+      "selectPlaceholder": "Selecione a stablecoin",
+      "amount": "Valor ($)",
+      "balance": "Seu Saldo"
+    },
+    "confirmButton": "Confirmar Depósito",
+    "toast": {
+      "success": {
+        "title": "Depósito Bem-sucedido",
+        "description": "Seus fundos foram recebidos e estão sendo aplicados."
+      }
+    }
+  },
+  "withdraw": {
+    "button": "Sacar Fundos",
+    "title": "Sacar Fundos",
+    "description": "Insira o valor que deseja sacar para a sua carteira conectada.",
+    "amountLabel": "Valor (USDC)",
+    "addressLabel": "Endereço da Carteira",
+    "notConnected": "Não conectado",
+    "addressDescription": "Os fundos serão enviados para a sua carteira conectada.",
+    "availableBalance": "Saldo disponível",
+    "confirmButton": "Confirmar Saque",
+    "locked": {
+      "title": "Saques Bloqueados",
+      "description": "Seus fundos estão bloqueados em um plano de investimento por {{count}} meses. Saques estarão disponíveis após o fim do período."
+    },
+    "toast": {
+      "success": {
+        "title": "Saque Iniciado",
+        "description": "Seus fundos (${{amount}}) estão sendo processados e serão enviados para sua carteira."
+      },
+      "error": {
+        "title": "Falha no Saque",
+        "invalidAmount": "Por favor, insira um valor válido para sacar.",
+        "insufficientBalance": "Você não pode sacar mais do que seu saldo disponível.",
+        "fundsLocked": "Seus fundos estão atualmente bloqueados em um plano de investimento."
+      }
+    }
+  },
+  "lockup": {
+    "title": "Configure Seu Plano",
+    "description": "Escolha o plano que melhor se adapta aos seus objetivos. Planos mais longos oferecem rendimentos maiores.",
+    "plans": {
+      "flexible": {
+        "title": "Flexível",
+        "description": "3 meses. Rendimento básico, máxima flexibilidade."
+      },
+      "strategic": {
+        "title": "Estratégico",
+        "description": "6 meses. Uma abordagem equilibrada para o crescimento."
+      },
+      "committed": {
+        "title": "Comprometido",
+        "description": "1 ano. Melhores retornos por um compromisso sólido."
+      },
+      "visionary": {
+        "title": "Visionário",
+        "description": "3 anos. Rendimentos mais altos para metas de longo prazo."
+      },
+      "retirement": {
+        "title": "Aposentadoria",
+        "description": "5 anos. Maximize seu potencial de aposentadoria."
+      },
+      "apy": "APY Est."
+    },
+    "updateButton": "Atualizar Plano",
+    "toast": {
+      "success": {
+        "title": "Plano Atualizado",
+        "description": "Seu novo período de carência é de {{count}} meses."
+      }
+    }
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "description": "Seu guia para o mundo de CryptoPrev e Finanças Descentralizadas, com o poder da IA.",
+    "guide": {
+      "title": "Guia IA",
+      "description": "Tem uma pergunta diferente? Pergunte diretamente ao nosso guia IA!",
+      "placeholder": "Por exemplo: Como o APY é calculado?",
+      "askButton": "Perguntar ao Guia",
+      "thinking": "Pensando...",
+      "answerTitle": "Resposta do Guia IA"
+    },
+    "topics": {
+      "whatIsCryptoPrev": "Qual o objetivo do CryptoPrev?",
+      "howDoesItWork": "Como o CryptoPrev gera rendimentos?",
+      "whatIsDeFi": "O que é DeFi?",
+      "whatIsApy": "O que é APY (Rendimento Percentual Anual)?",
+      "whatAreSmartContracts": "O que são Contratos Inteligentes?",
+      "whatAreStablecoins": "O que são Stablecoins?",
+      "whatAreTheRisks": "Quais são os riscos de DeFi?",
+      "whatIsYieldFarming": "O que é Yield Farming?"
+    },
+    "error": "Desculpe, ocorreu um erro ao buscar a explicação. Por favor, tente novamente."
+  },
+  "oracle": {
+    "title": "Oráculo DeFi",
+    "description": "Deixe nossa IA encontrar as melhores estratégias para maximizar seus ganhos.",
+    "form": {
+      "title": "Parâmetros do Oráculo",
+      "description": "Forneça seus critérios para obter sugestões de DeFi com IA.",
+      "stablecoin": {
+        "label": "Stablecoin",
+        "placeholder": "Selecione uma stablecoin"
+      },
+      "amount": {
+        "label": "Valor do Investimento ($)"
+      },
+      "risk": {
+        "label": "Tolerância ao Risco",
+        "low": "Baixo",
+        "medium": "Médio",
+        "high": "Alto"
+      },
+      "analyzingButton": "Analisando...",
+      "getSuggestionsButton": "Obter Sugestões",
+      "error": {
+        "title": "Ocorreu um erro"
+      }
+    },
+    "results": {
+      "strategy": "Estratégia",
+      "monthlyYield": "Rendimento Mensal Est.",
+      "basedOnInvestment": "Baseado no valor do seu investimento.",
+      "risks": "Riscos Potenciais",
+      "selectButton": "Selecionar Estratégia",
+      "toast": {
+        "title": "Estratégia Selecionada!",
+        "description": "{{protocol}} agora é sua estratégia ativa. Verifique seu painel."
+      }
+    },
+    "placeholder": {
+      "title": "Suas sugestões com IA aparecerão aqui.",
+      "description": "Envie seus critérios para ver a mágica acontecer."
+    }
+  },
+  "planner": {
+    "title": "Planejador Financeiro com IA",
+    "description": "Receba um plano de aposentadoria personalizado com o poder da IA.",
+    "form": {
+      "title": "Seus Objetivos Financeiros",
+      "description": "Conte-nos sobre seus objetivos, e nossa IA criará um plano personalizado para você.",
+      "currentAge": {
+        "label": "Idade Atual"
+      },
+      "retirementAge": {
+        "label": "Idade de Aposentadoria Desejada"
+      },
+      "initialInvestment": {
+        "label": "Investimento Inicial ($)"
+      },
+      "monthlyContribution": {
+        "label": "Contribuição Mensal ($)"
+      },
+      "desiredMonthlyIncome": {
+        "label": "Renda Mensal Desejada ($)"
+      },
+      "analyzingButton": "Gerando Plano...",
+      "getPlanButton": "Obter Meu Plano",
+      "error": {
+        "title": "Ocorreu um erro"
+      }
+    },
+    "results": {
+      "title": "Seu Plano Personalizado com IA",
+      "description": "Aqui está o plano passo a passo que nossa IA gerou para seus objetivos.",
+      "feasible": {
+        "title": "Meta no Caminho Certo!"
+      },
+      "infeasible": {
+        "title": "Ação Recomendada"
+      },
+      "advice": {
+        "title": "Conselho Prático"
+      },
+      "projectedValue": {
+        "label": "Valor Projetado na Aposentadoria"
+      },
+      "projectedIncome": {
+        "label": "Renda Mensal Projetada"
+      },
+      "growthChart": {
+        "title": "Crescimento Projetado",
+        "description": "Este gráfico ilustra seu potencial de crescimento de investimento ao longo do tempo."
+      },
+      "ageAbbr": "Idade {{age}}",
+      "tooltipLabel": "${{value}} aos {{age}} anos"
+    },
+    "placeholder": {
+      "title": "Seu plano com IA aparecerá aqui.",
+      "description": "Preencha seus objetivos financeiros para gerar seu plano de aposentadoria personalizado."
+    }
+  },
+  "proofOfFunds": {
+    "title": "Prova de Fundos e Transparência",
+    "description": "Acreditamos em transparência total. Aqui está uma visão geral ao vivo das principais métricas da nossa plataforma.",
+    "totalReserves": "Valor Total Bloqueado (TVL)",
+    "btcReserves": "Reserva Total em Bitcoin",
+    "bnbReserves": "Reserva Total em BNB",
+    "activeUsers": "Usuários Ativos",
+    "reservesDescription": "Total de stablecoins atualmente investido. Este capital está ativamente gerando rendimentos.",
+    "btcReservesDescription": "Mantido como uma reserva de valor de longo prazo com alto potencial de crescimento, garantindo a sustentabilidade do sistema.",
+    "bnbReservesDescription": "Gera receita adicional através de staking e apoia as operações da plataforma.",
+    "usersDescription": "Número de usuários ativos gerando rendimento na plataforma.",
+    "onChain": {
+      "title": "Verificação On-Chain",
+      "description": "Verifique nossas reservas diretamente na blockchain usando os endereços de carteira abaixo."
+    }
+  },
+  "health": {
+    "title": "Poupança Saúde",
+    "description": "Acumule créditos para cuidados médicos particulares, com a segurança da blockchain.",
+    "credits": "Créditos",
+    "balance": {
+      "title": "Saldo de Créditos de Saúde"
+    },
+    "services": {
+      "title": "Serviços Disponíveis",
+      "description": "Use seus créditos para acessar serviços médicos sem burocracia.",
+      "general": {
+        "name": "Consulta Médica Geral",
+        "description": "Consulta online ou presencial com um clínico geral."
+      },
+      "psychology": {
+        "name": "Sessão de Psicologia",
+        "description": "Cuide da sua saúde mental com um profissional especializado."
+      },
+      "nutrition": {
+        "name": "Nutricionista",
+        "description": "Crie um plano alimentar personalizado com um especialista."
+      },
+      "lab": {
+        "name": "Exames Laboratoriais",
+        "description": "Realize uma ampla gama de exames e check-ups laboratoriais."
+      },
+      "useButton": "Usar Créditos"
+    },
+    "history": {
+      "title": "Histórico de Transações",
+      "description": "Um registro de seus depósitos e uso de serviços.",
+      "deposit": "Depósito de Créditos",
+      "table": {
+        "date": "Data",
+        "description": "Descrição",
+        "amount": "Valor (Créditos)"
+      },
+      "empty": {
+        "title": "Nenhum Histórico de Transações",
+        "description": "Seus depósitos e uso de serviços aparecerão aqui."
+      }
+    },
+    "toast": {
+      "success": {
+        "title": "Serviço Adquirido!",
+        "description": "Você utilizou seus créditos com sucesso para: {{service}}."
+      },
+      "error": {
+        "title": "Créditos Insuficientes",
+        "description": "Você não tem créditos suficientes para adquirir este serviço."
+      }
+    }
+  },
+  "loans": {
+    "title": "Empréstimos com Garantia Cripto",
+    "description": "Alavanque seus ativos. Pegue empréstimos usando seus investimentos como garantia, sem precisar vendê-los.",
+    "connectWalletPrompt": {
+      "description": "Para solicitar um empréstimo, você precisa conectar sua carteira primeiro. Isso nos permite verificar sua garantia disponível.",
+      "cancel": "Cancelar"
+    },
+    "cards": {
+      "collateral": {
+        "title": "Valor em Garantia",
+        "description": "Total de ativos disponíveis para usar como garantia."
+      },
+      "available": {
+        "title": "Disponível para Empréstimo",
+        "description": "Baseado em uma Relação Empréstimo-Valor (LTV) de 50%."
+      },
+      "interest": {
+        "title": "Taxa de Juros",
+        "description": "Taxa anual fixa para todos os empréstimos."
+      }
+    },
+    "request": {
+      "title": "Solicitar Empréstimo",
+      "description": "Insira o valor que deseja pegar emprestado.",
+      "amountLabel": "Valor do Empréstimo ($)",
+      "button": "Solicitar Empréstimo"
+    },
+    "history": {
+      "title": "Empréstimos Ativos",
+      "description": "Um resumo dos seus empréstimos pendentes.",
+      "table": {
+        "date": "Data",
+        "amount": "Valor",
+        "interest": "Taxa de Juros",
+        "status": "Status"
+      },
+      "statusLabels": {
+        "active": "Ativo",
+        "paid": "Pago"
+      },
+      "empty": {
+        "title": "Nenhum Empréstimo Ativo",
+        "description": "Solicite um empréstimo para ver seu histórico aqui."
+      }
+    },
+    "simulator": {
+      "title": "Simulador de Empréstimo",
+      "termLabel": "Prazo do Empréstimo: {{term}} meses",
+      "monthlyPayment": "Pagamento Mensal Est.",
+      "totalInterest": "Total de Juros Pagos"
+    },
+    "toast": {
+      "success": {
+        "title": "Empréstimo Solicitado com Sucesso",
+        "description": "Seu empréstimo de ${{amount}} foi aprovado e financiado."
+      },
+      "error": {
+        "title": "Falha na Solicitação de Empréstimo",
+        "insufficientCollateral": "Sua garantia disponível não é suficiente para este valor de empréstimo."
+      }
+    }
+  },
+  "rosca": {
+    "title": "Caixa Colaborativa Inteligente (ROSCA)",
+    "description": "Participe de grupos de poupança e crédito rotativo, potencializados por DeFi. Escolha um grupo para começar.",
+    "dashboard": {
+      "description": "Monitore o progresso do grupo e gerencie sua participação."
+    },
+    "connectWalletPrompt": "Para participar de uma ROSCA, você precisa conectar sua carteira primeiro.",
+    "backToList": "Voltar para a Lista de Grupos",
+    "groupList": {
+      "cycleDescription": "Ciclo de {{count}} meses",
+      "participants": "Participantes",
+      "potValue": "Pote Mensal",
+      "joinButton": "Ver Grupo"
+    },
+    "groupStatus": {
+      "in-progress": "Em Andamento",
+      "forming": "Formando Grupo",
+      "finished": "Finalizado"
+    },
+    "cards": {
+      "pot": {
+        "title": "Pote do Mês",
+        "description": "Total arrecadado neste mês."
+      },
+      "next": {
+        "title": "Próximo a Receber",
+        "description": "Ciclo {{month}} de {{total}}."
+      },
+      "extraYield": {
+        "title": "Rendimento Extra do Grupo",
+        "description": "De investimentos de curto prazo."
+      }
+    },
+    "participants": {
+      "title": "Participantes do Grupo ROSCA",
+      "description": "Status do ciclo atual.",
+      "description_cycle": "Este grupo tem 12 participantes em um ciclo de 12 meses. Cada membro contribui mensalmente e recebe o pote completo uma vez durante o ciclo, que se renova ao final.",
+      "table": {
+        "order": "Ordem",
+        "name": "Nome",
+        "contribution": "Contribuição",
+        "received": "Recebeu"
+      },
+      "status": {
+        "paid": "Pago",
+        "waiting": "Aguardando"
+      }
+    },
+    "actions": {
+      "title": "Suas Ações",
+      "description": "Contribua para o ciclo ou otimize seus fundos.",
+      "contributeButton": "Contribuir com ${{amount}}"
+    },
+    "reallocate": {
+      "title": "Realocar Saque Futuro",
+      "description": "Ganhe rendimento extra emprestando seu saque futuro.",
+      "bonusYield": "Bônus de APY na Carteira Principal"
+    },
+    "investment": {
+      "title": "Gestor de Investimentos IA",
+      "description": "Performance dos fundos ociosos do grupo."
+    },
+    "toast": {
+      "contribution": {
+        "title": "Contribuição Realizada!",
+        "description": "Sua contribuição de ${{amount}} foi registrada."
+      },
+      "reallocateOn": {
+        "title": "Realocação Ativada!",
+        "description": "Seu saque futuro agora está rendendo extra. Veja o bônus no seu painel."
+      },
+      "reallocateOff": {
+        "title": "Realocação Desativada",
+        "description": "Seu saque futuro será recebido normalmente."
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+
+'use client';
+
+import './globals.css';
+import AppHeader from '@/components/layout/header';
+import {Toaster} from '@/components/ui/toaster';
+import { cn } from '@/lib/utils';
+import { AuthProvider } from '@/lib/firebase-auth';
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="dark" style={{colorScheme: 'dark'}} suppressHydrationWarning>
+      <head>
+        <title>CryptoPrev - Smart Yields</title>
+        <meta name="description" content="Maximize your stablecoin yield with our AI-powered DeFi strategies." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        ></link>
+      </head>
+      <body className={cn("font-sans antialiased", "animated-gradient")}>
+        <AuthProvider>
+          <div className="flex min-h-screen w-full flex-col">
+            <AppHeader />
+            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+              {children}
+            </main>
+          </div>
+          <Toaster />
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}

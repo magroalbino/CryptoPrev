@@ -1,0 +1,284 @@
+
+'use client';
+
+import { useActionState, useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Loader2, Sparkles, AlertTriangle, BadgePercent, CheckCircle, Wallet } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { getOracleSuggestion } from '@/app/oracle/actions';
+import type { OracleState } from '@/app/oracle/actions';
+
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
+import { useAppTranslation } from '@/hooks/use-app-translation';
+import { useAuth } from '@/lib/firebase-auth';
+
+const formSchema = z.object({
+  stablecoin: z.string().min(1, 'Please select a stablecoin.'),
+  riskTolerance: z.enum(['low', 'medium', 'high']),
+  investmentAmount: z.coerce
+    .number({ invalid_type_error: 'Please enter a valid amount' })
+    .min(100, 'Minimum investment is $100.'),
+});
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  const { t } = useAppTranslation();
+
+  return (
+    <Button type="submit" disabled={pending} size="lg" className="w-full">
+      {pending ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {t('oracle.form.analyzingButton')}
+        </>
+      ) : (
+        <>
+          <Sparkles className="mr-2 h-4 w-4" />
+          {t('oracle.form.getSuggestionsButton')}
+        </>
+      )}
+    </Button>
+  );
+}
+
+export default function OracleForm() {
+  const { toast } = useToast();
+  const { t } = useAppTranslation();
+  const { web3UserAddress, connectWallet } = useAuth();
+  const initialState: OracleState = { data: null, error: null };
+  const [state, formAction] = useActionState(getOracleSuggestion, initialState);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      stablecoin: 'USDC',
+      riskTolerance: 'medium',
+      investmentAmount: 1000,
+    },
+  });
+
+  useEffect(() => {
+    if (state.error) {
+      toast({
+        variant: 'destructive',
+        title: t('oracle.form.error.title'),
+        description: state.error,
+      });
+    }
+  }, [state.error, toast, t]);
+  
+  const handleSelectStrategy = (suggestion: any) => {
+    const strategyToSave = {
+      name: suggestion.protocolName,
+      apy: suggestion.apy / 100, // Convert percentage to decimal
+    };
+    localStorage.setItem('selectedStrategy', JSON.stringify(strategyToSave));
+    toast({
+      title: t('oracle.results.toast.title'),
+      description: t('oracle.results.toast.description', { protocol: suggestion.protocolName }),
+    })
+  }
+
+  return (
+    <div className="grid gap-8">
+      <Card className="brutalist-shadow">
+        <Form {...form}>
+          <form action={formAction}>
+            <CardHeader>
+              <CardTitle>{t('oracle.form.title')}</CardTitle>
+              <CardDescription>
+                {t('oracle.form.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="stablecoin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">{t('oracle.form.stablecoin.label')}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        name={field.name}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-2">
+                            <SelectValue placeholder={t('oracle.form.stablecoin.placeholder')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="border-2">
+                          <SelectItem value="USDC">USDC</SelectItem>
+                          <SelectItem value="USDT">USDT</SelectItem>
+                          <SelectItem value="DAI">DAI</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="investmentAmount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">{t('oracle.form.amount.label')}</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="e.g. 1000" {...field} className="border-2"/>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="riskTolerance"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="font-bold">{t('oracle.form.risk.label')}</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex h-10 items-center space-x-4 pt-2"
+                          name={field.name}
+                        >
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="low" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {t('oracle.form.risk.low')}
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="medium" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {t('oracle.form.risk.medium')}
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="high" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {t('oracle.form.risk.high')}
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </CardContent>
+            <CardFooter>
+                <SubmitButton />
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
+      
+      {state.data && state.data.suggestions.length > 0 ? (
+        <div className="grid gap-6 lg:grid-cols-3">
+            {state.data.suggestions.map((suggestion, index) => (
+                <Card key={index} className="brutalist-shadow flex flex-col">
+                    <CardHeader>
+                        <div className="flex flex-col gap-4 rounded-lg sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <CardTitle className="text-2xl">{suggestion.protocolName}</CardTitle>
+                            <CardDescription>{suggestion.lockupPeriod}</CardDescription>
+                          </div>
+                          <div className="flex items-center gap-2 rounded-sm border-2 border-foreground bg-accent px-4 py-2 text-accent-foreground brutalist-shadow">
+                            <BadgePercent className="h-6 w-6" />
+                            <span className="text-2xl font-bold">{suggestion.apy.toFixed(2)}% APY</span>
+                          </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6 flex-grow">
+                        <Separator className="border-t-2 border-dashed border-foreground/50"/>
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-lg">{t('oracle.results.strategy')}</h4>
+                            <p className="text-muted-foreground text-sm">{suggestion.strategyDescription}</p>
+                        </div>
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-lg">{t('oracle.results.monthlyYield')}</h4>
+                            <p className="text-3xl font-bold text-accent">${suggestion.estimatedMonthlyYield.toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">{t('oracle.results.basedOnInvestment')}</p>
+                        </div>
+                        <Separator className="border-t-2 border-dashed border-foreground/50"/>
+                         <div>
+                            <h4 className="font-bold text-lg">{t('oracle.results.risks')}</h4>
+                            <div className="mt-2 flex items-start gap-3 border-2 border-destructive/50 bg-destructive/10 p-4 text-sm">
+                              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
+                              <p className="text-foreground">{suggestion.risks}</p>
+                            </div>
+                          </div>
+                    </CardContent>
+                    <CardFooter>
+                       <Button
+                          onClick={() => {
+                            if (web3UserAddress) {
+                              handleSelectStrategy(suggestion);
+                            } else {
+                              connectWallet('solana');
+                            }
+                          }}
+                          className='w-full'
+                          disabled={!web3UserAddress}
+                        >
+                          <CheckCircle className="mr-2"/>
+                          {t('oracle.results.selectButton')}
+                       </Button>
+                    </CardFooter>
+                </Card>
+            ))}
+        </div>
+      ) : (
+          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-sm border-2 border-dashed border-muted-foreground/30 p-12 text-center">
+              <Sparkles className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-semibold">{t('oracle.placeholder.title')}</h3>
+              <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                {t('oracle.placeholder.description')}
+              </p>
+          </div>
+      )}
+    </div>
+  );
+}

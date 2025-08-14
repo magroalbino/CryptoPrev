@@ -1,0 +1,79 @@
+'use server';
+
+/**
+ * @fileOverview An AI guide that answers user questions about CryptoPrev and DeFi.
+ *
+ * - askAiGuide - A function that handles answering user questions.
+ * - AiGuideOutput - The return type for the askAiGuide function.
+ */
+
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
+import { headers } from "next/headers";
+
+const AiGuideInputSchema = z.object({
+  question: z.string().describe('The user\'s question.'),
+  language: z.enum(['en', 'pt']).optional().default('pt').describe('The language for the response.'),
+});
+
+const AiGuideOutputSchema = z.object({
+  answer: z
+    .string()
+    .describe('A helpful and clear answer to the user\'s question, in a friendly tone.'),
+});
+export type AiGuideOutput = z.infer<typeof AiGuideOutputSchema>;
+
+
+const prompt = ai.definePrompt({
+  name: 'aiGuidePrompt',
+  input: { schema: AiGuideInputSchema },
+  output: { schema: AiGuideOutputSchema },
+  prompt: `You are CryptoPrev's AI Guide, a friendly and knowledgeable assistant for a DeFi retirement platform.
+Your goal is to answer user questions clearly and simply. Avoid complex jargon.
+If the question is about a financial concept, use an analogy to help explain it.
+
+IMPORTANT: Generate your entire response in the following language: {{{language}}}.
+
+User's question: "{{{question}}}"`,
+});
+
+const aiGuideFlow = ai.defineFlow(
+  {
+    name: 'aiGuideFlow',
+    inputSchema: AiGuideInputSchema,
+    outputSchema: AiGuideOutputSchema,
+  },
+  async (input) => {
+    const { output } = await prompt(input);
+    return output!;
+  }
+);
+
+
+// Action for the form
+export async function askAiGuide(
+  prevState: { answer: string | null; error: string | null },
+  formData: FormData
+) {
+  const question = formData.get('question') as string;
+
+  if (!question || question.trim().length < 5) {
+    return { answer: null, error: 'Please ask a more detailed question.' };
+  }
+  
+  // Get language from cookie to pass to the AI flow
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie");
+  const i18nextCookie = cookieHeader
+    ?.split(';')
+    .find(c => c.trim().startsWith('i18next='));
+  const language = i18nextCookie ? i18nextCookie.split('=')[1] : 'pt';
+
+  try {
+    const result = await aiGuideFlow({ question, language: language as 'en' | 'pt' });
+    return { answer: result.answer, error: null };
+  } catch (e: any) {
+    console.error("AI Guide Error:", e.message);
+    return { answer: null, error: 'AI communication failed. Ensure API key is configured correctly in production.' };
+  }
+}

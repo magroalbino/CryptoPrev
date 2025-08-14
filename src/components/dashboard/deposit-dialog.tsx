@@ -1,0 +1,158 @@
+
+'use client';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Landmark, Wallet, CreditCard } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useAppTranslation } from '@/hooks/use-app-translation';
+import { useAuth } from '@/lib/firebase-auth';
+
+
+const PixIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path d="M12.0002 6.85718L7.71452 11.1429C7.52737 11.3301 7.42285 11.5858 7.42285 11.8516V16.1429C7.42285 16.5742 7.59014 16.9881 7.88299 17.281C8.17585 17.5738 8.58972 17.7411 9.02102 17.7411H9.59952C9.86534 17.7411 10.121 17.6366 10.3082 17.4495L12.0002 15.7572L14.8573 12.8943L16.2859 11.4572M12.0002 6.85718L13.7145 8.57147L15.4288 10.2858M12.0002 6.85718C12.5525 6.30491 13.2982 6 14.0859 6H14.9788C15.8078 6 16.6022 6.32843 17.198 6.92421C17.7938 7.52 18.1222 8.31435 18.1222 9.14335V10.0362C18.1222 10.8239 17.8173 11.5697 17.265 12.1219L16.2859 13.1029M16.2859 11.4572L15.4288 12.2858M16.2859 11.4572C15.7336 10.9049 14.9879 10.5714 14.1995 10.5714H13.7145M9.02102 6.2589C8.42523 6.85468 8.1222 7.64903 8.1222 8.47804V10.0362C8.1222 10.5422 8.27371 11.033 8.55394 11.4429L9.59952 13.1429L10.8859 11.8572L13.7145 9.00004" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+)
+
+export default function DepositDialog({ onDeposit, ...triggerProps }: { onDeposit: (amount: number) => void } & React.ComponentProps<typeof Button>) {
+  const [open, setOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('1000');
+  const { t } = useAppTranslation();
+  const { usdcBalance } = useAuth();
+
+
+  const handleConfirmDeposit = () => {
+    const amount = parseFloat(depositAmount);
+    if (!isNaN(amount) && amount > 0) {
+        onDeposit(amount);
+    }
+    setOpen(false);
+  };
+  
+  const handleSetMax = () => {
+    if (usdcBalance !== null) {
+      setDepositAmount(String(usdcBalance));
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button {...triggerProps}>
+          <Landmark className="mr-2" /> {t('deposit.button')}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>{t('deposit.title')}</DialogTitle>
+          <DialogDescription>
+            {t('deposit.description')}
+          </DialogDescription>
+        </DialogHeader>
+        <Tabs defaultValue="crypto" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pix"><PixIcon className="mr-2 text-primary-foreground"/> PIX</TabsTrigger>
+            <TabsTrigger value="card"><CreditCard className="mr-2"/> {t('deposit.tabs.card')}</TabsTrigger>
+            <TabsTrigger value="crypto"><Wallet className="mr-2"/> {t('deposit.tabs.crypto')}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="pix">
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+                <p className="text-sm text-muted-foreground">{t('deposit.pix.scan')}</p>
+                <div className="rounded-md border-2 border-dashed border-muted-foreground/50 p-2 bg-background">
+                    <Image src="https://placehold.co/200x200.png" alt="PIX QR Code" width={200} height={200} data-ai-hint="qr code"/>
+                </div>
+                <p className="text-xs text-muted-foreground">{t('deposit.pix.simulation')}</p>
+            </div>
+          </TabsContent>
+          <TabsContent value="card">
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="card-number">{t('deposit.card.number')}</Label>
+                <Input id="card-number" placeholder="0000 0000 0000 0000" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="expiry-date">{t('deposit.card.expires')}</Label>
+                  <Input id="expiry-date" placeholder="MM/YY" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cvc">CVC</Label>
+                  <Input id="cvc" placeholder="123" />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="amount-card">{t('deposit.crypto.amount')}</Label>
+                  <Input id="amount-card" type="number" defaultValue="1000" />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="crypto">
+             <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="stablecoin" className="text-right">
+                  {t('deposit.crypto.coin')}
+                </Label>
+                <Select defaultValue="usdc">
+                  <SelectTrigger id="stablecoin" className="col-span-3">
+                    <SelectValue placeholder={t('deposit.crypto.selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="usdc">USDC</SelectItem>
+                    <SelectItem value="dai" disabled>DAI (em breve)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="amount-crypto" className="text-right">
+                  {t('deposit.crypto.amount')}
+                </Label>
+                <div className="col-span-3 relative">
+                   <Input
+                    id="amount-crypto"
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    className="pr-12"
+                    />
+                    <Button variant="ghost" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-7" onClick={handleSetMax}>
+                        Max
+                    </Button>
+                </div>
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                    <div/>
+                    <div className="col-span-3 text-xs text-muted-foreground">
+                        {t('deposit.crypto.balance')}: {usdcBalance !== null ? `${usdcBalance.toFixed(2)} USDC` : t('withdraw.notConnected')}
+                    </div>
+                </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+        <DialogFooter>
+          <Button type="submit" onClick={handleConfirmDeposit} className="w-full">
+            {t('deposit.confirmButton')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

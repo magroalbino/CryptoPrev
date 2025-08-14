@@ -1,0 +1,168 @@
+// src/app/dashboard/actions.ts
+'use server';
+
+import { z } from 'zod';
+import { getFirebaseAdmin } from '@/lib/firebase-server';
+import { FieldValue } from 'firebase-admin/firestore';
+import { revalidatePath } from 'next/cache';
+import { getDynamicApy } from '@/lib/apy';
+
+const depositSchema = z.object({
+  amount: z.number().min(1, 'Deposit amount must be greater than 0.'),
+  userId: z.string().min(1, 'User ID is required.'),
+});
+
+const MOCK_BTC_PRICE = 65000;
+const MOCK_BNB_PRICE = 580; // Mock BNB price
+
+/**
+ * Ensures a user document exists in Firestore. If not, it creates one with default values.
+ * This function is critical for the first-time login flow.
+ * @param userId - The UID of the user from Firebase Auth.
+ */
+export async function initializeUser(userId: string) {
+    const { db, isFirebaseEnabled } = getFirebaseAdmin();
+    if (!isFirebaseEnabled) return;
+
+    try {
+        const userRef = db.collection('users').doc(userId);
+        const doc = await userRef.get();
+
+        if (!doc.exists) {
+            console.log(`Initializing new user document for UID: ${userId}`);
+            const defaultLockup = 12;
+            const defaultApy = getDynamicApy(defaultLockup);
+
+            const newUser = {
+                currentBalance: 0,
+                bitcoinReserve: 0,
+                bnbReserve: 0,
+                lockupPeriod: defaultLockup,
+                activeProtocol: 'CryptoPrev Strategy',
+                activeProtocolApy: defaultApy,
+                transactions: [],
+                achievements: [],
+            };
+            await userRef.set(newUser);
+        }
+    } catch (error) {
+        console.error("Error initializing user:", error);
+    }
+}
+
+
+export async function handleDeposit(userId: string, amount: number) {
+  const { db, isFirebaseEnabled } = getFirebaseAdmin();
+  const validated = depositSchema.safeParse({ amount, userId });
+
+  if (!validated.success || !isFirebaseEnabled) {
+    console.error('Validation failed or Firebase is not enabled.');
+    return { success: false, error: 'Invalid data or server misconfiguration.' };
+  }
+
+  const { amount: depositAmount } = validated.data;
+  
+  // New allocation: 75% in use (stablecoin), 25% in reserve.
+  // Reserve: 75% BTC, 25% BNB.
+  const stablecoinAllocation = depositAmount * 0.75;      // 75% of total
+  const btcAllocation = depositAmount * 0.25 * 0.75;    // 18.75% of total
+  const bnbAllocation = depositAmount * 0.25 * 0.25;     // 6.25% of total
+
+
+  const bnbAmount = bnbAllocation / MOCK_BNB_PRICE;
+  const btcAmount = btcAllocation / MOCK_BTC_PRICE;
+
+  try {
+    const userRef = db.collection('users').doc(userId);
+
+    // Use a transaction to ensure atomic updates
+    await db.runTransaction(async (transaction) => {
+      transaction.set(
+        userRef,
+        {
+          currentBalance: FieldValue.increment(stablecoinAllocation),
+          bitcoinReserve: FieldValue.increment(btcAmount),
+          bnbReserve: FieldValue.increment(bnbAmount),
+        },
+        { merge: true }
+      );
+    });
+
+    // Revalidate paths to show updated data
+    revalidatePath('/');
+    revalidatePath('/proof-of-funds');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error handling deposit:', error);
+    return { success: false, error: 'Failed to process deposit.' };
+  }
+}
+
+export async function handleUpdateLockupPeriod(userId: string, newPeriod: number) {
+     const { db, isFirebaseEnabled } = getFirebaseAdmin();
+     if (!isFirebaseEnabled) {
+        return { success: false, error: 'Server misconfiguration.' };
+    }
+     try {
+        const userRef = db.collection('users').doc(userId);
+        const newApy = getDynamicApy(newPeriod);
+
+        await userRef.update({
+            lockupPeriod: newPeriod,
+            activeProtocol: 'CryptoPrev Strategy',
+            activeProtocolApy: newApy,
+        });
+
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating lockup period:', error);
+        return { success: false, error: 'Failed to update plan.' };
+    }
+}
+
+export async function getUserData(userId: string) {
+    const { db, isFirebaseEnabled } = getFirebaseAdmin();
+    if (!isFirebaseEnabled) return null;
+    
+    try {
+        const userRef = db.collection('users').doc(userId);
+        const doc = await userRef.get();
+
+        if (!doc.exists) {
+            // This case should ideally not be hit if initializeUser is called on login.
+            console.warn(`User document for ${userId} not found. Returning null.`);
+            return null;
+        }
+        
+        const data = doc.data();
+        if (!data) return null;
+        
+        // Ensure default values for older documents just in case
+        const lockupPeriod = data.lockupPeriod || 12;
+        const apy = data.activeProtocolApy || getDynamicApy(lockupPeriod);
+
+        const accumulatedRewards = (data.currentBalance || 0) * apy;
+        const monthlyYield = accumulatedRewards / 12;
+
+
+        return {
+            ...data,
+            currentBalance: data.currentBalance || 0,
+            bitcoinReserve: data.bitcoinReserve || 0,
+            bnbReserve: data.bnbReserve || 0,
+            accumulatedRewards: accumulatedRewards,
+            monthlyYield: monthlyYield,
+            activeProtocol: data.activeProtocol || 'CryptoPrev Strategy',
+            activeProtocolApy: apy,
+            lockupPeriod: lockupPeriod,
+            transactions: data.transactions || [],
+            achievements: data.achievements || [],
+        };
+
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        return null;
+    }
+}
