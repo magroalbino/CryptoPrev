@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
@@ -150,29 +151,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (type === 'solana') {
         const provider = getPhantomProvider();
         if (!provider) throw new Error('Phantom wallet is not installed.');
-        try {
-          const resp = await provider.connect({ onlyIfTrusted: false });
-          address = resp.publicKey?.toString();
-          if (!address) throw new Error('Could not get Phantom wallet address.');
-        } catch (err: any) {
-          if (err.code === 4001) {
-            throw new Error('User rejected Phantom connection request.');
-          }
-          throw err;
-        }
+        const resp = await provider.connect({ onlyIfTrusted: false });
+        address = resp.publicKey.toString();
       } else if (type === 'ethereum') {
         const provider = getMetamaskProvider();
         if (!provider) throw new Error('MetaMask wallet is not installed.');
-        try {
-          const accounts = await provider.request({ method: 'eth_requestAccounts' });
-          if (!accounts || accounts.length === 0) throw new Error('No accounts returned from MetaMask.');
-          address = accounts[0];
-        } catch (err: any) {
-          if (err.code === 4001) {
-            throw new Error('User rejected MetaMask connection request.');
-          }
-          throw err;
-        }
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        if (!accounts || accounts.length === 0) throw new Error('No accounts returned from MetaMask.');
+        address = accounts[0];
       }
 
       if (!address) throw new Error('Could not get wallet address.');
@@ -185,16 +171,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let userFriendlyError = 'Wallet connection failed.';
 
       if (error.message === 'Phantom wallet is not installed.') {
-        userFriendlyError = 'Phantom wallet não encontrada. Instale a extensão Phantom.';
+        userFriendlyError = 'Phantom wallet not found. Please install it.';
       } else if (error.message === 'MetaMask wallet is not installed.') {
-        userFriendlyError = 'MetaMask não encontrada. Instale a extensão MetaMask.';
-      } else if (error.message === 'User rejected Phantom connection request.' || error.message === 'User rejected MetaMask connection request.') {
-        userFriendlyError = 'Conexão rejeitada pelo usuário.';
-      } else if (error.message === 'No accounts returned from MetaMask.') {
-        userFriendlyError = 'Nenhuma conta MetaMask encontrada.';
+        userFriendlyError = 'MetaMask wallet not found. Please install it.';
+      } else if (error.code === 4001) {
+        // EIP-1193 userRejectedRequest error
+        userFriendlyError = 'Wallet connection request rejected by the user.';
       }
-      alert(`Erro de conexão: ${userFriendlyError}`);
-      await signOut();
+      // You could add more specific error checks based on known wallet errors
+      alert(`Connection Error: ${userFriendlyError}`); // Or use a more sophisticated UI for errors
+      await signOut(); // Cleanup on failure
     } finally {
       setLoading(false);
     }
